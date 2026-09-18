@@ -203,9 +203,9 @@ export default function CaseDetail() {
           </div>
         </div>
         <CorrelatePanel key={`${c.latest_result_version}-${spill?.wind?.speed_ms}-${spill?.current?.speed_ms}`} caseId={id} defaults={config?.correlation_params} spill={spill} onDone={load} />
-        <div className="flex border-b" style={{ borderColor: "var(--border-default)" }}>
+        <div className="flex border-b overflow-x-auto [&::-webkit-scrollbar]:h-1 bg-[#091222]/80" style={{ borderColor: "var(--border-default)" }}>
           {TABS.map(([k, l]) => (
-            <button key={k} data-testid={`tab-${k}`} onClick={() => setTab(k)} className={`px-4 py-2 font-mono text-[11px] uppercase tracking-wider transition-colors ${tab === k ? "text-cyan-300 border-b-2 border-cyan-300" : "text-slate-400 hover:text-slate-100"}`}>{l}</button>
+            <button key={k} data-testid={`tab-${k}`} onClick={() => setTab(k)} className={`shrink-0 px-3.5 py-2 font-mono text-[10.5px] uppercase tracking-wider transition-all ${tab === k ? "text-[#00E5FF] border-b-2 border-[#00E5FF] font-bold bg-cyan-400/10" : "text-slate-400 hover:text-slate-100 hover:bg-[#0E182A]"}`}>{l}</button>
           ))}
         </div>
         <div className="flex-1 overflow-y-auto">

@@ -27,6 +27,7 @@ import AuthCallback from "@/pages/AuthCallback";
 import Signup from "@/pages/Signup";
 import Account from "@/pages/Account";
 import Validation from "@/pages/Validation";
+import About from "@/pages/About";
 import AdminSecurity from "@/pages/AdminSecurity";
 import Billing from "@/pages/Billing";
 
@@ -52,6 +53,7 @@ const AppRoutes = () => {
             <Route path="/verify" element={<Verify />} />
             <Route element={<Protected><Layout /></Protected>}>
               <Route path="/" element={<Dashboard />} />
+              <Route path="/about" element={<About />} />
               <Route path="/cases/:id" element={<CaseDetail />} />
               <Route path="/vessels/:mmsi" element={<VesselProfile />} />
               <Route path="/zones" element={<Zones />} />
