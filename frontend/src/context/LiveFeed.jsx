@@ -57,8 +57,8 @@ export const LiveFeedProvider = ({ children }) => {
       }, 10000);
     };
     const connect = () => {
-      if (closed) return startPolling();
-      es = new EventSource(`${process.env.REACT_APP_BACKEND_URL}/api/alerts/stream`, { withCredentials: true });
+      const base = (process.env.REACT_APP_BACKEND_URL || "").replace(/\/+$/, "");
+      es = new EventSource(`${base}/api/alerts/stream`, { withCredentials: true });
       es.addEventListener("hello", () => { failures = 0; setMode("live"); if (poll) { clearInterval(poll); poll = null; } });
       es.addEventListener("alert", (e) => { const d = JSON.parse(e.data); sinceRef.current = d.at; onAlert(d.alert, d.notification); });
       es.addEventListener("job", (e) => { const d = JSON.parse(e.data); setLastJob(d); if (d.status === "failed") toast.error(`Job ${d.type} failed`, { description: d.error }); });

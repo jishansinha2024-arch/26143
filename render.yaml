@@ -1,0 +1,46 @@
+services:
+  # ---------------------------------------------------------------------------
+  # 1. Varuna Netra Backend API (FastAPI)
+  # ---------------------------------------------------------------------------
+  - type: web
+    name: varuna-netra-backend
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn server:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/system/health
+    envVars:
+      - key: MONGO_URL
+        sync: false # Set your MongoDB Atlas connection string (e.g. mongodb+srv://...)
+      - key: DB_NAME
+        value: varuna_netra
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DEMO_MODE
+        value: "true"
+      - key: APP_ENV
+        value: production
+      - key: CORS_ORIGIN_REGEX
+        value: "^https://.*\\.onrender\\.com$"
+      - key: AIS_INGEST_ENABLED
+        value: "false"
+
+  # ---------------------------------------------------------------------------
+  # 2. Varuna Netra Frontend UI (React Single-Page App)
+  # ---------------------------------------------------------------------------
+  - type: web
+    name: varuna-netra-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: yarn && yarn build
+    staticPublishPath: ./build
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: REACT_APP_BACKEND_URL
+        fromService:
+          type: web
+          name: varuna-netra-backend
+          property: url

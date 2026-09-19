@@ -2,7 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { ShieldCheck, ShieldAlert, Upload, Hash } from "lucide-react";
 
-const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+const API = `${(process.env.REACT_APP_BACKEND_URL || "").replace(/\/+$/, "")}/api`;
 const inputCls = "w-full rounded border bg-slate-900/60 px-3 py-2 font-mono text-xs text-slate-100 outline-none focus:border-cyan-400/60";
 
 export default function Verify() {

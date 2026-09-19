@@ -1,6 +1,7 @@
 import axios from "axios";
 
-export const api = axios.create({ baseURL: `${process.env.REACT_APP_BACKEND_URL}/api`, withCredentials: true });
+const BACKEND_BASE = (process.env.REACT_APP_BACKEND_URL || "").replace(/\/+$/, "");
+export const api = axios.create({ baseURL: `${BACKEND_BASE}/api`, withCredentials: true });
 
 api.interceptors.response.use(
   (r) => r,
