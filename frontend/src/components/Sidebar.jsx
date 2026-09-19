@@ -1,257 +1,94 @@
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import {
-  Radar,
-  LayoutDashboard,
-  Satellite,
-  Globe2,
-  Images,
-  ShieldAlert,
-  Eye,
-  Columns2,
-  BookOpen,
-  Map as MapIcon,
-  HeartPulse,
-  Users as UsersIcon,
-  Bookmark,
-  UserCog,
-  BadgeCheck,
-  ShieldCheck,
-  CreditCard,
-  ChevronsLeft,
-  ChevronsRight,
-  X,
-  Info,
+  Radar, LayoutDashboard, Satellite, Globe2, Images, ShieldAlert, Eye, Columns2,
+  BookOpen, Map as MapIcon, HeartPulse, Users as UsersIcon, Bookmark, UserCog,
+  BadgeCheck, ShieldCheck, CreditCard, ChevronsLeft, ChevronsRight, X, Info
 } from "lucide-react";
 import { api, hasRole } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
 
 const SECTIONS = [
-  {
-    title: "Operations",
-    items: [
-      { to: "/", label: "Surveillance", icon: LayoutDashboard, id: "nav-dashboard-link", end: true },
-      { to: "/ingest", label: "Ingestion", icon: Satellite, id: "nav-ingest-link" },
-      { to: "/explorer", label: "Scene Explorer", icon: Globe2, id: "nav-explorer-link" },
-      { to: "/events", label: "Events", icon: Images, id: "nav-events-link" },
-    ],
-  },
-  {
-    title: "Investigation",
-    items: [
-      { to: "/alerts", label: "Alerts", icon: ShieldAlert, id: "nav-alerts-link" },
-      { to: "/watchlist", label: "Watchlist", icon: Eye, id: "nav-watchlist-link" },
-      { to: "/compare", label: "Compare", icon: Columns2, id: "nav-compare-link" },
-    ],
-  },
-  {
-    title: "Intelligence",
-    items: [
-      { to: "/about", label: "About Varuna Netra", icon: Info, id: "nav-about-link" },
-      { to: "/archive", label: "Archive", icon: BookOpen, id: "nav-archive-link" },
-      { to: "/zones", label: "Zones / Jurisdictions", icon: MapIcon, id: "nav-zones-link" },
-      { to: "/validation", label: "Validation", icon: BadgeCheck, id: "nav-validation-link" },
-      { to: "/health", label: "Data Sources", icon: HeartPulse, id: "nav-health-link" },
-    ],
-  },
+  { title:"Operations", items:[
+    {to:"/",label:"Surveillance",icon:LayoutDashboard,id:"nav-dashboard-link",end:true},
+    {to:"/ingest",label:"Ingestion",icon:Satellite,id:"nav-ingest-link"},
+    {to:"/explorer",label:"Scene Explorer",icon:Globe2,id:"nav-explorer-link"},
+    {to:"/events",label:"Events",icon:Images,id:"nav-events-link"}]},
+  { title:"Investigation", items:[
+    {to:"/alerts",label:"Alerts",icon:ShieldAlert,id:"nav-alerts-link"},
+    {to:"/watchlist",label:"Watchlist",icon:Eye,id:"nav-watchlist-link"},
+    {to:"/compare",label:"Compare",icon:Columns2,id:"nav-compare-link"}]},
+  { title:"Intelligence", items:[
+    {to:"/archive",label:"Archive",icon:BookOpen,id:"nav-archive-link"},
+    {to:"/zones",label:"Zones / Jurisdictions",icon:MapIcon,id:"nav-zones-link"},
+    {to:"/validation",label:"Validation",icon:BadgeCheck,id:"nav-validation-link"},
+    {to:"/health",label:"Data Sources",icon:HeartPulse,id:"nav-health-link"}]}
 ];
 
-const itemBase =
-  "group relative flex items-center rounded-lg py-2 text-xs font-medium outline-none transition-all duration-150 focus-visible:ring-2 focus-visible:ring-sky-400";
-const itemState = (isActive) =>
-  isActive
-    ? "bg-sky-500/15 text-sky-400 shadow-xs font-semibold border-l-2 border-sky-400"
-    : "text-slate-400 hover:bg-[#162B4D]/60 hover:text-slate-200 border-l-2 border-transparent";
+const Tip=({label})=><span className="pointer-events-none absolute left-full z-50 ml-2.5 hidden whitespace-nowrap rounded-xl border border-[color:var(--edge)] bg-ink-800 px-3 py-1.5 font-mono text-[10.5px] text-mist shadow-panel group-hover:block">{label}</span>;
 
-const Tip = ({ label }) => (
-  <span className="pointer-events-none absolute left-full z-50 ml-2.5 hidden whitespace-nowrap rounded-md bg-[#0F1D38] px-2.5 py-1 font-mono text-[10.5px] text-slate-100 shadow-lg border border-[#1E2E4A] group-hover:block group-focus-visible:block">
-    {label}
-  </span>
-);
-
-const NavItem = ({ item, collapsed, onNavigate }) => {
-  const Icon = item.icon;
-  return (
-    <NavLink
-      to={item.to}
-      end={item.end}
-      data-testid={item.id}
-      onClick={onNavigate}
-      title={collapsed ? item.label : undefined}
-      className={({ isActive }) =>
-        `${itemBase} ${itemState(isActive)} ${collapsed ? "justify-center px-0 mx-1" : "gap-2.5 px-3 mx-1"}`
-      }
-    >
-      <Icon size={16} className="shrink-0" />
-      {!collapsed && <span className="truncate">{item.label}</span>}
-      {collapsed && <Tip label={item.label} />}
-    </NavLink>
-  );
+const NavItem=({item,collapsed,onNavigate})=>{
+  const Icon=item.icon;
+  return <NavLink to={item.to} end={item.end} data-testid={item.id} onClick={onNavigate}
+    title={collapsed?item.label:undefined}
+    className={({isActive})=>`group relative flex h-11 items-center rounded-xl text-[13.5px] font-medium transition-all duration-150 ease-premium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua-400/60 ${collapsed?"mx-1 justify-center":"mx-0 gap-3 px-3"} ${isActive?"text-mist":"text-mist-muted hover:bg-white/[.045] hover:text-mist"}`}>
+    {({isActive})=><>
+      {isActive&&<span className="absolute inset-0 rounded-xl border border-aqua-400/25 bg-aqua-500/[.12]"/>}
+      <Icon size={18} className={`relative z-10 shrink-0 ${isActive?"text-aqua-300":"text-mist-faint group-hover:text-mist-soft"}`}/>
+      {!collapsed&&<span className="relative z-10 truncate tracking-[-.01em]">{item.label}</span>}
+      {collapsed&&<Tip label={item.label}/>}
+    </>}
+  </NavLink>;
 };
 
-const NavBody = ({ collapsed, onNavigate }) => {
-  const { user } = useAuth();
-  const [ref, setRef] = useState(null);
+const NavBody=({collapsed,onNavigate})=>{
+  const {user}=useAuth(); const [ref,setRef]=useState(null);
+  useEffect(()=>{api.get("/demo/reference").then(r=>setRef(r.data)).catch(()=>setRef(null))},[]);
+  const pinned=ref?.pinned&&ref?.available;
+  return <nav className="flex flex-1 flex-col overflow-y-auto px-3 py-5" data-testid="sidebar-nav">
+    {SECTIONS.map(sec=><div key={sec.title} className="mb-6">
+      {!collapsed&&<p className="eyebrow mb-2 px-3 text-[10px]">{sec.title}</p>}
+      <div className="space-y-1">{sec.items.map(it=><NavItem key={it.to} item={it} collapsed={collapsed} onNavigate={onNavigate}/>)}</div>
+    </div>)}
+    <div className="mt-auto border-t border-[color:var(--edge)] pt-3">
+      {pinned&&<div className={`mb-2 flex items-center rounded-xl py-2 text-[11px] ${collapsed?"justify-center":"gap-2.5 px-3"}`}><Bookmark size={15} className="text-mint"/>{!collapsed&&<span className="font-mono text-[10px]"><span className="text-mist-faint">Reference case</span><br/><span className="font-bold text-mint">✓ {ref?.case_number||"Pinned"}</span></span>}</div>}
+      {hasRole(user,"admin")&&<>
+        {!collapsed&&<p className="eyebrow px-3 pb-2 pt-2 text-[9px]">Admin</p>}
+        <NavItem item={{to:"/users",label:"Users & Roles",icon:UsersIcon,id:"nav-users-link"}} collapsed={collapsed} onNavigate={onNavigate}/>
+        <NavItem item={{to:"/admin/security",label:"Security Center",icon:ShieldCheck,id:"nav-admin-security-link"}} collapsed={collapsed} onNavigate={onNavigate}/>
+      </>}
+      {!collapsed&&<p className="eyebrow px-3 pb-2 pt-3 text-[9px]">Session</p>}
+      <NavItem item={{to:"/billing",label:"Plans & Billing",icon:CreditCard,id:"nav-billing-sidebar-link"}} collapsed={collapsed} onNavigate={onNavigate}/>
+      <NavItem item={{to:"/account",label:"My Account",icon:UserCog,id:"nav-account-sidebar-link"}} collapsed={collapsed} onNavigate={onNavigate}/>
+    </div>
+  </nav>;
+};
 
-  useEffect(() => {
-    api.get("/demo/reference").then((r) => setRef(r.data)).catch(() => setRef(null));
-  }, []);
-
-  const refPinned = ref?.pinned && ref?.available;
-
-  return (
-    <nav
-      className="flex flex-1 flex-col gap-4 overflow-y-auto overflow-x-hidden px-2 py-3.5 [&::-webkit-scrollbar]:w-1"
-      data-testid="sidebar-nav"
-    >
-      {SECTIONS.map((sec) => (
-        <div key={sec.title} className="flex flex-col gap-0.5">
-          {!collapsed && (
-            <p className="label-mono px-3 pb-1 pt-1 text-[9px] text-slate-400 font-semibold tracking-[0.15em]">
-              {sec.title}
-            </p>
-          )}
-          {sec.items.map((it) => (
-            <NavItem key={it.to} item={it} collapsed={collapsed} onNavigate={onNavigate} />
-          ))}
-        </div>
-      ))}
-
-      {/* Footer reference, admin and session links */}
-      <div className="mt-auto flex flex-col gap-0.5 border-t border-[#1E2E4A] pt-2.5">
-        {refPinned && (
-          <div
-            title={
-              collapsed
-                ? refPinned
-                  ? `Reference case pinned: ${ref?.case_number || ""}`
-                  : "Reference case not pinned"
-                : undefined
-            }
-            className={`group relative flex items-center rounded-lg py-1.5 ${
-              collapsed ? "justify-center px-0 mx-1" : "gap-2.5 px-3 mx-1"
-            }`}
-            data-testid="sidebar-reference-status"
-          >
-            <Bookmark size={15} className="shrink-0" style={{ color: refPinned ? "#10B981" : "#64748B" }} />
-            {!collapsed && (
-              <span className="truncate font-mono text-[10px] leading-tight">
-                <span className="text-slate-400">Reference case</span>
-                <br />
-                {ref === null ? (
-                  <span className="text-slate-500">checking…</span>
-                ) : refPinned ? (
-                  <span className="text-emerald-400 font-bold" data-testid="sidebar-ref-pinned">
-                    ✓ {ref.case_number || "Pinned"}
-                  </span>
-                ) : (
-                  <span className="text-slate-500" data-testid="sidebar-ref-unpinned">
-                    Not configured
-                  </span>
-                )}
-              </span>
-            )}
-            {collapsed && (
-              <Tip label={refPinned ? `Reference: ${ref?.case_number || "pinned"}` : "Reference not pinned"} />
-            )}
-          </div>
-        )}
-
-        {hasRole(user, "admin") && (
-          <>
-            {!collapsed && (
-              <p className="label-mono px-3 pb-1 pt-2 text-[9px] text-slate-400 font-semibold tracking-[0.15em]">
-                Admin
-              </p>
-            )}
-            <NavItem
-              item={{ to: "/users", label: "Users & Roles", icon: UsersIcon, id: "nav-users-link" }}
-              collapsed={collapsed}
-              onNavigate={onNavigate}
-            />
-            <NavItem
-              item={{
-                to: "/admin/security",
-                label: "Security Center",
-                icon: ShieldCheck,
-                id: "nav-admin-security-link",
-              }}
-              collapsed={collapsed}
-              onNavigate={onNavigate}
-            />
-          </>
-        )}
-
-        {!collapsed && (
-          <p className="label-mono px-3 pb-1 pt-2 text-[9px] text-slate-400 font-semibold tracking-[0.15em]">
-            Session
-          </p>
-        )}
-        <NavItem
-          item={{ to: "/billing", label: "Plans & Billing", icon: CreditCard, id: "nav-billing-link" }}
-          collapsed={collapsed}
-          onNavigate={onNavigate}
-        />
-        <NavItem
-          item={{ to: "/account", label: "My Account", icon: UserCog, id: "nav-account-sidebar-link" }}
-          collapsed={collapsed}
-          onNavigate={onNavigate}
-        />
+export const Sidebar=({collapsed,onToggleCollapse,mobileOpen,onCloseMobile})=><>
+  <aside className={`relative hidden h-full shrink-0 flex-col border-r border-[color:var(--edge)] bg-ink-900/80 backdrop-blur-xl transition-[width] duration-200 ease-premium lg:flex ${collapsed?"w-[76px]":"w-[246px]"}`} data-testid="sidebar-desktop">
+    <div className={`flex h-[68px] shrink-0 items-center border-b border-[color:var(--edge)] ${collapsed?"justify-center px-0":"px-5"}`}>
+      <NavLink to="/" className="flex items-center gap-3">
+        <span className="relative grid h-9 w-9 place-items-center rounded-xl border border-aqua-400/30 bg-gradient-to-br from-aqua-500/25 to-iris-500/20 shadow-glowAqua">
+          <span className="absolute inset-[7px] rounded-full border border-aqua-300/55"/>
+          <span className="absolute inset-[7px] rounded-full border-t-2 border-t-aqua-300 animate-spinSlow"/>
+          <span className="h-1.5 w-1.5 rounded-full bg-aqua-300 shadow-[0_0_10px_3px_rgba(84,221,238,.5)]"/>
+        </span>
+        {!collapsed&&<span className="leading-none"><span className="block font-display text-[17px] font-extrabold tracking-[-.025em] text-mist">Varuna <span className="text-aqua-400">Netra</span></span><span className="mt-1 block font-mono text-[9.5px] uppercase tracking-[.18em] text-mist-faint">Maritime domain awareness</span></span>}
+      </NavLink>
+    </div>
+    <NavBody collapsed={collapsed}/>
+    <button onClick={onToggleCollapse} data-testid="sidebar-collapse-toggle" className={`flex h-14 shrink-0 items-center gap-2 border-t border-[color:var(--edge)] font-mono text-[10.5px] uppercase tracking-[.15em] text-mist-faint transition-colors hover:bg-white/[.04] hover:text-mist-soft ${collapsed?"justify-center":"px-6"}`}>
+      {collapsed?<ChevronsRight size={16}/>:<><ChevronsLeft size={16}/><span>Collapse</span></>}
+    </button>
+  </aside>
+  {mobileOpen&&<div className="fixed inset-0 z-50 lg:hidden" data-testid="sidebar-mobile-overlay">
+    <div className="absolute inset-0 bg-ink-950/70 backdrop-blur-sm" onClick={onCloseMobile}/>
+    <aside className="absolute inset-y-0 left-0 flex w-[246px] flex-col border-r border-[color:var(--edge)] bg-ink-900 shadow-panel" data-testid="sidebar-mobile">
+      <div className="flex h-[68px] items-center justify-between border-b border-[color:var(--edge)] px-5">
+        <div className="flex items-center gap-3 font-display font-bold text-mist"><Radar size={20} className="text-aqua-400"/>Varuna <span className="text-aqua-400">Netra</span></div>
+        <button onClick={onCloseMobile} className="rounded-lg p-1.5 text-mist-muted hover:text-mist"><X size={18}/></button>
       </div>
-    </nav>
-  );
-};
-
-export const Sidebar = ({ collapsed, onToggleCollapse, mobileOpen, onCloseMobile }) => (
-  <>
-    {/* Desktop Sidebar */}
-    <aside
-      className={`hidden shrink-0 flex-col border-r md:flex ${
-        collapsed ? "w-[68px]" : "w-60"
-      } transition-[width] duration-200 z-30 bg-[#0B1528] text-slate-100 border-[#1E2E4A] shadow-xs`}
-      data-testid="sidebar-desktop"
-    >
-      <NavBody collapsed={collapsed} />
-      <button
-        data-testid="sidebar-collapse-toggle"
-        onClick={onToggleCollapse}
-        title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-        className="flex items-center justify-center gap-2 border-t border-[#1E2E4A] py-2.5 text-slate-400 hover:bg-[#162B4D] hover:text-sky-300 transition-colors"
-      >
-        {collapsed ? (
-          <ChevronsRight size={16} />
-        ) : (
-          <>
-            <ChevronsLeft size={16} />
-            <span className="font-mono text-[10px] uppercase tracking-wider font-semibold">Collapse Sidebar</span>
-          </>
-        )}
-      </button>
+      <NavBody collapsed={false} onNavigate={onCloseMobile}/>
     </aside>
-
-    {/* Mobile Drawer */}
-    {mobileOpen && (
-      <div className="fixed inset-0 z-50 md:hidden" data-testid="sidebar-mobile-overlay">
-        <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-xs" onClick={onCloseMobile} />
-        <aside
-          className="absolute left-0 top-0 flex h-full w-64 flex-col border-r bg-[#0B1528] text-slate-100 border-[#1E2E4A] shadow-2xl"
-          data-testid="sidebar-mobile"
-        >
-          <div className="flex h-14 shrink-0 items-center justify-between border-b border-[#1E2E4A] px-4">
-            <span className="flex items-center gap-2 font-display text-base font-bold text-white">
-              <Radar size={17} className="text-sky-400" /> Varuna <span className="text-sky-400">Netra</span>
-            </span>
-            <button
-              data-testid="sidebar-mobile-close"
-              onClick={onCloseMobile}
-              className="rounded-lg p-1.5 text-slate-400 hover:bg-[#162B4D] hover:text-white"
-            >
-              <X size={18} />
-            </button>
-          </div>
-          <NavBody collapsed={false} onNavigate={onCloseMobile} />
-        </aside>
-      </div>
-    )}
-  </>
-);
+  </div>}
+</>;
