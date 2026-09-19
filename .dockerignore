@@ -1,0 +1,9 @@
+.git
+.emergent
+**/node_modules
+frontend/build
+test_reports
+memory
+tests
+backend/.env
+frontend/.env
