@@ -2,7 +2,7 @@ services:
   - type: web
     name: varuna-netra
     runtime: docker
-    plan: starter        # free (512 MB) will likely run out of memory with pandas/scipy/opencv
+    plan: free           # 512 MB RAM; sleeps after 15 min idle (see keep-alive note in the guide)
     healthCheckPath: /health
     autoDeployTrigger: commit
     envVars:
@@ -26,5 +26,7 @@ services:
         generateValue: true
       - key: DEMO_ANALYST_PASSWORD
         generateValue: true
+      - key: MALLOC_ARENA_MAX
+        value: "2"
       - key: WEBHOOK_CRON_SECRET
         generateValue: true
