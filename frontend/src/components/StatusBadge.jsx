@@ -1,24 +1,24 @@
 import { STATUS_LABEL, STATUS_STYLE } from "@/lib/api";
 
 const EXTENDED_STATUS = {
-  active: { color: "#0284C7", bg: "#F0F9FF", border: "#BAE6FD", label: "Active" },
-  monitored: { color: "#0EA5E9", bg: "#F0F9FF", border: "#BAE6FD", label: "Monitored" },
-  warning: { color: "#D97706", bg: "#FFFBEB", border: "#FDE68A", label: "Warning" },
-  critical: { color: "#DC2626", bg: "#FEF2F2", border: "#FECACA", label: "Critical" },
-  resolved: { color: "#059669", bg: "#ECFDF5", border: "#A7F3D0", label: "Resolved" },
-  probable: { color: "#D97706", bg: "#FFFBEB", border: "#FDE68A", label: "Probable" },
-  possible: { color: "#B45309", bg: "#FFFBEB", border: "#FDE68A", label: "Possible" },
-  analyst_confirmed: { color: "#059669", bg: "#ECFDF5", border: "#A7F3D0", label: "Analyst Confirmed" },
-  insufficient_evidence: { color: "#64748B", bg: "#F8FAFC", border: "#E2E8F0", label: "Insufficient Evidence" },
-  indeterminate: { color: "#7C3AED", bg: "#FAF5FF", border: "#E9D5FF", label: "Indeterminate" },
+  active: { color: "#1F7F93", bg: "#EEF7F9", border: "#B3DBE3", label: "Active" },
+  monitored: { color: "#1F7F93", bg: "#EEF7F9", border: "#B3DBE3", label: "Monitored" },
+  warning: { color: "#B8862A", bg: "#FAF4E4", border: "#E9D49A", label: "Warning" },
+  critical: { color: "#C25A49", bg: "#FBEFEC", border: "#EBC7BF", label: "Critical" },
+  resolved: { color: "#2E8B6A", bg: "#EAF5F0", border: "#B5DCCB", label: "Resolved" },
+  probable: { color: "#B8862A", bg: "#FAF4E4", border: "#E9D49A", label: "Probable" },
+  possible: { color: "#96691A", bg: "#FAF4E4", border: "#E9D49A", label: "Possible" },
+  analyst_confirmed: { color: "#2E8B6A", bg: "#EAF5F0", border: "#B5DCCB", label: "Analyst Confirmed" },
+  insufficient_evidence: { color: "#5F7684", bg: "#F7F6F2", border: "#E2DFD6", label: "Insufficient Evidence" },
+  indeterminate: { color: "#7C5CBF", bg: "#F3EFFA", border: "#D8CDEE", label: "Indeterminate" },
 };
 
 export const StatusBadge = ({ status, testId }) => {
   const norm = (status || "insufficient_evidence").toLowerCase();
   const s = EXTENDED_STATUS[norm] || {
-    color: STATUS_STYLE[norm]?.color || "#64748B",
-    bg: STATUS_STYLE[norm]?.bg || "#F8FAFC",
-    border: "#E2E8F0",
+    color: STATUS_STYLE[norm]?.color || "#5F7684",
+    bg: STATUS_STYLE[norm]?.bg || "#F7F6F2",
+    border: "#E2DFD6",
     label: STATUS_LABEL[norm] || status?.replace(/_/g, " "),
   };
 
@@ -40,9 +40,9 @@ export const StatusBadge = ({ status, testId }) => {
 
 export const BandBadge = ({ band }) => {
   const map = {
-    high: { color: "#059669", bg: "#ECFDF5", border: "#A7F3D0" },
-    medium: { color: "#D97706", bg: "#FFFBEB", border: "#FDE68A" },
-    low: { color: "#64748B", bg: "#F8FAFC", border: "#E2E8F0" },
+    high: { color: "#2E8B6A", bg: "#EAF5F0", border: "#B5DCCB" },
+    medium: { color: "#B8862A", bg: "#FAF4E4", border: "#E9D49A" },
+    low: { color: "#5F7684", bg: "#F7F6F2", border: "#E2DFD6" },
   };
   const b = map[band] || map.low;
   return (
@@ -56,7 +56,7 @@ export const BandBadge = ({ band }) => {
   );
 };
 
-export const ScoreBar = ({ value, color = "#0284C7", testId }) => (
+export const ScoreBar = ({ value, color = "#1F7F93", testId }) => (
   <div data-testid={testId} className="h-1.5 w-full rounded-full bg-slate-100 overflow-hidden border border-slate-200/60 p-0">
     <div
       className="h-full rounded-full transition-all duration-300 ease-out"

@@ -32,7 +32,7 @@ import { AssetSearch, assetBounds } from "@/components/map/AssetSearch";
 import { useLive } from "@/context/LiveFeed";
 
 const TABS = [["candidates", "Candidates"], ["comparison", "Why not #2?"], ["assistant", "AI assistant"], ["summary", "Investigation summary"], ["review", "Analyst review"], ["response", "Response"], ["precedents", "Related precedent"], ["vulnerability", "Vulnerability"], ["timeline", "Timeline"], ["files", "Files"], ["beforeafter", "Before / After"], ["scenes", "Scene timeline"], ["evidence", "Evidence & audit"], ["log", "Processing log"]];
-const overlayBtn = { background: "rgba(11,21,40,0.92)", border: "1px solid rgba(30,46,74,0.85)", backdropFilter: "blur(12px)", color: "#F8FAFC" };
+const overlayBtn = { background: "rgba(255,255,255,0.92)", border: "1px solid rgba(30,46,74,0.85)", backdropFilter: "blur(12px)", color: "#F7F6F2" };
 
 export default function CaseDetail() {
   const { id } = useParams();
@@ -136,40 +136,40 @@ export default function CaseDetail() {
         <CaseMap liveVessels={nearLive} darkVessels={darkScan?.targets} geojson={geo} selected={selected} onSelect={setSelected} showTracks={showTracks} timeCursor={cursor} acquisitionTime={c.acquisition_time} zones={showZones ? zones : null} zoneKinds={zoneKinds} gibs={showSat && satMeta ? { layer: satMeta.basemaps[0], template: satMeta.gibs_template } : null}
           overlay={showOverlay && overlayUrl && overlayMeta ? { url: overlayUrl, bounds: overlayMeta.bounds, opacity: overlayOpacity } : null} fitTo={fitTo} highlight={highlight} asset={asset} />
         <div className="absolute left-3 top-3 z-[1000] flex items-center gap-2">
-          <Link to="/" data-testid="back-to-dashboard" className="inline-flex items-center gap-1 rounded px-2.5 py-1.5 font-mono text-[11px] uppercase tracking-wider text-slate-200" style={overlayBtn}><ArrowLeft size={12} /> Cases</Link>
-          <button data-testid="map-toggle-ais-layer" onClick={() => setShowTracks(!showTracks)} className="inline-flex items-center gap-1 rounded px-2.5 py-1.5 font-mono text-[11px] uppercase tracking-wider" style={{ ...overlayBtn, color: showTracks ? "#00F0FF" : "#94A3B8" }}><Layers size={12} /> AIS tracks</button>
-          <button data-testid="map-toggle-zones-layer" onClick={() => setShowZones(!showZones)} className="inline-flex items-center gap-1 rounded px-2.5 py-1.5 font-mono text-[11px] uppercase tracking-wider" style={{ ...overlayBtn, color: showZones ? "#00F0FF" : "#94A3B8" }}><Layers size={12} /> Zones</button>
+          <Link to="/" data-testid="back-to-dashboard" className="inline-flex items-center gap-1 rounded px-2.5 py-1.5 font-mono text-[11px] uppercase tracking-wider text-slate-700" style={overlayBtn}><ArrowLeft size={12} /> Cases</Link>
+          <button data-testid="map-toggle-ais-layer" onClick={() => setShowTracks(!showTracks)} className="inline-flex items-center gap-1 rounded px-2.5 py-1.5 font-mono text-[11px] uppercase tracking-wider" style={{ ...overlayBtn, color: showTracks ? "#2A93A8" : "#7D919C" }}><Layers size={12} /> AIS tracks</button>
+          <button data-testid="map-toggle-zones-layer" onClick={() => setShowZones(!showZones)} className="inline-flex items-center gap-1 rounded px-2.5 py-1.5 font-mono text-[11px] uppercase tracking-wider" style={{ ...overlayBtn, color: showZones ? "#2A93A8" : "#7D919C" }}><Layers size={12} /> Zones</button>
           {showZones && (
             <span className="inline-flex items-center gap-1 rounded px-1.5 py-1" style={overlayBtn} data-testid="zone-kind-toggles">
               {[["territorial", "12 NM"], ["contiguous", "24 NM"], ["eez", "EEZ"]].map(([k, l]) => (
-                <button key={k} data-testid={`zone-kind-${k}`} onClick={() => setZoneKinds({ ...zoneKinds, [k]: !zoneKinds[k] })} className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider" style={{ color: zoneKinds[k] ? ZONE_STYLE[k].color : "#64748B", background: zoneKinds[k] ? `${ZONE_STYLE[k].color}22` : "transparent" }}>
-                  <span className="inline-block h-0 w-3 border-t-2" style={{ borderColor: zoneKinds[k] ? ZONE_STYLE[k].color : "#64748B", borderStyle: ZONE_STYLE[k].dashArray ? "dashed" : "solid" }} />{l}
+                <button key={k} data-testid={`zone-kind-${k}`} onClick={() => setZoneKinds({ ...zoneKinds, [k]: !zoneKinds[k] })} className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider" style={{ color: zoneKinds[k] ? ZONE_STYLE[k].color : "#5F7684", background: zoneKinds[k] ? `${ZONE_STYLE[k].color}22` : "transparent" }}>
+                  <span className="inline-block h-0 w-3 border-t-2" style={{ borderColor: zoneKinds[k] ? ZONE_STYLE[k].color : "#5F7684", borderStyle: ZONE_STYLE[k].dashArray ? "dashed" : "solid" }} />{l}
                 </button>))}
             </span>
           )}
-          <button data-testid="map-toggle-satellite-layer" onClick={() => setShowSat(!showSat)} title="NASA GIBS VIIRS true colour on acquisition date" className="inline-flex items-center gap-1 rounded px-2.5 py-1.5 font-mono text-[11px] uppercase tracking-wider" style={{ ...overlayBtn, color: showSat ? "#00F0FF" : "#94A3B8" }}><Globe2 size={12} /> Satellite</button>
-          <button data-testid="btn-export-geojson" onClick={exportGeo} className="inline-flex items-center gap-1 rounded px-2.5 py-1.5 font-mono text-[11px] uppercase tracking-wider text-slate-200" style={overlayBtn}><Download size={12} /> GeoJSON</button>
-          <button data-testid="btn-export-pdf" disabled={pdfBusy} onClick={exportPdf} className="inline-flex items-center gap-1 rounded px-2.5 py-1.5 font-mono text-[11px] uppercase tracking-wider disabled:opacity-50" style={{ ...overlayBtn, color: "#FFB703" }}><FileText size={12} /> {pdfBusy ? "Building…" : "Evidence PDF"}</button>
-          <Link to={`/compare?a=${id}`} data-testid="btn-compare-case" className="inline-flex items-center gap-1 rounded px-2.5 py-1.5 font-mono text-[11px] uppercase tracking-wider text-slate-200" style={overlayBtn}><Columns2 size={12} /> Compare</Link>
-          <button data-testid="btn-focus-spill" onClick={focusSpill} className="inline-flex items-center gap-1 rounded px-2.5 py-1.5 font-mono text-[11px] uppercase tracking-wider" style={{ ...overlayBtn, color: focus ? "#FFB703" : "#F8FAFC" }}><Crosshair size={12} /> Focus spill</button>
-          {hasRole(user, "supervisor") && <button data-testid="btn-prosecution-export" disabled={exporting} onClick={prosecutionExport} className="inline-flex items-center gap-1 rounded px-2.5 py-1.5 font-mono text-[11px] uppercase tracking-wider text-rose-200 disabled:opacity-50" style={{ ...overlayBtn, borderColor: "rgba(255,42,109,0.6)" }}><Gavel size={12} /> {exporting ? "Bundling…" : "Prosecution export"}</button>}
-          {hasRole(user, "admin") && <button data-testid="btn-pin-reference" onClick={async () => { try { await api.put(`/demo/reference/${id}`); toast.success(`${c.case_number} pinned as SIH reference case (REFERENCE CASE — STORED DATA)`); } catch (e) { toast.error(apiError(e)); } }} title="Run SIH Demo will always open this stored case" className="inline-flex items-center gap-1 rounded px-2.5 py-1.5 font-mono text-[11px] uppercase tracking-wider" style={{ ...overlayBtn, color: "#FFB703" }}><Pin size={12} /> Pin as SIH reference case</button>}
+          <button data-testid="map-toggle-satellite-layer" onClick={() => setShowSat(!showSat)} title="NASA GIBS VIIRS true colour on acquisition date" className="inline-flex items-center gap-1 rounded px-2.5 py-1.5 font-mono text-[11px] uppercase tracking-wider" style={{ ...overlayBtn, color: showSat ? "#2A93A8" : "#7D919C" }}><Globe2 size={12} /> Satellite</button>
+          <button data-testid="btn-export-geojson" onClick={exportGeo} className="inline-flex items-center gap-1 rounded px-2.5 py-1.5 font-mono text-[11px] uppercase tracking-wider text-slate-700" style={overlayBtn}><Download size={12} /> GeoJSON</button>
+          <button data-testid="btn-export-pdf" disabled={pdfBusy} onClick={exportPdf} className="inline-flex items-center gap-1 rounded px-2.5 py-1.5 font-mono text-[11px] uppercase tracking-wider disabled:opacity-50" style={{ ...overlayBtn, color: "#C48A22" }}><FileText size={12} /> {pdfBusy ? "Building…" : "Evidence PDF"}</button>
+          <Link to={`/compare?a=${id}`} data-testid="btn-compare-case" className="inline-flex items-center gap-1 rounded px-2.5 py-1.5 font-mono text-[11px] uppercase tracking-wider text-slate-700" style={overlayBtn}><Columns2 size={12} /> Compare</Link>
+          <button data-testid="btn-focus-spill" onClick={focusSpill} className="inline-flex items-center gap-1 rounded px-2.5 py-1.5 font-mono text-[11px] uppercase tracking-wider" style={{ ...overlayBtn, color: focus ? "#C48A22" : "#F7F6F2" }}><Crosshair size={12} /> Focus spill</button>
+          {hasRole(user, "supervisor") && <button data-testid="btn-prosecution-export" disabled={exporting} onClick={prosecutionExport} className="inline-flex items-center gap-1 rounded px-2.5 py-1.5 font-mono text-[11px] uppercase tracking-wider text-rose-200 disabled:opacity-50" style={{ ...overlayBtn, borderColor: "rgba(194,90,73,0.6)" }}><Gavel size={12} /> {exporting ? "Bundling…" : "Prosecution export"}</button>}
+          {hasRole(user, "admin") && <button data-testid="btn-pin-reference" onClick={async () => { try { await api.put(`/demo/reference/${id}`); toast.success(`${c.case_number} pinned as SIH reference case (REFERENCE CASE — STORED DATA)`); } catch (e) { toast.error(apiError(e)); } }} title="Run SIH Demo will always open this stored case" className="inline-flex items-center gap-1 rounded px-2.5 py-1.5 font-mono text-[11px] uppercase tracking-wider" style={{ ...overlayBtn, color: "#C48A22" }}><Pin size={12} /> Pin as SIH reference case</button>}
           <AssetSearch compact onSelect={(h) => { setFitTo(assetBounds(h)); setAsset(h); }} />
-          <span className="inline-flex items-center gap-1 rounded px-2.5 py-1.5 font-mono text-[11px] uppercase tracking-wider" style={{ ...overlayBtn, color: liveAis?.state === "LIVE" ? "#10B981" : "#94A3B8" }} data-testid="map-live-vessels-chip" title="Live AISStream vessels within 250 km of the slick (green dots)">● live AIS {liveAis?.state || "…"} · {nearLive.length} near slick</span>
+          <span className="inline-flex items-center gap-1 rounded px-2.5 py-1.5 font-mono text-[11px] uppercase tracking-wider" style={{ ...overlayBtn, color: liveAis?.state === "LIVE" ? "#2E8B6A" : "#7D919C" }} data-testid="map-live-vessels-chip" title="Live AISStream vessels within 250 km of the slick (green dots)">● live AIS {liveAis?.state || "…"} · {nearLive.length} near slick</span>
           {overlayMeta?.has_quicklook && (
             <span className="inline-flex items-center gap-2 rounded px-2.5 py-1.5" style={overlayBtn} data-testid="scene-overlay-control">
-              <button data-testid="map-toggle-scene-overlay" onClick={() => setShowOverlay(!showOverlay)} className="inline-flex items-center gap-1 font-mono text-[11px] uppercase tracking-wider" style={{ color: showOverlay ? "#00F0FF" : "#94A3B8" }}><ImageIcon size={12} /> SAR quicklook</button>
+              <button data-testid="map-toggle-scene-overlay" onClick={() => setShowOverlay(!showOverlay)} className="inline-flex items-center gap-1 font-mono text-[11px] uppercase tracking-wider" style={{ color: showOverlay ? "#2A93A8" : "#7D919C" }}><ImageIcon size={12} /> SAR quicklook</button>
               {showOverlay && <input data-testid="scene-overlay-opacity" type="range" min="0" max="1" step="0.05" value={overlayOpacity} onChange={(e) => setOverlayOpacity(+e.target.value)} className="w-20" />}
             </span>
           )}
         </div>
         <div className="absolute bottom-3 left-3 right-3 z-[1000] flex items-end gap-3">
-          <div className="rounded p-3 text-[11px] shrink-0" style={{ background: "rgba(10,14,23,0.85)", border: "1px solid var(--border-default)", backdropFilter: "blur(12px)" }} data-testid="map-legend">
-            <div className="flex items-center gap-2"><span className="h-2.5 w-4 border border-dashed" style={{ borderColor: "#FF2A6D", background: "rgba(255,42,109,0.35)" }} /> Spill polygon</div>
-            <div className="flex items-center gap-2 mt-1"><span className="h-2.5 w-4 border border-dashed" style={{ borderColor: "#00F0FF" }} /> Search corridor</div>
-            <div className="flex items-center gap-2 mt-1"><span className="h-0.5 w-4" style={{ background: "#FF2A6D" }} /> Rank 1 track · <span className="h-0.5 w-4" style={{ background: "#FFB703" }} /> Rank 2 …</div>
-            <div className="flex items-center gap-2 mt-1"><span className="h-0 w-4 border-t-2 border-dashed" style={{ borderColor: "#94A3B8" }} /> Interpolated AIS gap (dead reckoning)</div>
-            <div className="flex items-center gap-2 mt-1"><span className="h-2.5 w-4 border border-dashed" style={{ borderColor: "#C77DFF", background: "rgba(157,78,221,0.25)" }} /> Origin envelope (2σ back-drift) · likely window</div>
+          <div className="rounded p-3 text-[11px] shrink-0" style={{ background: "rgba(255,255,255,0.85)", border: "1px solid var(--border-default)", backdropFilter: "blur(12px)" }} data-testid="map-legend">
+            <div className="flex items-center gap-2"><span className="h-2.5 w-4 border border-dashed" style={{ borderColor: "#D4604D", background: "rgba(194,90,73,0.35)" }} /> Spill polygon</div>
+            <div className="flex items-center gap-2 mt-1"><span className="h-2.5 w-4 border border-dashed" style={{ borderColor: "#2A93A8" }} /> Search corridor</div>
+            <div className="flex items-center gap-2 mt-1"><span className="h-0.5 w-4" style={{ background: "#D4604D" }} /> Rank 1 track · <span className="h-0.5 w-4" style={{ background: "#C48A22" }} /> Rank 2 …</div>
+            <div className="flex items-center gap-2 mt-1"><span className="h-0 w-4 border-t-2 border-dashed" style={{ borderColor: "#7D919C" }} /> Interpolated AIS gap (dead reckoning)</div>
+            <div className="flex items-center gap-2 mt-1"><span className="h-2.5 w-4 border border-dashed" style={{ borderColor: "#A98BDB", background: "rgba(124,92,191,0.25)" }} /> Origin envelope (2σ back-drift) · likely window</div>
             <div className="flex items-center gap-2 mt-1"><span className="h-2 w-2 rounded-full border border-white" /> Drift back-projection</div>
           </div>
           <div className="flex-1 max-w-3xl">
@@ -232,7 +232,7 @@ export default function CaseDetail() {
           {tab === "log" && (
             <div className="p-4 font-mono text-[11px] leading-relaxed" data-testid="processing-log">
               {evidence?.calculations?.processing_log?.map((l, i) => (
-                <div key={i} className={l.level === "warn" ? "text-amber-300" : "text-slate-300"}><span className="text-slate-600">{l.t.slice(11, 19)}</span> {l.msg}</div>
+                <div key={i} className={l.level === "warn" ? "text-amber-700" : "text-slate-600"}><span className="text-slate-600">{l.t.slice(11, 19)}</span> {l.msg}</div>
               )) || <p className="text-slate-500">No processing log yet.</p>}
             </div>
           )}

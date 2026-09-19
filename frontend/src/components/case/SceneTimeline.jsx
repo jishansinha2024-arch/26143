@@ -3,9 +3,9 @@ import { Clock3, Satellite } from "lucide-react";
 import { api, apiError, fmtTime } from "@/lib/api";
 
 const Pass = ({ p, active, onClick }) => (
-  <button data-testid={`scene-pass-${p.stac_id}`} onClick={onClick} className={`shrink-0 rounded border px-2 py-1 text-left font-mono text-[10px] ${active ? "border-cyan-400 text-cyan-300" : "border-slate-700 text-slate-400 hover:text-slate-100"}`}>
+  <button data-testid={`scene-pass-${p.stac_id}`} onClick={onClick} className={`shrink-0 rounded border px-2 py-1 text-left font-mono text-[10px] ${active ? "border-cyan-400 text-tide" : "border-slate-700 text-slate-400 hover:text-slate-800"}`}>
     <div>{fmtTime(p.datetime)}</div>
-    <div className={p.offset_hours === 0 ? "text-amber-300" : ""}>{p.offset_hours > 0 ? "+" : ""}{p.offset_hours} h{p.is_case_scene ? " · case scene" : ""}</div>
+    <div className={p.offset_hours === 0 ? "text-amber-700" : ""}>{p.offset_hours > 0 ? "+" : ""}{p.offset_hours} h{p.is_case_scene ? " · case scene" : ""}</div>
   </button>
 );
 
@@ -33,13 +33,13 @@ export const SceneTimeline = ({ caseId }) => {
   return (
     <div className="p-4" data-testid="scene-timeline">
       <div className="mb-2 flex flex-wrap items-center gap-2">
-        <Satellite size={13} color="#00F0FF" /><span className="font-display text-sm font-semibold">Sentinel-1 pass timeline</span>
-        <span className="rounded px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-emerald-300" style={{ border: "1px solid currentColor" }}>REAL SENTINEL-1 · archive acquisitions</span>
-        <select data-testid="scene-timeline-window" value={days} onChange={(e) => setDays(+e.target.value)} className="ml-auto rounded border bg-slate-900/60 px-2 py-1 font-mono text-[10px] text-slate-200" style={{ borderColor: "var(--border-highlight)" }}>
+        <Satellite size={13} color="#2A93A8" /><span className="font-display text-sm font-semibold">Sentinel-1 pass timeline</span>
+        <span className="rounded px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-emerald-700" style={{ border: "1px solid currentColor" }}>REAL SENTINEL-1 · archive acquisitions</span>
+        <select data-testid="scene-timeline-window" value={days} onChange={(e) => setDays(+e.target.value)} className="ml-auto rounded border bg-mist px-2 py-1 font-mono text-[10px] text-slate-700" style={{ borderColor: "var(--border-highlight)" }}>
           {[14, 30, 60, 120, 365].map((d) => <option key={d} value={d}>± {d} days</option>)}
         </select>
       </div>
-      {err && <p className="text-xs text-rose-300" data-testid="scene-timeline-error">{err}</p>}
+      {err && <p className="text-xs text-rose-600" data-testid="scene-timeline-error">{err}</p>}
       {!data && !err && <p className="font-mono text-xs text-slate-500">Searching Planetary Computer for every pass over the slick…</p>}
       {data && data.count === 0 && <p className="text-xs text-slate-500" data-testid="scene-timeline-empty">No Sentinel-1 GRD acquisition covers this point within ± {days} days.</p>}
       {data && data.count > 0 && p && (
@@ -52,9 +52,9 @@ export const SceneTimeline = ({ caseId }) => {
               {img === "loading" && <p className="p-4 font-mono text-xs text-slate-500">Loading quicklook…</p>}
               {(img === "failed" || !p.preview) && <p className="p-4 font-mono text-xs text-slate-500" data-testid="scene-timeline-no-preview">No preview available for this pass — metadata only.</p>}
             </div>
-            <div className="font-mono text-[11px] text-slate-300" data-testid="scene-timeline-meta">
+            <div className="font-mono text-[11px] text-slate-600" data-testid="scene-timeline-meta">
               <div className="flex items-center gap-1 text-slate-400"><Clock3 size={11} /> acquired {fmtTime(p.datetime)} ({p.offset_hours > 0 ? "+" : ""}{p.offset_hours} h vs spill)</div>
-              <div className="mt-1 break-all text-cyan-300">{p.stac_id}</div>
+              <div className="mt-1 break-all text-tide">{p.stac_id}</div>
               <div className="mt-1">{p.platform} · {p.instrument_mode} · {(p.polarizations || []).join("+")} · {p.orbit_state}</div>
               <div className="mt-1 text-slate-500">{p.registered_scene_id ? "registered in Varuna Netra" : "not yet registered"} · pass {idx + 1}/{data.count}</div>
               <p className="mt-2 text-[10px] text-slate-500">{data.source}</p>

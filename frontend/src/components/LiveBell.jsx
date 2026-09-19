@@ -15,14 +15,14 @@ export const LiveBell = () => {
         nav("/alerts");
       }}
       title={`Telemetry status: ${live.mode}`}
-      className="relative inline-flex items-center gap-1.5 rounded-lg border border-[#1B2B44] bg-[#070D18]/80 px-2.5 py-1.5 font-mono text-[10px] uppercase tracking-wider text-slate-300 hover:text-white hover:border-cyan-400/40 transition-all shadow-sm"
+      className="relative inline-flex items-center gap-1.5 rounded-lg border border-ink/10 bg-paper/70 px-2.5 py-1.5 font-mono text-[10px] uppercase tracking-wider text-fog transition-colors hover:border-tide/50 hover:text-ink"
     >
-      <Bell size={13} className="text-slate-400" />
+      <Bell size={13} className="text-fog" />
       {live.unread > 0 && (
         <span
           data-testid="live-bell-count"
           className="absolute -right-1.5 -top-1.5 grid h-4 min-w-4 place-items-center rounded-full px-1 text-[9px] font-bold text-white shadow-md animate-pulse"
-          style={{ background: "#EF4444" }}
+          style={{ background: "#C25A49" }}
         >
           {live.unread}
         </span>
@@ -31,7 +31,7 @@ export const LiveBell = () => {
         data-testid="live-mode"
         className="hidden lg:inline-flex items-center gap-1 font-semibold"
         style={{
-          color: live.mode === "live" ? "#10B981" : live.mode === "polling" ? "#F59E0B" : "#64748B",
+          color: live.mode === "live" ? "#2E8B6A" : live.mode === "polling" ? "#B8862A" : "#5F7684",
         }}
       >
         {live.mode === "live" ? <Wifi size={10} /> : <RefreshCw size={10} />}
@@ -50,16 +50,16 @@ export const CriticalBanner = () => {
   return (
     <div
       data-testid="critical-banner"
-      className="flex items-center gap-3 px-4 sm:px-6 py-2 text-xs border-b border-rose-600/40 bg-gradient-to-r from-rose-950/90 via-red-900/80 to-rose-950/90 text-rose-100 shadow-lg z-30"
+      className="z-30 flex items-center gap-3 border-b border-flare/40 bg-flare px-4 py-2 text-xs text-white shadow-lg sm:px-6"
       role="alert"
     >
       <div className="flex items-center gap-2 shrink-0">
-        <Siren size={15} className="animate-pulse text-rose-400" />
-        <span className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] bg-rose-500/25 px-2 py-0.5 rounded border border-rose-500/40 text-rose-200">
+        <Siren size={15} className="animate-pulse text-white" />
+        <span className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] rounded border border-white/30 bg-white/15 px-2 py-0.5 text-white">
           Critical Incident
         </span>
       </div>
-      <span className="truncate text-rose-200 font-medium">{a.message}</span>
+      <span className="truncate font-medium text-white">{a.message}</span>
       {a.case_id && (
         <button
           data-testid="critical-banner-open"
@@ -67,7 +67,7 @@ export const CriticalBanner = () => {
             live.dismissCritical();
             nav(`/cases/${a.case_id}`);
           }}
-          className="ml-auto shrink-0 rounded-md bg-white px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-rose-950 hover:bg-rose-100 shadow transition-colors"
+          className="ml-auto shrink-0 rounded-md bg-white px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-flare shadow transition-colors hover:bg-paper"
         >
           Acknowledge &amp; Inspect →
         </button>
@@ -77,7 +77,7 @@ export const CriticalBanner = () => {
           data-testid="critical-banner-mute"
           onClick={live.toggleMute}
           title={live.muted ? "Unmute siren" : "Mute siren"}
-          className="rounded p-1 text-rose-300 hover:bg-rose-800/40 hover:text-white transition-colors"
+          className="rounded p-1 text-white/80 transition-colors hover:bg-white/15 hover:text-white"
         >
           {live.muted ? <BellOff size={13} /> : <Bell size={13} />}
         </button>
@@ -85,7 +85,7 @@ export const CriticalBanner = () => {
           data-testid="critical-banner-dismiss"
           onClick={live.dismissCritical}
           title="Dismiss alert"
-          className="rounded p-1 text-rose-300 hover:bg-rose-800/40 hover:text-white transition-colors"
+          className="rounded p-1 text-white/80 transition-colors hover:bg-white/15 hover:text-white"
         >
           <X size={14} />
         </button>

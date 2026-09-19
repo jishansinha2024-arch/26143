@@ -31,11 +31,11 @@ import { OSM_URL, TILE_PERF } from "@/components/map/tiles";
 
 const MAP_CENTER = [20, 12];
 const COLORS = {
-  probable: "#D97706",
-  analyst_confirmed: "#059669",
-  possible: "#B45309",
-  insufficient_evidence: "#64748B",
-  indeterminate: "#7C3AED",
+  probable: "#B8862A",
+  analyst_confirmed: "#2E8B6A",
+  possible: "#96691A",
+  insufficient_evidence: "#5F7684",
+  indeterminate: "#7C5CBF",
 };
 
 const coordsOf = (c) => {
@@ -60,12 +60,12 @@ const MapFocus = ({ target }) => {
   return null;
 };
 
-const caseColor = (c) => COLORS[c.attribution_status] || "#0284C7";
+const caseColor = (c) => COLORS[c.attribution_status] || "#1F7F93";
 
 function CaseMap({ cases, selected, onSelect, target }) {
   return (
     <div
-      className="relative h-full min-h-[520px] overflow-hidden rounded-xl border border-slate-200 bg-[#0B1528] shadow-xs"
+      className="relative h-full min-h-[520px] overflow-hidden rounded-xl border border-slate-200 bg-ink shadow-xs"
       data-testid="dashboard-map"
     >
       <MapContainer
@@ -94,7 +94,7 @@ function CaseMap({ cases, selected, onSelect, target }) {
               center={pos}
               radius={isSelected ? 10 : 6.5}
               pathOptions={{
-                color: isSelected ? "#38BDF8" : color,
+                color: isSelected ? "#1F7F93" : color,
                 fillColor: color,
                 fillOpacity: isSelected ? 0.95 : 0.8,
                 weight: isSelected ? 3 : 1.5,
@@ -104,11 +104,11 @@ function CaseMap({ cases, selected, onSelect, target }) {
             >
               <Popup>
                 <div className="min-w-[220px] text-xs">
-                  <div className="mb-1.5 flex items-center justify-between gap-2 border-b border-slate-700/60 pb-1.5">
-                    <b className="font-mono text-sky-400 text-sm">{c.case_number}</b>
+                  <div className="mb-1.5 flex items-center justify-between gap-2 border-b border-ink/10 pb-1.5">
+                    <b className="font-mono text-tide text-sm">{c.case_number}</b>
                     <StatusBadge status={c.attribution_status} />
                   </div>
-                  <div className="text-slate-200 font-medium">
+                  <div className="text-slate-700 font-medium">
                     {c.vessel_name ? `Suspect: ${c.vessel_name}` : c.source || "Satellite observation"}
                   </div>
                   <div className="mt-1 font-mono text-[10.5px] text-slate-400">
@@ -117,7 +117,7 @@ function CaseMap({ cases, selected, onSelect, target }) {
                     Acquired: {fmtTime(c.acquisition_time)}
                   </div>
                   <button
-                    className="mt-2.5 inline-flex items-center gap-1.5 rounded bg-sky-500/20 px-2.5 py-1 text-sky-300 hover:bg-sky-500/30 font-mono text-[11px] font-semibold transition-colors"
+                    className="mt-2.5 inline-flex items-center gap-1.5 rounded-full bg-tide/10 px-2.5 py-1 text-tide hover:bg-tide/20 font-mono text-[11px] font-semibold transition-colors"
                     onClick={() => onSelect(c)}
                   >
                     Inspect case <ExternalLink size={11} />
@@ -131,23 +131,23 @@ function CaseMap({ cases, selected, onSelect, target }) {
 
       {/* Top Map HUD Overlay */}
       <div
-        className="pointer-events-none absolute left-3.5 top-3.5 z-[1000] rounded-lg border border-slate-700/80 bg-[#0B1528]/90 px-3.5 py-2 backdrop-blur-md shadow-md text-white"
+        className="pointer-events-none absolute left-3.5 top-3.5 z-[1000] rounded-lg border border-ink/10 bg-mist/90 px-3.5 py-2 text-ink shadow-md backdrop-blur-md"
       >
-        <div className="flex items-center gap-2 font-mono text-[10.5px] font-bold tracking-wider text-sky-400">
+        <div className="flex items-center gap-2 font-mono text-[10.5px] font-bold tracking-wider text-tide">
           <span className="pulse-dot" />
           GLOBAL SPILL SURVEILLANCE
         </div>
-        <div className="mt-0.5 text-[11px] text-slate-300 font-mono">
+        <div className="mt-0.5 text-[11px] text-slate-600 font-mono">
           {cases.length} active observation markers · click to inspect
         </div>
       </div>
 
       {/* Bottom Map Legend */}
       <div
-        className="pointer-events-none absolute bottom-3.5 left-3.5 z-[1000] flex flex-wrap gap-2.5 rounded-lg border border-slate-700/80 bg-[#0B1528]/90 px-3 py-2 text-[10px] font-mono uppercase tracking-wider backdrop-blur-md shadow-md"
+        className="pointer-events-none absolute bottom-3.5 left-3.5 z-[1000] flex flex-wrap gap-2.5 rounded-lg border border-ink/10 bg-mist/90 px-3 py-2 text-[10px] font-mono uppercase tracking-wider backdrop-blur-md shadow-md"
       >
         {Object.entries(COLORS).map(([k, color]) => (
-          <span key={k} className="flex items-center gap-1.5 text-slate-300">
+          <span key={k} className="flex items-center gap-1.5 text-slate-600">
             <i className="h-2 w-2 rounded-full" style={{ background: color }} />
             {k.replace(/_/g, " ")}
           </span>
@@ -314,9 +314,9 @@ export default function Dashboard() {
       value: kv(stats?.active_cases),
       icon: Waves,
       theme: "critical", // red priority
-      accentColor: "#DC2626",
-      bgLight: "#FEF2F2",
-      borderLight: "#FECACA",
+      accentColor: "#C25A49",
+      bgLight: "#FBEFEC",
+      borderLight: "#EBC7BF",
       to: "/?origin=real",
     },
     {
@@ -325,9 +325,9 @@ export default function Dashboard() {
       value: kv(stats?.probable_confirmed),
       icon: Ship,
       theme: "warning", // amber priority
-      accentColor: "#D97706",
-      bgLight: "#FFFBEB",
-      borderLight: "#FDE68A",
+      accentColor: "#B8862A",
+      bgLight: "#FAF4E4",
+      borderLight: "#E9D49A",
       to: "/?origin=real&view=probable",
     },
     {
@@ -336,9 +336,9 @@ export default function Dashboard() {
       value: kv(stats?.pending_review),
       icon: Clock,
       theme: "pending", // amber/blue
-      accentColor: "#B45309",
-      bgLight: "#FFFBEB",
-      borderLight: "#FDE68A",
+      accentColor: "#96691A",
+      bgLight: "#FAF4E4",
+      borderLight: "#E9D49A",
       to: "/?origin=real&view=pending",
     },
     {
@@ -347,9 +347,9 @@ export default function Dashboard() {
       value: kv(stats?.ais_fixes_indexed),
       icon: FileCheck,
       theme: "marine", // sky/marine
-      accentColor: "#0284C7",
-      bgLight: "#F0F9FF",
-      borderLight: "#BAE6FD",
+      accentColor: "#1F7F93",
+      bgLight: "#EEF7F9",
+      borderLight: "#B3DBE3",
       to: "/ingest",
     },
     {
@@ -358,9 +358,9 @@ export default function Dashboard() {
       value: kv(stats?.demo?.imported),
       icon: BookOpen,
       theme: "neutral", // slate
-      accentColor: "#475569",
-      bgLight: "#F8FAFC",
-      borderLight: "#E2E8F0",
+      accentColor: "#506672",
+      bgLight: "#F7F6F2",
+      borderLight: "#E2DFD6",
       to: "/?origin=imported",
     },
   ];
@@ -376,7 +376,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="flex h-full overflow-hidden bg-[#F8FAFC] text-slate-900">
+    <div className="flex h-full overflow-hidden bg-[#F7F6F2] text-slate-900">
       <main className="min-w-0 flex-1 overflow-y-auto p-4 sm:p-6 lg:p-7">
         {/* Console Header */}
         <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
@@ -402,7 +402,7 @@ export default function Dashboard() {
                 onClick={() => setActiveTab("map")}
                 className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider transition-all ${
                   activeTab === "map"
-                    ? "bg-[#0B1528] text-white shadow-xs"
+                    ? "bg-ink text-white shadow-xs"
                     : "text-slate-600 hover:text-slate-900"
                 }`}
               >
@@ -413,7 +413,7 @@ export default function Dashboard() {
                 onClick={() => setActiveTab("analytics")}
                 className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider transition-all ${
                   activeTab === "analytics"
-                    ? "bg-[#0B1528] text-white shadow-xs"
+                    ? "bg-ink text-white shadow-xs"
                     : "text-slate-600 hover:text-slate-900"
                 }`}
               >
@@ -476,7 +476,7 @@ export default function Dashboard() {
           />
           <button
             onClick={executeSearch}
-            className="absolute right-2 top-1.5 rounded-lg bg-[#0B1528] hover:bg-[#162B4D] px-3.5 py-1.5 font-mono text-[10.5px] font-bold uppercase tracking-wider text-white transition-colors shadow-xs"
+            className="absolute right-2 top-1.5 rounded-full bg-ink px-3.5 py-1.5 text-xs font-semibold text-paper transition-colors hover:bg-tide"
           >
             Search
           </button>
@@ -580,7 +580,7 @@ export default function Dashboard() {
 
                       <button
                         onClick={() => nav(`/cases/${selected.id}`)}
-                        className="mt-auto inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#0B1528] px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-white shadow-xs hover:bg-[#162B4D] transition-all"
+                        className="mt-auto inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink px-4 py-2.5 text-sm font-semibold text-paper hover:bg-tide transition-all"
                       >
                         Open Full Case Dossier <ExternalLink size={13} />
                       </button>
@@ -889,10 +889,10 @@ export default function Dashboard() {
 
                 <div className="space-y-3.5">
                   {[
-                    { label: "Territorial Sea (12 nm)", code: "territorial", color: "#DC2626" },
-                    { label: "Contiguous Zone (24 nm)", code: "contiguous", color: "#D97706" },
-                    { label: "Exclusive Economic Zone (EEZ, 200 nm)", code: "eez", color: "#0284C7" },
-                    { label: "High Seas / International Waters", code: "high_seas", color: "#0EA5E9" },
+                    { label: "Territorial Sea (12 nm)", code: "territorial", color: "#C25A49" },
+                    { label: "Contiguous Zone (24 nm)", code: "contiguous", color: "#B8862A" },
+                    { label: "Exclusive Economic Zone (EEZ, 200 nm)", code: "eez", color: "#1F7F93" },
+                    { label: "High Seas / International Waters", code: "high_seas", color: "#1F7F93" },
                   ].map((z) => {
                     const count = all.filter((c) => c.primary_jurisdiction?.kind === z.code).length;
                     const ratio = all.length ? count / all.length : 0;
@@ -944,8 +944,8 @@ export default function Dashboard() {
               key={a.id}
               className="rounded-xl border p-3 text-xs transition-colors shadow-xs"
               style={{
-                borderColor: a.acknowledged ? "#E2E8F0" : "#FECACA",
-                background: a.acknowledged ? "#F8FAFC" : "#FEF2F2",
+                borderColor: a.acknowledged ? "#E2DFD6" : "#EBC7BF",
+                background: a.acknowledged ? "#F7F6F2" : "#FBEFEC",
               }}
             >
               <div className="flex items-center justify-between">

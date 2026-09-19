@@ -4,6 +4,7 @@ import { Radar, UserPlus, Compass, Eye, EyeOff, Mail, Lock, User, Building, Aler
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 import { api, apiError } from "@/lib/api";
+import { GlobeCanvas } from "@/components/entry/GlobeCanvas";
 
 export default function Signup() {
   const { user, signup, guestLogin } = useAuth();
@@ -72,57 +73,48 @@ export default function Signup() {
 
   return (
     <div
-      className="grid min-h-screen grid-cols-1 lg:grid-cols-[1.1fr_1fr] bg-[#F8FAFC] text-slate-900 selection:bg-sky-500/20 selection:text-sky-900"
+      className="grid min-h-screen grid-cols-1 lg:grid-cols-[1.1fr_1fr] bg-paper text-ink selection:bg-tide/20 selection:text-ink"
       data-testid="signup-page"
     >
-      {/* Left hero */}
-      <div
-        className="hidden lg:flex flex-col justify-between p-12 bg-[#0B1528] text-slate-100 relative overflow-hidden border-r border-[#1E2E4A]"
-      >
-        <div className="flex items-center gap-3">
-          <span
-            className="grid h-10 w-10 place-items-center rounded-lg shadow-md bg-gradient-to-br from-sky-500/20 to-sky-600/10 border border-sky-400/30 text-sky-400"
-          >
-            <Radar size={22} className="animate-pulse" />
-          </span>
-          <div>
-            <div className="font-display text-2xl font-bold tracking-tight text-white flex items-center gap-1.5">
-              Varuna <span className="text-sky-400 font-extrabold">Netra</span>
-            </div>
-            <p className="font-mono text-[10px] tracking-[0.2em] text-slate-400 uppercase">
-              Maritime Domain Awareness &amp; Attribution
-            </p>
-          </div>
+      {/* Left hero — daylight globe, same as the login screen */}
+      <div className="daylight relative hidden flex-col justify-between overflow-hidden border-r border-ink/10 p-12 lg:flex">
+        <div className="pointer-events-none absolute -left-[10%] top-1/2 h-[140%] w-[120%] -translate-y-1/2 opacity-70">
+          <GlobeCanvas spinSpeed={0.05} />
         </div>
 
-        <div className="relative z-10 max-w-lg my-auto py-8">
-          <span className="font-mono text-[11px] uppercase tracking-wider text-sky-300 bg-sky-500/10 border border-sky-500/30 px-3 py-1 rounded-full">
-            ANALYST REGISTRATION
+        <div className="relative z-10 flex items-center gap-3">
+          <span className="grid h-9 w-9 place-items-center rounded-lg border border-tide/25 bg-tide/10 text-tide">
+            <Radar size={18} />
           </span>
-          <h1 className="font-display text-4xl font-extrabold tracking-tight text-white mt-4 leading-tight">
-            Register for Varuna Netra intelligence access.
+          <span className="font-display text-lg font-semibold tracking-tight text-ink">
+            Varuna <span className="text-tide">Netra</span>
+          </span>
+        </div>
+
+        <div className="relative z-10 my-auto max-w-lg py-8">
+          <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-tide">Analyst registration</p>
+          <h1 className="mt-5 font-display text-[clamp(2.25rem,3.6vw,3.5rem)] font-extrabold leading-[0.95] tracking-[-0.03em] text-ink">
+            Register for Varuna Netra <span className="text-tide">intelligence access.</span>
           </h1>
-          <p className="mt-3 text-sm text-slate-300 leading-relaxed">
-            New accounts receive read-only <strong>Viewer</strong> privileges. If you are an authorized maritime safety officer, coast guard investigator, or supervisor, you can request role elevation inside your account console.
+          <p className="mt-5 text-[15px] leading-relaxed text-fog">
+            New accounts receive read-only <strong className="text-ink">Viewer</strong> privileges. If you are an authorized maritime safety officer, coast guard investigator, or supervisor, you can request role elevation inside your account console.
           </p>
 
-          <div className="mt-6 space-y-2.5 font-mono text-xs text-slate-300">
-            <div className="flex items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-sky-400" />
-              <span>Full read access to active spill incidents</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-sky-400" />
-              <span>Historical AIS trajectory vectors &amp; replay</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-sky-400" />
-              <span>Standard MARPOL Annex I evidence exports</span>
-            </div>
-          </div>
+          <ol className="relative mt-8 border-l border-ink/10 pl-6">
+            {[
+              "Full read access to active spill incidents",
+              "Historical AIS trajectory vectors & replay",
+              "Standard MARPOL Annex I evidence exports",
+            ].map((line) => (
+              <li key={line} className="relative pb-4 text-sm text-fog last:pb-0">
+                <span aria-hidden="true" className="absolute -left-[31px] top-1.5 h-2.5 w-2.5 rounded-full bg-tide ring-4 ring-paper" />
+                {line}
+              </li>
+            ))}
+          </ol>
         </div>
 
-        <div className="relative z-10 text-[11px] font-mono text-slate-400 border-t border-[#1E2E4A] pt-4">
+        <div className="relative z-10 border-t border-ink/10 pt-4 font-mono text-[11px] uppercase tracking-[0.16em] text-fog">
           Government &amp; Maritime Agency Decision Support Console
         </div>
       </div>
@@ -132,11 +124,11 @@ export default function Signup() {
         <div className="w-full max-w-md py-6">
           <form
             onSubmit={submit}
-            className="rounded-2xl border border-slate-200 bg-white p-8 sm:p-9 shadow-sm relative"
+            className="rounded-2xl border border-ink/10 bg-mist p-8 sm:p-9 shadow-[0_30px_80px_-32px_rgba(22,38,46,0.35)] relative"
             data-testid="signup-form"
           >
             <div className="flex items-center justify-between mb-4">
-              <h2 className="font-display text-2xl font-bold tracking-tight text-slate-900">
+              <h2 className="font-display text-2xl font-semibold tracking-tight text-ink">
                 Create Account
               </h2>
               <span className="font-mono text-[10px] uppercase text-sky-800 bg-sky-50 px-2 py-0.5 rounded border border-sky-200 font-semibold">
@@ -282,11 +274,11 @@ export default function Signup() {
               data-testid="signup-submit-button"
               disabled={busy}
               type="submit"
-              className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#0B1528] px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-white shadow-xs transition-all hover:bg-[#162B4D] active:scale-[0.99] disabled:opacity-50"
+              className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink px-4 py-2.5 text-sm font-semibold text-paper transition-all hover:bg-tide active:scale-[0.99] disabled:opacity-50"
             >
               {busy ? (
                 <>
-                  <Loader2 size={15} className="animate-spin text-sky-400" /> Creating Account…
+                  <Loader2 size={15} className="animate-spin text-tide" /> Creating Account…
                 </>
               ) : (
                 <>

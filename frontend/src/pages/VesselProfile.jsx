@@ -6,10 +6,10 @@ import { api, apiError, fmtTime, hasRole } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
 import { StatusBadge } from "@/components/StatusBadge";
 
-const Kpi = ({ label, value, color = "#F8FAFC", testId }) => (
+const Kpi = ({ label, value, color = "#F7F6F2", testId }) => (
   <div className="panel p-3" data-testid={testId}><span className="label-mono">{label}</span><div className="mt-1 font-mono text-xl font-semibold" style={{ color }}>{value}</div></div>
 );
-const DECISION_COLOR = { confirm: "#10B981", reject: "#FF2A6D", needs_more_data: "#FFB703", supervisor_override: "#FFB703" };
+const DECISION_COLOR = { confirm: "#2E8B6A", reject: "#D4604D", needs_more_data: "#C48A22", supervisor_override: "#C48A22" };
 
 export default function VesselProfile() {
   const { mmsi } = useParams();
@@ -27,7 +27,7 @@ export default function VesselProfile() {
   };
   const unflag = async () => { try { await api.delete(`/watchlist/${watch.id}`); toast.success("Removed from watchlist"); loadWatch(); } catch (e) { toast.error(apiError(e)); } };
 
-  if (err) return <div className="p-6 text-sm text-rose-300" data-testid="vessel-error">{err}</div>;
+  if (err) return <div className="p-6 text-sm text-rose-600" data-testid="vessel-error">{err}</div>;
   if (!p) return <div className="p-6 font-mono text-xs text-slate-400" data-testid="vessel-loading">Loading vessel profile…</div>;
   const a = p.ais_summary;
 
@@ -37,41 +37,41 @@ export default function VesselProfile() {
       <div className="mt-2 mb-5 flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="label-mono mb-1">Vessel profile · MMSI {p.mmsi}{p.imo ? ` · IMO ${p.imo}` : ""}{p.vessel_type ? ` · ${p.vessel_type}` : ""}</p>
-          <h1 className="font-display text-3xl font-extrabold tracking-tight sm:text-4xl flex items-center gap-3"><Ship size={28} color="#00F0FF" /> <span data-testid="vessel-name">{p.vessel_name || "UNKNOWN VESSEL"}</span></h1>
-          {p.name_variants.length > 1 && <p className="mt-1 font-mono text-[11px] text-amber-300" data-testid="vessel-name-variants"><AlertTriangle size={11} className="inline mr-1" />name variants seen in AIS: {p.name_variants.join(" / ")}</p>}
+          <h1 className="font-display text-3xl font-extrabold tracking-tight sm:text-4xl flex items-center gap-3"><Ship size={28} color="#2A93A8" /> <span data-testid="vessel-name">{p.vessel_name || "UNKNOWN VESSEL"}</span></h1>
+          {p.name_variants.length > 1 && <p className="mt-1 font-mono text-[11px] text-amber-700" data-testid="vessel-name-variants"><AlertTriangle size={11} className="inline mr-1" />name variants seen in AIS: {p.name_variants.join(" / ")}</p>}
         </div>
         <div className="flex flex-col items-end gap-2">
-          {watch && <span data-testid="vessel-watchlist-badge" className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider" style={{ color: "#FF2A6D", background: "rgba(255,42,109,0.12)", border: "1px solid rgba(255,42,109,0.5)" }} title={watch.reason}><Eye size={11} /> on watchlist · {watch.severity}</span>}
+          {watch && <span data-testid="vessel-watchlist-badge" className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider" style={{ color: "#D4604D", background: "rgba(194,90,73,0.12)", border: "1px solid rgba(194,90,73,0.5)" }} title={watch.reason}><Eye size={11} /> on watchlist · {watch.severity}</span>}
           {hasRole(user, "supervisor") && (watch
-            ? <button data-testid="btn-unflag-vessel" onClick={unflag} className="rounded border px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider text-slate-300 hover:text-white" style={{ borderColor: "var(--border-highlight)" }}>Remove from watchlist</button>
-            : <button data-testid="btn-flag-vessel" onClick={flag} className="inline-flex items-center gap-1.5 rounded px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-slate-950" style={{ background: "#FF2A6D" }}><Eye size={12} /> Flag vessel</button>)}
+            ? <button data-testid="btn-unflag-vessel" onClick={unflag} className="rounded border px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider text-slate-600 hover:text-white" style={{ borderColor: "var(--border-highlight)" }}>Remove from watchlist</button>
+            : <button data-testid="btn-flag-vessel" onClick={flag} className="inline-flex items-center gap-1.5 rounded px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-slate-950" style={{ background: "#D4604D" }}><Eye size={12} /> Flag vessel</button>)}
           <p className="max-w-md text-right text-[11px] text-slate-500" data-testid="vessel-disclaimer">{p.disclaimer}</p>
         </div>
       </div>
       <div className="mb-5 grid grid-cols-2 gap-3 lg:grid-cols-5">
-        <Kpi label="Case appearances" value={p.summary.appearances} color="#00F0FF" testId="vessel-kpi-appearances" />
-        <Kpi label="Ranked #1" value={p.summary.top_ranked} color="#FF2A6D" testId="vessel-kpi-top" />
-        <Kpi label="Probable / confirmed" value={p.summary.probable_or_confirmed} color="#FF6B00" testId="vessel-kpi-probable" />
-        <Kpi label="Analyst confirmations" value={p.summary.confirmed} color="#10B981" testId="vessel-kpi-confirmed" />
-        <Kpi label="Analyst rejections" value={p.summary.rejected} color="#94A3B8" testId="vessel-kpi-rejected" />
+        <Kpi label="Case appearances" value={p.summary.appearances} color="#2A93A8" testId="vessel-kpi-appearances" />
+        <Kpi label="Ranked #1" value={p.summary.top_ranked} color="#D4604D" testId="vessel-kpi-top" />
+        <Kpi label="Probable / confirmed" value={p.summary.probable_or_confirmed} color="#D9762E" testId="vessel-kpi-probable" />
+        <Kpi label="Analyst confirmations" value={p.summary.confirmed} color="#2E8B6A" testId="vessel-kpi-confirmed" />
+        <Kpi label="Analyst rejections" value={p.summary.rejected} color="#7D919C" testId="vessel-kpi-rejected" />
       </div>
       <div className="grid gap-4 xl:grid-cols-[1fr_360px]">
         <div className="space-y-4">
           <div className="panel overflow-hidden" data-testid="vessel-cases">
-            <div className="flex items-center gap-2 border-b px-4 py-3 font-display font-semibold" style={{ borderColor: "var(--border-default)" }}><Gavel size={14} color="#FFB703" /> Cases where this vessel was a candidate</div>
+            <div className="flex items-center gap-2 border-b px-4 py-3 font-display font-semibold" style={{ borderColor: "var(--border-default)" }}><Gavel size={14} color="#C48A22" /> Cases where this vessel was a candidate</div>
             <table className="w-full text-xs">
               <thead><tr className="label-mono text-left">{["Case", "Acquired", "Rank", "Score", "Candidate status", "Case outcome", "Dist km", "Gap h", "Jurisdiction"].map((h) => <th key={h} className="px-4 py-2 font-normal">{h}</th>)}</tr></thead>
               <tbody>
                 {p.appearances.map((c) => (
                   <tr key={c.case_id} data-testid={`vessel-case-${c.case_number}`} className="border-t" style={{ borderColor: "var(--border-default)" }}>
-                    <td className="px-4 py-2.5"><Link to={`/cases/${c.case_id}`} className="font-mono text-cyan-300 hover:underline">{c.case_number}</Link></td>
+                    <td className="px-4 py-2.5"><Link to={`/cases/${c.case_id}`} className="font-mono text-tide hover:underline">{c.case_number}</Link></td>
                     <td className="px-4 py-2.5 font-mono text-slate-400">{fmtTime(c.acquisition_time)}</td>
                     <td className="px-4 py-2.5 font-mono">#{c.rank}<span className="text-slate-500">/{c.candidate_count}</span></td>
                     <td className="px-4 py-2.5 font-mono">{c.score.toFixed(3)}</td>
                     <td className="px-4 py-2.5"><StatusBadge status={c.candidate_status} testId={`vessel-cand-status-${c.case_number}`} /></td>
-                    <td className="px-4 py-2.5"><StatusBadge status={c.case_attribution_status} testId={`vessel-case-status-${c.case_number}`} />{c.confirmed_this_vessel && <span className="ml-1 font-mono text-[10px] text-emerald-300">this vessel</span>}</td>
-                    <td className="px-4 py-2.5 font-mono text-slate-300">{c.distance_km}</td>
-                    <td className="px-4 py-2.5 font-mono text-slate-300">{c.time_gap_hours}</td>
+                    <td className="px-4 py-2.5"><StatusBadge status={c.case_attribution_status} testId={`vessel-case-status-${c.case_number}`} />{c.confirmed_this_vessel && <span className="ml-1 font-mono text-[10px] text-emerald-700">this vessel</span>}</td>
+                    <td className="px-4 py-2.5 font-mono text-slate-600">{c.distance_km}</td>
+                    <td className="px-4 py-2.5 font-mono text-slate-600">{c.time_gap_hours}</td>
                     <td className="px-4 py-2.5 font-mono text-slate-400">{c.primary_jurisdiction || "—"}</td>
                   </tr>
                 ))}
@@ -85,12 +85,12 @@ export default function VesselProfile() {
               {p.decisions.map((d) => (
                 <div key={d.id} className="px-4 py-3 text-xs" style={{ borderColor: "var(--border-default)" }} data-testid={`vessel-decision-${d.id}`}>
                   <div className="flex flex-wrap items-center gap-2 font-mono text-[11px]">
-                    <span style={{ color: DECISION_COLOR[d.decision] || "#94A3B8" }}>{d.decision.toUpperCase()}</span>
-                    <Link to={`/cases/${d.case_id}`} className="text-cyan-300 hover:underline">{d.case_number}</Link>
+                    <span style={{ color: DECISION_COLOR[d.decision] || "#7D919C" }}>{d.decision.toUpperCase()}</span>
+                    <Link to={`/cases/${d.case_id}`} className="text-tide hover:underline">{d.case_number}</Link>
                     <span className="text-slate-400">{d.analyst}{d.analyst_role ? ` (${d.analyst_role})` : ""} · {fmtTime(d.created_at)}</span>
                   </div>
-                  {d.reason_codes?.length > 0 && <div className="mt-1 font-mono text-[10px] text-cyan-300">{d.reason_codes.join(" · ")}</div>}
-                  {d.notes && <p className="mt-1 text-slate-300">{d.notes}</p>}
+                  {d.reason_codes?.length > 0 && <div className="mt-1 font-mono text-[10px] text-tide">{d.reason_codes.join(" · ")}</div>}
+                  {d.notes && <p className="mt-1 text-slate-600">{d.notes}</p>}
                 </div>
               ))}
               {p.decisions.length === 0 && <p className="px-4 py-6 text-center text-slate-500 text-xs">No analyst decisions reference this vessel.</p>}
@@ -98,15 +98,15 @@ export default function VesselProfile() {
           </div>
         </div>
         <div className="panel p-4 text-xs" data-testid="vessel-ais-summary">
-          <div className="mb-3 flex items-center gap-2 font-display font-semibold"><Radio size={14} color="#38BDF8" /> AIS coverage</div>
+          <div className="mb-3 flex items-center gap-2 font-display font-semibold"><Radio size={14} color="#1F7F93" /> AIS coverage</div>
           <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 font-mono text-[11px]">
             <dt className="text-slate-500">fixes</dt><dd>{a.fixes}</dd>
             <dt className="text-slate-500">first seen</dt><dd>{fmtTime(a.first_seen)}</dd>
             <dt className="text-slate-500">last seen</dt><dd>{fmtTime(a.last_seen)}</dd>
             <dt className="text-slate-500">last position</dt><dd>{a.last_position.lat.toFixed(4)}, {a.last_position.lon.toFixed(4)} · {a.last_position.sog_kn ?? "—"} kn · {a.last_position.cog_deg ?? "—"}°</dd>
-            <dt className="text-slate-500">gaps &gt; 2h</dt><dd style={{ color: a.gaps_over_2h ? "#FFB703" : "#F8FAFC" }}>{a.gaps_over_2h}</dd>
+            <dt className="text-slate-500">gaps &gt; 2h</dt><dd style={{ color: a.gaps_over_2h ? "#C48A22" : "#F7F6F2" }}>{a.gaps_over_2h}</dd>
             <dt className="text-slate-500">sources</dt><dd>{a.sources.join(", ") || "—"}</dd>
-            <dt className="text-slate-500">quality flags</dt><dd style={{ color: a.quality_flags.length ? "#FFB703" : "#F8FAFC" }}>{a.quality_flags.join(", ") || "none"}</dd>
+            <dt className="text-slate-500">quality flags</dt><dd style={{ color: a.quality_flags.length ? "#C48A22" : "#F7F6F2" }}>{a.quality_flags.join(", ") || "none"}</dd>
           </dl>
         </div>
       </div>

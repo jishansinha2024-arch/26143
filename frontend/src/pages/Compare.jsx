@@ -1,65 +1,107 @@
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeftRight, ShieldCheck, Radar, Ship, MapPin } from "lucide-react";
-import { useSearchParams } from "react-router-dom";
-import { api, apiError } from "@/lib/api";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
+import { Columns2, Layers, Ship } from "lucide-react";
+import { api, apiError, fmtTime } from "@/lib/api";
+import { CaseMap } from "@/components/case/CaseMap";
 import { StatusBadge } from "@/components/StatusBadge";
 
-const fields=[
- ["Acquired (UTC)",c=>c.acquisition_time?new Date(c.acquisition_time).toISOString().replace("T"," ").slice(0,19)+"Z":"—"],
- ["Source",c=>c.source||"dark_spot_detector"],
- ["Jurisdiction",c=>c.primary_jurisdiction?.code||c.jurisdiction||"—"],
- ["Detector confidence",c=>`${Math.round((c.detection_confidence||c.confidence||0)*100)}%`],
- ["Slick area",c=>c.area_km2!=null?`${c.area_km2} km²`:"—"],
- ["Candidate vessels",c=>String(c.candidate_vessels_count??c.candidates_count??"—")],
- ["Provenance",c=>c.origin||c.provenance||"real"]
-];
+const SIDE = { a: "#2A93A8", b: "#D4604D" };
+const sel = "rounded border bg-mist px-2 py-1.5 font-mono text-[11px] text-slate-700 outline-none";
 
-function RadarDecor({side}){return <div className={`pointer-events-none absolute -top-10 ${side==="left"? "-left-10":"-right-10"} h-32 w-32 opacity-50`}>
- <div className="absolute inset-0 rounded-full border border-aqua-300/30"/><div className="absolute inset-5 rounded-full border border-aqua-300/25"/><div className="absolute inset-10 rounded-full border border-aqua-300/20"/><div className="absolute left-1/2 top-1/2 h-px w-full origin-left bg-aqua-300/30"/>
-</div>}
+const tag = (geo, side) => ({ ...geo, features: (geo?.features || []).map((f) => ({ ...f, properties: { ...f.properties, side } })) });
 
-function CasePanel({value,onChange,c,side,cases}) {
- const confidence=c?Math.round((c.detection_confidence||c.confidence||0)*100):0;
- return <section className="surface relative overflow-hidden rounded-3xl p-6 sm:p-8">
-  <RadarDecor side={side}/>
-  <div className="relative">
-   <select value={value} onChange={e=>onChange(e.target.value)} className="w-full rounded-xl border border-[color:var(--edge)] bg-ink-950/70 px-4 py-3 font-mono text-[12px] text-mist outline-none focus:border-aqua-400/40">
-    <option value="">Select case</option>{cases.map(x=><option key={x.id} value={x.id}>{x.case_number||x.id}</option>)}
-   </select>
-   {c?<><div className="mt-7 font-display text-[46px] font-extrabold leading-none tracking-[-.045em] text-mist">{confidence}%</div>
-    <div className="mt-2 font-mono text-[10.5px] uppercase tracking-[.12em] text-mist-faint">detector confidence</div>
-    <div className="mt-5"><StatusBadge status={c.attribution_status||"indeterminate"}/></div>
-    <dl className="mt-6 space-y-3">{fields.map(([label,fn])=><div key={label} className="flex items-start justify-between gap-4 border-b border-[color:var(--edge)] pb-3 text-[13px] last:border-0"><dt className="font-mono text-[10.5px] uppercase tracking-[.12em] text-mist-faint">{label}</dt><dd className="max-w-[55%] text-right text-mist-soft">{fn(c)}</dd></div>)}</dl>
-    <div className="mt-5 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[.12em] text-mist-faint"><Radar size={13} className="text-aqua-400"/> evidence chain linked</div>
-   </>:<div className="grid min-h-[360px] place-items-center text-sm text-mist-faint">Select a case to inspect.</div>}
+export default function Compare() {
+  const nav = useNavigate();
+  const [sp, setSp] = useSearchParams();
+  const [cases, setCases] = useState([]);
+  const [data, setData] = useState(null);
+  const [mode, setMode] = useState("split");
+  const a = sp.get("a") || "", b = sp.get("b") || "";
+
+  useEffect(() => { api.get("/cases").then((r) => setCases(r.data)).catch((e) => toast.error(apiError(e))); }, []);
+  useEffect(() => {
+    if (!a || !b || a === b) { setData(null); return; }
+    api.get(`/cases/compare/${a}/${b}`).then((r) => setData(r.data)).catch((e) => toast.error(apiError(e)));
+  }, [a, b]);
+  const overlay = useMemo(() => data && { type: "FeatureCollection", features: [...tag(data.a.geojson, "a").features, ...tag(data.b.geojson, "b").features] }, [data]);
+  const set = (k, v) => { const n = new URLSearchParams(sp); n.set(k, v); setSp(n); };
+
+  const Picker = ({ k }) => (
+    <select data-testid={`compare-select-${k}`} value={sp.get(k) || ""} onChange={(e) => set(k, e.target.value)} className={sel} style={{ borderColor: SIDE[k] }}>
+      <option value="">— select case {k.toUpperCase()} —</option>
+      {cases.map((c) => <option key={c.id} value={c.id}>{c.case_number} · {c.attribution_status} · {c.primary_jurisdiction?.code || "—"}</option>)}
+    </select>
+  );
+
+  return (
+    <div className="flex h-full flex-col overflow-hidden" data-testid="compare-page">
+      <div className="flex flex-wrap items-center gap-3 border-b px-5 py-3" style={{ borderColor: "var(--border-default)", background: "var(--bg-secondary)" }}>
+        <div><p className="label-mono">Cross-incident analysis</p><h1 className="font-display text-xl font-bold tracking-tight">Compare cases</h1></div>
+        <Picker k="a" /><span className="font-mono text-xs text-slate-500">vs</span><Picker k="b" />
+        <div className="ml-auto flex rounded border" style={{ borderColor: "var(--border-highlight)" }}>
+          {[["split", Columns2, "Split"], ["overlay", Layers, "Overlay"]].map(([m, Icon, l]) => (
+            <button key={m} data-testid={`compare-mode-${m}`} onClick={() => setMode(m)} className={`inline-flex items-center gap-1.5 px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider ${mode === m ? "bg-tide/10 text-tide" : "text-slate-400"}`}><Icon size={12} /> {l}</button>
+          ))}
+        </div>
+      </div>
+      {!data ? (
+        <div className="grid flex-1 place-items-center text-sm text-slate-500" data-testid="compare-empty">{a && b && a === b ? "Pick two different cases." : "Select two cases to compare tracks and shared vessels."}</div>
+      ) : (
+        <div className="flex flex-1 overflow-hidden">
+          <div className="flex flex-1 flex-col">
+            {mode === "split" ? (
+              <div className="grid flex-1 grid-cols-2" data-testid="compare-split">
+                {["a", "b"].map((k) => (
+                  <div key={k} className="relative border-r" style={{ borderColor: "var(--border-default)" }}>
+                    <CaseMap geojson={data[k].geojson} acquisitionTime={data[k].case.acquisition_time} />
+                    <SideBadge k={k} c={data[k].case} />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="relative flex-1" data-testid="compare-overlay">
+                <CaseMap geojson={overlay} sideColors={SIDE} />
+                <div className="absolute left-3 top-3 z-[1000] flex gap-2"><SideBadge k="a" c={data.a.case} inline /><SideBadge k="b" c={data.b.case} inline /></div>
+              </div>
+            )}
+          </div>
+          <aside className="w-[440px] shrink-0 overflow-y-auto border-l p-4" style={{ borderColor: "var(--border-default)", background: "var(--bg-secondary)" }}>
+            <p className="label-mono mb-1">Vessels appearing in both candidate lists</p>
+            <h2 className="font-display text-lg font-semibold" data-testid="shared-vessels-count">{data.shared_vessels.length} shared vessel{data.shared_vessels.length === 1 ? "" : "s"}</h2>
+            <p className="mt-1 text-[11px] text-slate-500" data-testid="compare-disclaimer">{data.disclaimer}</p>
+            <div className="mt-3 space-y-2" data-testid="shared-vessels-list">
+              {data.shared_vessels.map((v) => (
+                <button key={v.mmsi} data-testid={`shared-vessel-${v.mmsi}`} onClick={() => nav(`/vessels/${v.mmsi}`)} className="block w-full rounded border p-3 text-left text-xs hover:border-amber-400/60" style={{ borderColor: "rgba(184,134,42,0.4)", background: "rgba(184,134,42,0.05)" }}>
+                  <div className="flex items-center gap-2"><Ship size={12} color="#C48A22" /><span className="font-display font-semibold">{v.vessel_name || "UNKNOWN"}</span><span className="font-mono text-slate-400">{v.mmsi}</span><span className="ml-auto font-mono text-[10px] text-slate-500">{v.vessel_type || ""}</span></div>
+                  <div className="mt-1.5 grid grid-cols-2 gap-2 font-mono text-[10px]">
+                    {["a", "b"].map((k) => <div key={k} className="flex items-center gap-1.5" style={{ color: SIDE[k] }}>{data[k].case.case_number}: #{v[k].rank} · {v[k].score.toFixed(2)} <StatusBadge status={v[k].status} /></div>)}
+                  </div>
+                </button>
+              ))}
+              {data.shared_vessels.length === 0 && <p className="text-xs text-slate-500" data-testid="shared-vessels-empty">No vessel appears in both latest candidate lists.</p>}
+            </div>
+            {["a", "b"].map((k) => (
+              <div key={k} className="mt-4" data-testid={`compare-candidates-${k}`}>
+                <div className="mb-1 flex items-center gap-2 font-mono text-[10px] uppercase tracking-wider" style={{ color: SIDE[k] }}><span className="h-2 w-2 rounded-full" style={{ background: SIDE[k] }} />{data[k].case.case_number} · v{data[k].version} · {data[k].candidates.length} candidates</div>
+                {data[k].candidates.slice(0, 6).map((c) => {
+                  const shared = data.shared_vessels.some((s) => s.mmsi === c.mmsi);
+                  return <div key={c.mmsi} className="flex items-center gap-2 border-t py-1 text-xs" style={{ borderColor: "var(--border-default)" }}><span className="font-mono text-slate-500">#{c.rank}</span><span className={shared ? "font-semibold text-amber-700" : "text-slate-700"}>{c.vessel_name || c.mmsi}</span><span className="font-mono text-[10px] text-slate-500">{c.mmsi}</span><span className="ml-auto font-mono text-[10px]">{c.score.toFixed(2)}</span></div>;
+                })}
+              </div>
+            ))}
+          </aside>
+        </div>
+      )}
+    </div>
+  );
+}
+
+const SideBadge = ({ k, c, inline }) => (
+  <div className={inline ? "" : "absolute left-3 top-3 z-[1000]"} data-testid={`compare-badge-${k}`}>
+    <div className="rounded px-2.5 py-1.5 text-[11px]" style={{ background: "rgba(255,255,255,0.85)", border: `1px solid ${SIDE[k]}`, backdropFilter: "blur(12px)" }}>
+      <span className="font-mono uppercase tracking-wider" style={{ color: SIDE[k] }}>{k}</span> <span className="font-display font-semibold">{c.case_number}</span>
+      <span className="ml-2 text-slate-400">{fmtTime(c.acquisition_time)} · {c.primary_jurisdiction?.code || "—"}</span>
+    </div>
   </div>
- </section>
-}
-
-export default function Compare(){
- const [sp,setSp]=useSearchParams(); const [cases,setCases]=useState([]); const [data,setData]=useState(null);
- const a=sp.get("a")||""; const b=sp.get("b")||"";
- useEffect(()=>{api.get("/cases?limit=1000").then(r=>{const cs=r.data||[];setCases(cs);if(!a&&cs[0]){const n=new URLSearchParams(sp);n.set("a",cs[0].id);setSp(n,{replace:true})}if(!b&&cs[1]){const n=new URLSearchParams(navigatorURL(sp));n.set("b",cs[1].id);setSp(n,{replace:true})}}).catch(e=>toast.error(apiError(e)))},[]);
- useEffect(()=>{if(!a||!b||a===b){setData(null);return}api.get(`/cases/compare/${a}/${b}`).then(r=>setData(r.data)).catch(e=>toast.error(apiError(e)))},[a,b]);
- const set=(k,v)=>{const n=new URLSearchParams(sp);n.set(k,v);setSp(n)};
- const ca=data?.a?.case||cases.find(x=>x.id===a); const cb=data?.b?.case||cases.find(x=>x.id===b);
- return <div className="vn-page min-h-full">
-   <div className="mx-auto w-full max-w-[1200px] px-5 py-8 sm:px-8 sm:py-10">
-    <div className="flex flex-wrap items-end justify-between gap-5">
-      <div className="max-w-2xl"><p className="eyebrow">Side-by-side adjudication</p><h1 className="mt-2.5 font-display text-[34px] font-extrabold leading-[1.05] tracking-[-.035em] text-mist sm:text-[42px]">Compare</h1><p className="mt-3 text-[14.5px] leading-relaxed text-mist-muted">Put two cases against each other to sanity-check detector output before promoting an attribution.</p></div>
-      <div className="flex items-center gap-2 text-[11px] font-mono uppercase tracking-[.12em] text-mist-faint"><ShieldCheck size={14} className="text-aqua-400"/> Analyst review surface</div>
-    </div>
-    <div className="mt-8 grid grid-cols-1 items-start gap-4 lg:grid-cols-[1fr_auto_1fr]">
-      <CasePanel value={a} onChange={v=>set("a",v)} c={ca} side="left" cases={cases}/>
-      <div className="hidden self-center lg:block"><button onClick={()=>{const n=new URLSearchParams(sp);n.set("a",b);n.set("b",a);setSp(n)}} className="grid h-11 w-11 place-items-center rounded-full border border-[color:var(--edge)] bg-white/[.04] text-mist-muted transition-all hover:rotate-180 hover:border-aqua-400/40 hover:text-aqua-300" aria-label="Swap cases"><ArrowLeftRight size={16}/></button></div>
-      <CasePanel value={b} onChange={v=>set("b",v)} c={cb} side="right" cases={cases}/>
-    </div>
-    {data&&<div className="mt-5 surface rounded-2xl p-5">
-      <div className="flex flex-wrap items-center justify-between gap-3"><div><p className="eyebrow">Shared candidate vessels</p><h2 className="mt-1 font-display text-lg font-bold text-mist">{data.shared_vessels?.length||0} shared vessel{(data.shared_vessels?.length||0)===1?"":"s"}</h2></div><span className="font-mono text-[10px] uppercase tracking-[.12em] text-mist-faint">correlation evidence</span></div>
-      <div className="mt-4 grid gap-2 md:grid-cols-2">{(data.shared_vessels||[]).map(v=><div key={v.mmsi} className="rounded-xl border border-amber/25 bg-amber/[.05] p-3"><div className="flex items-center gap-2"><Ship size={14} className="text-amber"/><span className="font-display font-semibold text-mist">{v.vessel_name||"UNKNOWN"}</span><span className="font-mono text-[10px] text-mist-faint">{v.mmsi}</span><span className="ml-auto text-xs text-amber">{Number(v.score||0).toFixed(2)}</span></div></div>)}</div>
-    </div>}
-   </div>
- </div>
-}
-function navigatorURL(sp){return new URLSearchParams(sp)}
+);

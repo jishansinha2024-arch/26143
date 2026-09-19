@@ -9,10 +9,10 @@ const inputCls =
   "w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs text-slate-900 placeholder:text-slate-400 outline-none transition-all focus:border-sky-500 focus:ring-2 focus:ring-sky-500/15";
 
 const ROLE_COLOR = {
-  viewer: "#0284C7",
-  analyst: "#0EA5E9",
-  supervisor: "#D97706",
-  admin: "#DC2626",
+  viewer: "#1F7F93",
+  analyst: "#1F7F93",
+  supervisor: "#B8862A",
+  admin: "#C25A49",
 };
 
 export default function Users() {
@@ -86,7 +86,7 @@ export default function Users() {
   };
 
   return (
-    <div className="h-full overflow-y-auto p-4 sm:p-6 lg:p-8 bg-[#F8FAFC] text-slate-900" data-testid="users-page">
+    <div className="h-full overflow-y-auto p-4 sm:p-6 lg:p-8 bg-[#F7F6F2] text-slate-900" data-testid="users-page">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="border-b border-slate-200 pb-5">
@@ -158,7 +158,7 @@ export default function Users() {
                 data-testid="btn-create-user"
                 disabled={busy}
                 onClick={create}
-                className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#0B1528] px-4 py-2 font-mono text-xs font-bold uppercase tracking-wider text-white shadow-xs hover:bg-[#162B4D] disabled:opacity-50 transition-all"
+                className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink px-4 py-2 text-sm font-semibold text-paper hover:bg-tide disabled:opacity-50 transition-all"
               >
                 {busy ? "Creating Account…" : "Provision User"}
               </button>
@@ -225,11 +225,11 @@ export default function Users() {
                       <td className="px-4 py-3">
                         <span
                           className="inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-wider font-semibold"
-                          style={{ color: u.active ? "#059669" : "#64748B" }}
+                          style={{ color: u.active ? "#2E8B6A" : "#5F7684" }}
                         >
                           <span
                             className="h-1.5 w-1.5 rounded-full"
-                            style={{ background: u.active ? "#059669" : "#64748B" }}
+                            style={{ background: u.active ? "#2E8B6A" : "#5F7684" }}
                           />
                           {u.active ? "active" : "deactivated"}
                         </span>
@@ -353,7 +353,7 @@ export default function Users() {
                     <td className="px-4 py-3 font-mono text-slate-600">{r.email}</td>
                     <td
                       className="px-4 py-3 font-mono text-[10px] uppercase font-semibold"
-                      style={{ color: ROLE_COLOR[r.current_role] || "#64748B" }}
+                      style={{ color: ROLE_COLOR[r.current_role] || "#5F7684" }}
                     >
                       {r.current_role}
                     </td>
@@ -372,10 +372,10 @@ export default function Users() {
                       style={{
                         color:
                           r.status === "pending"
-                            ? "#D97706"
+                            ? "#B8862A"
                             : r.status === "approved"
-                            ? "#059669"
-                            : "#64748B",
+                            ? "#2E8B6A"
+                            : "#5F7684",
                       }}
                     >
                       {r.status}
@@ -424,7 +424,7 @@ export default function Users() {
             <h2 className="font-display text-sm font-bold text-slate-900">Password Reset Ledgers</h2>
             <span
               className="font-mono text-[10px] uppercase tracking-wider"
-              style={{ color: resets?.email_configured ? "#059669" : "#D97706" }}
+              style={{ color: resets?.email_configured ? "#2E8B6A" : "#B8862A" }}
               data-testid="email-delivery-status"
             >
               {resets?.email_configured
@@ -457,7 +457,7 @@ export default function Users() {
                       <td className="px-4 py-3 font-mono text-slate-900 font-medium">{r.email}</td>
                       <td
                         className="px-4 py-3 font-mono text-[10px] uppercase font-semibold"
-                        style={{ color: r.delivery === "email" ? "#059669" : "#D97706" }}
+                        style={{ color: r.delivery === "email" ? "#2E8B6A" : "#B8862A" }}
                       >
                         {r.delivery}
                       </td>

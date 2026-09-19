@@ -14,10 +14,10 @@ const ROLE_DESC = {
 };
 
 const STATUS_COLOR = {
-  pending: "#D97706",
-  approved: "#059669",
-  rejected: "#DC2626",
-  cancelled: "#64748B",
+  pending: "#B8862A",
+  approved: "#2E8B6A",
+  rejected: "#C25A49",
+  cancelled: "#5F7684",
 };
 
 export default function Account() {
@@ -73,7 +73,7 @@ export default function Account() {
   };
 
   return (
-    <div className="h-full overflow-y-auto p-4 sm:p-6 lg:p-8 bg-[#F8FAFC] text-slate-900" data-testid="account-page">
+    <div className="h-full overflow-y-auto p-4 sm:p-6 lg:p-8 bg-[#F7F6F2] text-slate-900" data-testid="account-page">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Header */}
         <div className="border-b border-slate-200 pb-5">
@@ -99,7 +99,7 @@ export default function Account() {
               <Link
                 to="/signup"
                 data-testid="account-signup-link"
-                className="mt-5 inline-flex items-center gap-2 rounded-xl bg-[#0B1528] px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-white shadow-xs hover:bg-[#162B4D] transition-all"
+                className="mt-5 inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2.5 text-sm font-semibold text-paper hover:bg-tide transition-all"
               >
                 <LogIn size={14} /> Create a Free Viewer Account
               </Link>
@@ -218,11 +218,11 @@ export default function Account() {
               data-testid="role-request-submit"
               disabled={busy}
               onClick={submit}
-              className="mt-4 inline-flex items-center gap-2 rounded-xl bg-[#0B1528] px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-white shadow-xs hover:bg-[#162B4D] disabled:opacity-50 transition-all"
+              className="mt-4 inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2.5 text-sm font-semibold text-paper hover:bg-tide disabled:opacity-50 transition-all"
             >
               {busy ? (
                 <>
-                  <Loader2 size={14} className="animate-spin text-sky-400" /> Submitting Request…
+                  <Loader2 size={14} className="animate-spin text-tide" /> Submitting Request…
                 </>
               ) : (
                 <>

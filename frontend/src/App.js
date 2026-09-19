@@ -88,7 +88,7 @@ function App() {
           </LiveFeedProvider>
         </BrowserRouter>
       </AuthProvider>
-      <Toaster theme="dark" position="bottom-right" toastOptions={{ style: { background: "#162032", border: "1px solid #334155", color: "#F8FAFC" } }} />
+      <Toaster theme="light" position="bottom-right" toastOptions={{ style: { background: "#FFFFFF", border: "1px solid rgba(22,38,46,0.12)", color: "#16262E", fontFamily: "Inter, system-ui, sans-serif" } }} />
     </div>
   );
 }

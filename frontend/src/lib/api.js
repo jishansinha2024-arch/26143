@@ -39,11 +39,11 @@ export const STATUS_LABEL = {
 };
 
 export const STATUS_STYLE = {
-  possible: { color: "#FFB703", bg: "rgba(255,183,3,0.15)" },
-  probable: { color: "#FF6B00", bg: "rgba(255,107,0,0.18)" },
-  insufficient_evidence: { color: "#94A3B8", bg: "rgba(148,163,184,0.15)" },
-  analyst_confirmed: { color: "#10B981", bg: "rgba(16,185,129,0.15)" },
-  indeterminate: { color: "#C77DFF", bg: "rgba(157,78,221,0.15)" },
+  possible: { color: "#C48A22", bg: "rgba(184,134,42,0.15)" },
+  probable: { color: "#D9762E", bg: "rgba(217,118,46,0.18)" },
+  insufficient_evidence: { color: "#7D919C", bg: "rgba(95,118,132,0.15)" },
+  analyst_confirmed: { color: "#2E8B6A", bg: "rgba(46,139,106,0.15)" },
+  indeterminate: { color: "#A98BDB", bg: "rgba(124,92,191,0.15)" },
 };
 
 export const pollJob = async (jobId, onTick) => {

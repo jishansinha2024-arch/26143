@@ -22,7 +22,7 @@ const PIPELINE = [
     title: "Spaceborne Radar Ingestion",
     icon: Satellite,
     tag: "SENTINEL-1 SAR",
-    color: "#0284C7",
+    color: "#1F7F93",
     desc: "Processes Copernicus Sentinel-1 C-band Synthetic Aperture Radar (SAR) imagery. Uses backscatter thresholding to detect dark slick signatures caused by oil-damped capillary-gravity waves.",
     details: [
       "Interferometric Wide (IW) swath mode with 10m spatial resolution",
@@ -35,7 +35,7 @@ const PIPELINE = [
     title: "AIS Trajectory Reconstruction",
     icon: Waypoints,
     tag: "TERRESTRIAL & SAT AIS",
-    color: "#0EA5E9",
+    color: "#1F7F93",
     desc: "Ingests millions of global AIS vessel position reports. Reconstructs historical trajectories across customizable search corridors and temporal observation windows.",
     details: [
       "Dead-reckoning trajectory interpolation across time intervals",
@@ -48,7 +48,7 @@ const PIPELINE = [
     title: "6-Factor Attribution Engine",
     icon: Lightbulb,
     tag: "SCORING ALGORITHM",
-    color: "#D97706",
+    color: "#B8862A",
     desc: "A transparent, deterministic multi-factor mathematical scoring model that explains why candidate vessels are ranked, eliminating black-box uncertainty.",
     details: [
       "Spatial proximity (closest distance to spill polygon)",
@@ -64,7 +64,7 @@ const PIPELINE = [
     title: "Maritime Jurisdiction & ICG Routing",
     icon: Scale,
     tag: "UNCLOS & EEZ RULES",
-    color: "#059669",
+    color: "#2E8B6A",
     desc: "Evaluates the incident against UNCLOS 1982 maritime boundaries. Automatically determines coastal state rights, enforcement authorities, and Coast Guard District dispatching.",
     details: [
       "Territorial Sea (0–12 nm): Full coastal state sovereignty & strict enforcement",
@@ -78,7 +78,7 @@ const PIPELINE = [
     title: "Cryptographic Evidence Vault",
     icon: FileCheck2,
     tag: "MARPOL COMPLIANT",
-    color: "#7C3AED",
+    color: "#7C5CBF",
     desc: "Generates tamper-evident forensic packages for legal prosecution and environmental tribunal proceedings. Every fact is permanently recorded in an auditable ledger.",
     details: [
       "SHA-256 cryptographic hashing of raw telemetry and satellite quicklooks",
@@ -101,7 +101,7 @@ export default function About() {
   const [activeStep, setActiveStep] = useState(0);
 
   return (
-    <div className="h-full overflow-y-auto p-4 sm:p-6 lg:p-8 bg-[#F8FAFC] text-slate-900" data-testid="about-page">
+    <div className="h-full overflow-y-auto p-4 sm:p-6 lg:p-8 bg-[#F7F6F2] text-slate-900" data-testid="about-page">
       <div className="max-w-6xl mx-auto space-y-8">
         {/* Hero Section */}
         <div className="panel p-6 sm:p-8 relative overflow-hidden bg-white border-slate-200 shadow-sm">
@@ -123,7 +123,7 @@ export default function About() {
             <div className="mt-6 flex flex-wrap gap-3">
               <Link
                 to="/"
-                className="inline-flex items-center gap-2 rounded-xl bg-[#0B1528] px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-white shadow-xs hover:bg-[#162B4D] transition-all"
+                className="inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2.5 text-sm font-semibold text-paper hover:bg-tide transition-all"
               >
                 Launch Surveillance Console <ArrowRight size={14} />
               </Link>

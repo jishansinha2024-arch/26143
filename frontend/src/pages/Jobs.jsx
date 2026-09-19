@@ -41,7 +41,7 @@ export default function Alerts() {
   };
 
   return (
-    <div className="h-full overflow-y-auto p-4 sm:p-6 lg:p-8 bg-[#F8FAFC] text-slate-900" data-testid="alerts-page">
+    <div className="h-full overflow-y-auto p-4 sm:p-6 lg:p-8 bg-[#F7F6F2] text-slate-900" data-testid="alerts-page">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex flex-wrap items-end justify-between gap-4 border-b border-slate-200 pb-5">
@@ -121,18 +121,18 @@ export default function Alerts() {
                   className="rounded-xl border p-4 text-xs flex flex-col justify-between transition-all duration-200 hover:shadow-sm"
                   style={{
                     borderColor: isUrgent
-                      ? "#FECACA"
+                      ? "#EBC7BF"
                       : isMedium
-                      ? "#FDE68A"
+                      ? "#E9D49A"
                       : a.acknowledged
-                      ? "#E2E8F0"
-                      : "#BAE6FD",
+                      ? "#E2DFD6"
+                      : "#B3DBE3",
                     background: isUrgent
-                      ? "#FEF2F2"
+                      ? "#FBEFEC"
                       : isMedium
-                      ? "#FFFBEB"
+                      ? "#FAF4E4"
                       : a.acknowledged
-                      ? "#F8FAFC"
+                      ? "#F7F6F2"
                       : "#FFFFFF",
                   }}
                   data-testid={`jobs-alert-${a.id}`}
@@ -194,10 +194,10 @@ export default function Alerts() {
                           style={{
                             color:
                               a.notification.status === "sent"
-                                ? "#059669"
+                                ? "#2E8B6A"
                                 : a.notification.status === "not_configured"
-                                ? "#D97706"
-                                : "#64748B",
+                                ? "#B8862A"
+                                : "#5F7684",
                           }}
                         >
                           Dispatch: {a.notification.status.replace(/_/g, " ")} ·{" "}

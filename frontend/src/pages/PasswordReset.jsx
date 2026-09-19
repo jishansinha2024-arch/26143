@@ -9,18 +9,18 @@ const inputCls =
 
 const Shell = ({ title, sub, children, testId }) => (
   <div
-    className="grid min-h-screen place-items-center p-6 bg-[#F8FAFC] text-slate-900 selection:bg-sky-500/20 selection:text-sky-900"
+    className="grid min-h-screen place-items-center p-6 daylight bg-paper text-ink selection:bg-tide/20 selection:text-ink"
     data-testid={testId}
   >
-    <div className="rounded-2xl border border-slate-200 bg-white w-full max-w-md p-8 sm:p-9 shadow-sm">
+    <div className="rounded-2xl border border-ink/10 bg-mist w-full max-w-md p-8 sm:p-9 shadow-[0_30px_80px_-32px_rgba(22,38,46,0.35)]">
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           <span
-            className="grid h-10 w-10 place-items-center rounded-lg shadow-sm bg-gradient-to-br from-sky-500/20 to-sky-600/10 border border-sky-400/30 text-sky-600"
+            className="grid h-9 w-9 place-items-center rounded-lg border border-tide/25 bg-tide/10 text-tide"
           >
             <Radar size={20} className="text-sky-600" />
           </span>
-          <span className="font-display text-xl font-bold tracking-tight text-slate-900">
+          <span className="font-display text-lg font-semibold tracking-tight text-ink">
             Varuna <span className="text-sky-600">Netra</span>
           </span>
         </div>
@@ -113,11 +113,11 @@ export function ForgotPassword() {
             data-testid="forgot-submit-button"
             disabled={busy}
             type="submit"
-            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#0B1528] px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-white shadow-xs transition-all hover:bg-[#162B4D] active:scale-[0.99] disabled:opacity-50"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink px-4 py-2.5 text-sm font-semibold text-paper transition-all hover:bg-tide active:scale-[0.99] disabled:opacity-50"
           >
             {busy ? (
               <>
-                <Loader2 size={15} className="animate-spin text-sky-400" /> Issuing link…
+                <Loader2 size={15} className="animate-spin text-tide" /> Issuing link…
               </>
             ) : (
               <>
@@ -186,7 +186,7 @@ export function ResetPassword() {
           <p className="mt-1 text-slate-600">You can now sign in to the Varuna Netra console with your new password.</p>
           <button
             onClick={() => nav("/login")}
-            className="mt-4 inline-flex items-center gap-2 rounded-xl bg-[#0B1528] px-4 py-2 font-mono text-xs font-bold uppercase tracking-wider text-white shadow-xs hover:bg-[#162B4D]"
+            className="mt-4 inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-sm font-semibold text-paper hover:bg-tide"
           >
             Sign In Now →
           </button>
@@ -251,11 +251,11 @@ export function ResetPassword() {
             data-testid="reset-submit-button"
             disabled={busy}
             type="submit"
-            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#0B1528] px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-white shadow-xs transition-all hover:bg-[#162B4D] active:scale-[0.99] disabled:opacity-50"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink px-4 py-2.5 text-sm font-semibold text-paper transition-all hover:bg-tide active:scale-[0.99] disabled:opacity-50"
           >
             {busy ? (
               <>
-                <Loader2 size={15} className="animate-spin text-sky-400" /> Updating Password…
+                <Loader2 size={15} className="animate-spin text-tide" /> Updating Password…
               </>
             ) : (
               <>

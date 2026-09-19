@@ -6,7 +6,7 @@ import { Images, Satellite } from "lucide-react";
 import { api, apiError, fmtTime, pct } from "@/lib/api";
 import { StatusBadge } from "@/components/StatusBadge";
 
-const inputCls = "rounded border bg-slate-900/60 px-2.5 py-1.5 font-mono text-xs text-slate-100 outline-none focus:border-cyan-400/60";
+const inputCls = "rounded border bg-mist px-2.5 py-1.5 font-mono text-xs text-slate-800 outline-none focus:border-tide/60";
 const bd = { borderColor: "var(--border-highlight)" };
 const COLS = 3, ROW_H = 250;
 
@@ -18,16 +18,16 @@ const Thumb = ({ src, alt }) => {
     api.get(src, { responseType: "blob", timeout: 120000 }).then((r) => { u = URL.createObjectURL(r.data); setUrl(u); }).catch(() => setUrl("x"));
     return () => { if (u) URL.revokeObjectURL(u); };
   }, [src]);
-  if (!src || url === "x") return <div className="grid h-28 w-full place-items-center rounded bg-slate-900/70"><Satellite size={18} color="#334155" /></div>;
-  return url ? <img src={url} alt={alt} loading="lazy" className="h-28 w-full rounded object-cover" /> : <div className="h-28 w-full animate-pulse rounded bg-slate-900/70" />;
+  if (!src || url === "x") return <div className="grid h-28 w-full place-items-center rounded bg-mist"><Satellite size={18} color="#3A4F5B" /></div>;
+  return url ? <img src={url} alt={alt} loading="lazy" className="h-28 w-full rounded object-cover" /> : <div className="h-28 w-full animate-pulse rounded bg-mist" />;
 };
 
 const Row = ({ index, style, events, nav }) => (
   <div style={style} className="grid grid-cols-3 gap-3 pr-2">
     {events.slice(index * COLS, index * COLS + COLS).map((e) => (
-      <button key={e.id} data-testid={`event-card-${e.case_number}`} onClick={() => nav(`/cases/${e.id}`)} className="rounded border p-2.5 text-left text-xs transition-colors hover:border-cyan-400/50" style={{ borderColor: "var(--border-default)", background: "var(--bg-secondary)" }}>
+      <button key={e.id} data-testid={`event-card-${e.case_number}`} onClick={() => nav(`/cases/${e.id}`)} className="rounded border p-2.5 text-left text-xs transition-colors hover:border-tide/50" style={{ borderColor: "var(--border-default)", background: "var(--bg-secondary)" }}>
         <Thumb src={e.thumb} alt={e.case_number} />
-        <div className="mt-2 flex items-center gap-2"><span className="font-display font-semibold text-slate-100">{e.case_number}</span><StatusBadge status={e.attribution_status} /></div>
+        <div className="mt-2 flex items-center gap-2"><span className="font-display font-semibold text-slate-800">{e.case_number}</span><StatusBadge status={e.attribution_status} /></div>
         <div className="mt-1 font-mono text-[10px] text-slate-400">{fmtTime(e.acquisition_time)} · {e.source} · conf {pct(e.detection_confidence)}</div>
         <div className="font-mono text-[10px] text-slate-500">{e.primary_jurisdiction?.code || "no jurisdiction"} · {e.candidate_count ?? 0} candidates{e.confirmed_vessel_mmsi ? ` · confirmed ${e.confirmed_vessel_mmsi}` : ""}</div>
       </button>

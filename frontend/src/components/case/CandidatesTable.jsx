@@ -186,7 +186,7 @@ export const CandidatesTable = ({ candidates, selected, onSelect }) => {
                             </span>
                           </span>
                         </div>
-                        <ScoreBar value={f.score} color="#0284C7" />
+                        <ScoreBar value={f.score} color="#1F7F93" />
                         <p className="mt-2 text-[11px] leading-relaxed text-slate-600">{f.detail}</p>
                       </div>
                     );

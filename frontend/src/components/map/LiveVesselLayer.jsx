@@ -20,7 +20,7 @@ export const LiveVesselLayer = ({ vessels }) => {
   return (
     <>
       {pts.map((v) => (
-        <CircleMarker key={v.mmsi} center={[v.lat, v.lon]} radius={5} pathOptions={{ color: "#10B981", fillColor: "#10B981", fillOpacity: 0.85, weight: 1 }} data-testid={`live-vessel-${v.mmsi}`}>
+        <CircleMarker key={v.mmsi} center={[v.lat, v.lon]} radius={5} pathOptions={{ color: "#2E8B6A", fillColor: "#2E8B6A", fillOpacity: 0.85, weight: 1 }} data-testid={`live-vessel-${v.mmsi}`}>
           <Tooltip direction="top" offset={[0, -6]}>
             <div className="font-mono text-[10px]">
               <b>{v.ship_name || "unknown"}</b> · MMSI {v.mmsi}<br />
