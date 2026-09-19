@@ -1,4 +1,4 @@
-"""Emergent-managed Google sign-in. Identity comes from Google; authorization comes from the users collection.
+"""Google sign-in. Identity comes from Google; authorization comes from the users collection.
 Policy: PUBLIC sign-in — a new Google user is auto-provisioned at LOWEST privilege (role=viewer). Existing users
 keep their stored role (never auto-promoted). Disabled accounts are not reactivated by Google sign-in."""
 import logging
@@ -9,7 +9,7 @@ import httpx
 from livemode import APP_ENV, DEMO_MODE
 
 logger = logging.getLogger("google_auth")
-SESSION_DATA_URL = "https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data"
+SESSION_DATA_URL = os.environ.get("GOOGLE_OAUTH_SESSION_URL", "")
 UNAUTHORIZED_MSG = "Your Google account is not authorized for Varuna Netra. Contact an administrator for access."
 
 
@@ -23,7 +23,7 @@ def google_status() -> dict:
         status = "DISABLED"
     else:
         status = "UNCONFIGURED"
-    return {"enabled": status == "READY", "configured": flag != "", "status": status, "provider": "Emergent-managed Google OAuth"}
+    return {"enabled": status == "READY", "configured": flag != "", "status": status, "provider": "Google OAuth"}
 
 
 def capabilities() -> dict:

@@ -227,19 +227,17 @@ frontend:
 
 metadata:
   created_by: "main_agent"
-  version: "1.1"
-  test_sequence: 2
+  version: "1.2"
+  test_sequence: 3
   run_ui: true
 
 test_plan:
   current_focus:
-    - "Login Page Redesign with Split-Screen & Password Toggle"
-    - "Spill Surveillance & Executive Analytics Dashboard"
-    - "Dedicated About Varuna Netra Section"
+    - "Clean Independent Deployment Verification"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
 agent_communication:
   - agent: "main"
-    message: "Completed modern maritime redesign of Varuna Netra with deep navy command palette (#0B1528), clean light neutral canvas (#F8FAFC), crisp white card panels, split-screen login with radar vector motif, sticky tactical header, multi-section sidebar, dual-mode dashboard (Surveillance Map & Executive Analytics), and refined enterprise tables."
+    message: "Removed all emergent files (.emergent directory, .gitconfig), proprietary tracking scripts (emergent-main.js, ap.emergent.sh posthog), npm packages (@emergentbase/visual-edits), Python packages (emergentintegrations, emergent wheel litellm), hardcoded domain references (auth.emergentagent.com, demobackend.emergentagent.com, preview domains), and replaced with standard standard libraries (standard openai, standard litellm, configurable Google OAuth endpoints, generic storage). Verified that both frontend and backend compile cleanly with zero errors."

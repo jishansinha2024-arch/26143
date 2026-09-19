@@ -65,7 +65,7 @@ Six explainable factors, weighted sum ÷ total weight (defaults):
   - **AISStream.io** — live AIS position reports over WebSocket (state machine: UNCONFIGURED→…→LIVE only after real parsed positions).
   - **Marine Regions** — EEZ / maritime jurisdiction polygons (sanitised, 2dsphere-indexed).
   - **Open-Meteo** — wind for the drift model; **OSM/Overpass** — coastal vulnerability enrichment.
-- **Auth & security:** custom **JWT (PyJWT HS256) in httpOnly Secure cookies** + **bcrypt**; **Emergent-managed Google OAuth** (public sign-in → auto Viewer); RBAC **guest < viewer < analyst < supervisor < admin**; scoped CORS + HSTS/nosniff/frame-deny headers.
+- **Auth & security:** custom **JWT (PyJWT HS256) in httpOnly Secure cookies** + **bcrypt**; **Google OAuth** (public sign-in → auto Viewer); RBAC **guest < viewer < analyst < supervisor < admin**; scoped CORS + HSTS/nosniff/frame-deny headers.
 - **Email:** **Resend** (currently sandbox) for password reset + access-request notifications.
 - **Object storage:** persistent store for scene crops / attachments (never Base64).
 - **LLM note:** the **detection & correlation pipeline is fully deterministic** — it does **not** rely on an LLM, by design, so every number is reproducible and defensible.

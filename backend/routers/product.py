@@ -184,7 +184,7 @@ class AssistantAsk(BaseModel):
 
 @router.get("/assistant/status")
 async def assistant_status(user=Depends(get_current_user)):
-    return {"enabled": _cfg("EMERGENT_LLM_KEY"), "model": "gpt-5.4", "grounded": True,
+    return {"enabled": _cfg("OPENAI_API_KEY") or _cfg("LLM_KEY"), "model": "gpt-4o-mini", "grounded": True,
             "note": "Answers are grounded only in this case's stored evidence. It never invents scenes, AIS, vessels, confidence or metrics."}
 
 
@@ -195,7 +195,7 @@ async def case_assistant(case_id: str, body: AssistantAsk, user=Depends(get_curr
     entitlement = await current_entitlement(user)
     if entitlement.get("plan") not in ("pro", "institution") or entitlement.get("status") not in ("active", "trialing"):
         raise HTTPException(402, {"code": "ENTITLEMENT_REQUIRED", "required": "pro", "message": "The case assistant requires an active Pro or Institution plan."})
-    key = os.environ.get("EMERGENT_LLM_KEY")
+    key = os.environ.get("OPENAI_API_KEY") or os.environ.get("LLM_KEY")
     if not key:
         raise HTTPException(503, "AI assistant NOT CONFIGURED (no LLM key).")
     if user.get("is_guest"):
@@ -220,11 +220,17 @@ async def case_assistant(case_id: str, body: AssistantAsk, user=Depends(get_curr
               "If the answer is not in the data, say it is not available in this case. Be concise, factual, and neutral. "
               "Ranked candidates are decision support, NOT a legal determination of responsibility.")
     try:
-        from emergentintegrations.llm.chat import LlmChat, UserMessage
+        import openai
         import json as _json
-        chat = LlmChat(api_key=key, session_id=f"case-{case_id}", system_message=system).with_model("openai", "gpt-5.4")
-        msg = UserMessage(text=f"CASE DATA (JSON):\n{_json.dumps(context, default=str)}\n\nQUESTION: {body.question}")
-        answer = await chat.send_message(msg)
+        client = openai.AsyncOpenAI(api_key=key)
+        res = await client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": system},
+                {"role": "user", "content": f"CASE DATA (JSON):\n{_json.dumps(context, default=str)}\n\nQUESTION: {body.question}"}
+            ]
+        )
+        answer = res.choices[0].message.content or ""
     except Exception as e:  # noqa: BLE001
         logger.exception("assistant failed")
         raise HTTPException(502, f"AI assistant error: {str(e)[:150]}")

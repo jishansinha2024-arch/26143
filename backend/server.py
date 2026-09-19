@@ -151,7 +151,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
     allow_origins=_cors_origins(),
-    allow_origin_regex=os.environ.get("CORS_ORIGIN_REGEX") or r"^https://vessel-correlate-1[a-z0-9-]*(\.preview)?\.(emergentagent\.com|emergent\.host|emergentcf\.cloud)$",
+    allow_origin_regex=os.environ.get("CORS_ORIGIN_REGEX") or r"^https?://(localhost|127\.0\.0\.1|.*\.onrender\.com)(:\d+)?$",
     allow_methods=["*"],
     allow_headers=["*"],
 )

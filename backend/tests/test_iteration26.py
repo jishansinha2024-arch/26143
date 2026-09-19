@@ -2,7 +2,7 @@
 import os
 import requests
 
-BASE = os.environ.get("REACT_APP_BACKEND_URL", "https://vessel-correlate-1.preview.emergentagent.com").rstrip("/")
+BASE = os.environ.get("REACT_APP_BACKEND_URL", "http://127.0.0.1:8000").rstrip("/")
 ADMIN = ("shawpriyanshu950@gmail.com", "Admin#2026")
 ANALYST = ("analyst@sentinelmar.demo", "Analyst#2026")
 

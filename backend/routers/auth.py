@@ -64,7 +64,7 @@ class GoogleSession(BaseModel):
 
 @router.post("/auth/google/session")
 async def google_session(body: GoogleSession, request: Request, response: Response):
-    """Exchange the Emergent session_id server-side; grant access ONLY to an existing active user (role from DB, never from the client)."""
+    """Exchange the Google session_id server-side; grant access ONLY to an existing active user (role from DB, never from the client)."""
     from google_auth import google_status, fetch_google_identity
     if not google_status()["enabled"]:
         raise HTTPException(403, "Google sign-in is not enabled for this deployment")

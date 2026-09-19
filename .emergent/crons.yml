@@ -1,8 +1,0 @@
-crons:
-  - name: scene-watch-poll
-    description: "Polls saved Scene Watch regions for new Sentinel-1 passes every 3 hours and registers/detects them"
-    cron: "0 */3 * * *"
-    # Cron endpoints must ack 2xx immediately; enqueue/background the actual work.
-    endpoint: "{{BASE_URL}}/api/cron/scene-watch"
-    method: POST
-    enabled: true

@@ -6,7 +6,7 @@ import requests
 from dotenv import load_dotenv
 
 load_dotenv("/app/backend/tests/.env.test")
-BASE = os.environ["REACT_APP_BACKEND_URL"].rstrip("/") if os.environ.get("REACT_APP_BACKEND_URL") else "https://vessel-correlate-1.preview.emergentagent.com"
+BASE = os.environ["REACT_APP_BACKEND_URL"].rstrip("/") if os.environ.get("REACT_APP_BACKEND_URL") else "http://127.0.0.1:8000"
 # Read from frontend .env if not set
 if "REACT_APP_BACKEND_URL" not in os.environ:
     with open("/app/frontend/.env") as f:

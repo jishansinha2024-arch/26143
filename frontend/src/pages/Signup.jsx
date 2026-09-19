@@ -63,7 +63,8 @@ export default function Signup() {
 
   const googleSignIn = () => {
     const redirectUrl = window.location.origin + "/";
-    window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`;
+    const googleAuthUrl = process.env.REACT_APP_GOOGLE_AUTH_URL || `${(process.env.REACT_APP_BACKEND_URL || "").replace(/\/+$/, "")}/api/auth/google`;
+    window.location.href = `${googleAuthUrl}?redirect=${encodeURIComponent(redirectUrl)}`;
   };
 
   const inputCls =
