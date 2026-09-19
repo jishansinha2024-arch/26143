@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
-import { ArrowUpCircle, ShieldCheck, LogIn, User, Mail, Shield, Building, Clock, Loader2 } from "lucide-react";
+import { ArrowUpCircle, ShieldCheck, LogIn, User, Shield, Clock, Loader2 } from "lucide-react";
 import { api, apiError, ROLE_LABEL } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
 
@@ -14,10 +14,10 @@ const ROLE_DESC = {
 };
 
 const STATUS_COLOR = {
-  pending: "#F59E0B",
-  approved: "#10B981",
-  rejected: "#EF4444",
-  cancelled: "#94A3B8",
+  pending: "#D97706",
+  approved: "#059669",
+  rejected: "#DC2626",
+  cancelled: "#64748B",
 };
 
 export default function Account() {
@@ -73,69 +73,69 @@ export default function Account() {
   };
 
   return (
-    <div className="h-full overflow-y-auto p-4 sm:p-6 lg:p-8 bg-[#070D18]" data-testid="account-page">
+    <div className="h-full overflow-y-auto p-4 sm:p-6 lg:p-8 bg-[#F8FAFC] text-slate-900" data-testid="account-page">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Header */}
-        <div className="border-b border-[#1B2B44] pb-5">
-          <p className="label-mono text-cyan-400 mb-1">Session &amp; Credentials</p>
-          <h1 className="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+        <div className="border-b border-slate-200 pb-5">
+          <p className="label-mono text-sky-700 mb-1">Session &amp; Credentials</p>
+          <h1 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
             User Account &amp; Access Controls
           </h1>
         </div>
 
         {/* Profile Card */}
-        <div className="panel p-6 border-[#1B2B44] bg-[#0A1424] shadow-xl fade-up" data-testid="account-summary">
+        <div className="panel p-6 border-slate-200 bg-white shadow-xs" data-testid="account-summary">
           {isGuest ? (
             <div>
-              <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-wider text-slate-400">
-                <User size={13} className="text-cyan-400" /> Active Session Type
+              <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-wider text-slate-500">
+                <User size={13} className="text-sky-600" /> Active Session Type
               </div>
-              <p className="mt-1.5 font-display text-2xl font-bold text-slate-300">
+              <p className="mt-1.5 font-display text-2xl font-bold text-slate-900">
                 Guest · Read Only
               </p>
-              <p className="mt-2 text-xs text-slate-400 leading-relaxed max-w-xl">
+              <p className="mt-2 text-xs text-slate-600 leading-relaxed max-w-xl">
                 {ROLE_DESC.guest}
               </p>
               <Link
                 to="/signup"
                 data-testid="account-signup-link"
-                className="mt-5 inline-flex items-center gap-2 rounded-lg bg-[#00E5FF] px-4 py-2 font-mono text-xs font-bold uppercase tracking-wider text-[#070D18] shadow-lg shadow-cyan-500/20 hover:bg-[#38BDF8] transition-all"
+                className="mt-5 inline-flex items-center gap-2 rounded-xl bg-[#0B1528] px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-white shadow-xs hover:bg-[#162B4D] transition-all"
               >
                 <LogIn size={14} /> Create a Free Viewer Account
               </Link>
             </div>
           ) : (
             <div>
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 pb-5 border-b border-[#1B2B44]/70">
-                <div className="rounded-lg border border-[#1E314B] bg-[#070D18] p-3.5">
-                  <p className="label-mono text-[9.5px] text-slate-400">Full Name</p>
-                  <p className="mt-1 text-sm font-semibold text-white truncate" data-testid="account-name">
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 pb-5 border-b border-slate-200">
+                <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5">
+                  <p className="label-mono text-[9.5px] text-slate-500">Full Name</p>
+                  <p className="mt-1 text-sm font-semibold text-slate-900 truncate" data-testid="account-name">
                     {user?.name}
                   </p>
                 </div>
 
-                <div className="rounded-lg border border-[#1E314B] bg-[#070D18] p-3.5">
-                  <p className="label-mono text-[9.5px] text-slate-400">Email Address</p>
-                  <p className="mt-1 font-mono text-xs text-slate-300 truncate" data-testid="account-email">
+                <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5">
+                  <p className="label-mono text-[9.5px] text-slate-500">Email Address</p>
+                  <p className="mt-1 font-mono text-xs text-slate-700 truncate" data-testid="account-email">
                     {user?.email}
                   </p>
                 </div>
 
-                <div className="rounded-lg border border-[#1E314B] bg-[#070D18] p-3.5">
-                  <p className="label-mono text-[9.5px] text-slate-400">Current Role</p>
+                <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5">
+                  <p className="label-mono text-[9.5px] text-slate-500">Current Role</p>
                   <p
-                    className="mt-1 font-mono text-xs font-bold uppercase text-[#00E5FF]"
+                    className="mt-1 font-mono text-xs font-bold uppercase text-sky-700"
                     data-testid="account-role"
                   >
                     {ROLE_LABEL[user?.role] || user?.role}
                   </p>
                 </div>
 
-                <div className="rounded-lg border border-[#1E314B] bg-[#070D18] p-3.5">
-                  <p className="label-mono text-[9.5px] text-slate-400">Access Request Status</p>
+                <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5">
+                  <p className="label-mono text-[9.5px] text-slate-500">Access Request Status</p>
                   <p className="mt-1 font-mono text-[11px] font-medium" data-testid="account-requested-role">
                     {req === undefined ? (
-                      <span className="text-slate-500">checking…</span>
+                      <span className="text-slate-400">checking…</span>
                     ) : req && req.status === "pending" ? (
                       <span style={{ color: STATUS_COLOR.pending }} className="font-bold">
                         {req.requested_role.toUpperCase()} (PENDING)
@@ -155,8 +155,8 @@ export default function Account() {
                 </div>
               </div>
 
-              <div className="mt-4 flex items-start gap-2.5 text-xs text-slate-400 leading-relaxed">
-                <Shield size={14} className="text-cyan-400 shrink-0 mt-0.5" />
+              <div className="mt-4 flex items-start gap-2.5 text-xs text-slate-600 leading-relaxed">
+                <Shield size={15} className="text-sky-600 shrink-0 mt-0.5" />
                 <span>{ROLE_DESC[user?.role]}</span>
               </div>
             </div>
@@ -165,25 +165,25 @@ export default function Account() {
 
         {/* Elevated Role Request Form */}
         {canRequest && (!req || req.status !== "pending") && (
-          <div className="panel p-6 border-[#1B2B44] bg-[#0A1424] shadow-xl fade-up" data-testid="role-request-form">
+          <div className="panel p-6 border-slate-200 bg-white shadow-xs" data-testid="role-request-form">
             <div className="mb-2 flex items-center gap-2">
-              <ArrowUpCircle size={17} className="text-[#00E5FF]" />
-              <h2 className="font-display text-lg font-bold text-white">
+              <ArrowUpCircle size={18} className="text-sky-600" />
+              <h2 className="font-display text-lg font-bold text-slate-900">
                 Request Elevated Credentials
               </h2>
             </div>
-            <p className="mb-5 text-xs text-slate-400">
+            <p className="mb-5 text-xs text-slate-500">
               Analyst and Supervisor roles provide operational write access and require designated administrator approval. Administrator access cannot be requested.
             </p>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="block">
-                <span className="label-mono mb-1.5 block text-slate-300">Target Role</span>
+                <span className="label-mono mb-1.5 block text-slate-700">Target Role</span>
                 <select
                   data-testid="role-request-select"
                   value={role}
                   onChange={(e) => setRole(e.target.value)}
-                  className="w-full rounded-lg border border-[#1E314B] bg-[#070D18] px-3 py-2 font-mono text-xs text-slate-100 outline-none focus:border-[#00E5FF]"
+                  className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 font-mono text-xs text-slate-900 outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/15"
                 >
                   <option value="analyst">Analyst — Ingest, correlate, review &amp; export</option>
                   <option value="supervisor">Supervisor — + Acknowledge alerts, override cases</option>
@@ -191,26 +191,26 @@ export default function Account() {
               </label>
 
               <label className="block">
-                <span className="label-mono mb-1.5 block text-slate-300">Agency / Department (Optional)</span>
+                <span className="label-mono mb-1.5 block text-slate-700">Agency / Department (Optional)</span>
                 <input
                   data-testid="role-request-org"
                   value={org}
                   onChange={(e) => setOrg(e.target.value)}
                   placeholder="e.g. Maritime Coast Guard HQ"
-                  className="w-full rounded-lg border border-[#1E314B] bg-[#070D18] px-3 py-2 text-xs text-slate-100 outline-none focus:border-[#00E5FF]"
+                  className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs text-slate-900 outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/15"
                 />
               </label>
             </div>
 
             <label className="mt-3.5 block">
-              <span className="label-mono mb-1.5 block text-slate-300">Justification / Operational Purpose</span>
+              <span className="label-mono mb-1.5 block text-slate-700">Justification / Operational Purpose</span>
               <textarea
                 data-testid="role-request-reason"
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
                 rows={2}
                 placeholder="Explain the investigative or regulatory purpose for requesting elevated credentials..."
-                className="w-full rounded-lg border border-[#1E314B] bg-[#070D18] px-3 py-2 text-xs text-slate-100 outline-none focus:border-[#00E5FF]"
+                className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs text-slate-900 outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/15"
               />
             </label>
 
@@ -218,11 +218,11 @@ export default function Account() {
               data-testid="role-request-submit"
               disabled={busy}
               onClick={submit}
-              className="mt-4 inline-flex items-center gap-2 rounded-lg bg-[#00E5FF] px-4 py-2 font-mono text-xs font-bold uppercase tracking-wider text-[#070D18] shadow-lg shadow-cyan-500/20 hover:bg-[#38BDF8] disabled:opacity-50 transition-all"
+              className="mt-4 inline-flex items-center gap-2 rounded-xl bg-[#0B1528] px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-white shadow-xs hover:bg-[#162B4D] disabled:opacity-50 transition-all"
             >
               {busy ? (
                 <>
-                  <Loader2 size={13} className="animate-spin" /> Submitting Request…
+                  <Loader2 size={14} className="animate-spin text-sky-400" /> Submitting Request…
                 </>
               ) : (
                 <>
@@ -236,26 +236,26 @@ export default function Account() {
         {/* Pending Request Status */}
         {canRequest && req && req.status === "pending" && (
           <div
-            className="panel p-6 border-amber-500/35 bg-amber-500/5 shadow-xl fade-up"
+            className="rounded-2xl border border-amber-300 bg-amber-50/80 p-6 shadow-xs"
             data-testid="role-request-pending"
           >
             <div className="flex items-center gap-2.5">
-              <Clock size={16} className="text-amber-400" />
-              <p className="text-sm font-medium text-slate-200">
+              <Clock size={18} className="text-amber-600 shrink-0" />
+              <p className="text-sm font-semibold text-slate-900">
                 Your request for elevated{" "}
-                <span className="font-mono font-bold uppercase text-amber-400">
+                <span className="font-mono font-bold uppercase text-amber-700">
                   {req.requested_role}
                 </span>{" "}
                 access is currently pending administrator verification.
               </p>
             </div>
-            <p className="mt-1 text-xs text-slate-400 ml-6">
+            <p className="mt-1 text-xs text-slate-600 ml-7">
               You will receive an updated role notification once an administrator reviews your submission.
             </p>
             <button
               data-testid="role-request-cancel"
               onClick={cancel}
-              className="mt-4 ml-6 rounded-md border border-[#1E314B] bg-[#0A1221] px-3.5 py-1.5 font-mono text-[11px] uppercase tracking-wider text-slate-300 hover:bg-[#121E33] hover:text-white transition-colors"
+              className="mt-4 ml-7 rounded-xl border border-slate-300 bg-white px-3.5 py-1.5 font-mono text-[11px] uppercase tracking-wider text-slate-700 hover:bg-slate-50 transition-colors shadow-xs"
             >
               Cancel Request
             </button>

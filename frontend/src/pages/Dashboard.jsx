@@ -15,13 +15,12 @@ import {
   ExternalLink,
   Map as MapIcon,
   BarChart3,
-  Filter,
   ArrowUpDown,
   Compass,
+  ChevronRight,
   AlertTriangle,
   Scale,
-  Sparkles,
-  ChevronRight,
+  Radio,
 } from "lucide-react";
 import { api, apiError, fmtTime, pct, hasRole } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
@@ -32,11 +31,11 @@ import { OSM_URL, TILE_PERF } from "@/components/map/tiles";
 
 const MAP_CENTER = [20, 12];
 const COLORS = {
-  probable: "#FF6B00",
-  analyst_confirmed: "#10B981",
-  possible: "#F59E0B",
+  probable: "#D97706",
+  analyst_confirmed: "#059669",
+  possible: "#B45309",
   insufficient_evidence: "#64748B",
-  indeterminate: "#A855F7",
+  indeterminate: "#7C3AED",
 };
 
 const coordsOf = (c) => {
@@ -61,12 +60,12 @@ const MapFocus = ({ target }) => {
   return null;
 };
 
-const caseColor = (c) => COLORS[c.attribution_status] || "#38BDF8";
+const caseColor = (c) => COLORS[c.attribution_status] || "#0284C7";
 
 function CaseMap({ cases, selected, onSelect, target }) {
   return (
     <div
-      className="relative h-full min-h-[520px] overflow-hidden rounded-xl border border-[#1B2B44] bg-[#050A14] shadow-inner"
+      className="relative h-full min-h-[520px] overflow-hidden rounded-xl border border-slate-200 bg-[#0B1528] shadow-xs"
       data-testid="dashboard-map"
     >
       <MapContainer
@@ -93,11 +92,11 @@ function CaseMap({ cases, selected, onSelect, target }) {
             <CircleMarker
               key={c.id}
               center={pos}
-              radius={isSelected ? 11 : 7}
+              radius={isSelected ? 10 : 6.5}
               pathOptions={{
-                color: isSelected ? "#00E5FF" : color,
+                color: isSelected ? "#38BDF8" : color,
                 fillColor: color,
-                fillOpacity: isSelected ? 0.95 : 0.75,
+                fillOpacity: isSelected ? 0.95 : 0.8,
                 weight: isSelected ? 3 : 1.5,
               }}
               eventHandlers={{ click: () => onSelect(c) }}
@@ -105,20 +104,20 @@ function CaseMap({ cases, selected, onSelect, target }) {
             >
               <Popup>
                 <div className="min-w-[220px] text-xs">
-                  <div className="mb-1.5 flex items-center justify-between gap-2 border-b border-[#1E314B] pb-1.5">
-                    <b className="font-mono text-[#00E5FF] text-sm">{c.case_number}</b>
+                  <div className="mb-1.5 flex items-center justify-between gap-2 border-b border-slate-700/60 pb-1.5">
+                    <b className="font-mono text-sky-400 text-sm">{c.case_number}</b>
                     <StatusBadge status={c.attribution_status} />
                   </div>
-                  <div className="text-slate-300 font-medium">
+                  <div className="text-slate-200 font-medium">
                     {c.vessel_name ? `Suspect: ${c.vessel_name}` : c.source || "Satellite observation"}
                   </div>
-                  <div className="mt-1 font-mono text-[10px] text-slate-400">
+                  <div className="mt-1 font-mono text-[10.5px] text-slate-400">
                     Pos: {pos[0].toFixed(4)}°, {pos[1].toFixed(4)}°
                     <br />
                     Acquired: {fmtTime(c.acquisition_time)}
                   </div>
                   <button
-                    className="mt-2.5 inline-flex items-center gap-1.5 rounded bg-cyan-400/15 px-2.5 py-1 text-cyan-300 hover:bg-cyan-400/25 font-mono text-[11px] font-semibold transition-colors"
+                    className="mt-2.5 inline-flex items-center gap-1.5 rounded bg-sky-500/20 px-2.5 py-1 text-sky-300 hover:bg-sky-500/30 font-mono text-[11px] font-semibold transition-colors"
                     onClick={() => onSelect(c)}
                   >
                     Inspect case <ExternalLink size={11} />
@@ -132,29 +131,24 @@ function CaseMap({ cases, selected, onSelect, target }) {
 
       {/* Top Map HUD Overlay */}
       <div
-        className="pointer-events-none absolute left-3.5 top-3.5 z-[1000] rounded-lg border px-3.5 py-2 backdrop-blur-md shadow-lg"
-        style={{
-          borderColor: "rgba(0,229,255,0.3)",
-          background: "rgba(8,14,26,0.85)",
-        }}
+        className="pointer-events-none absolute left-3.5 top-3.5 z-[1000] rounded-lg border border-slate-700/80 bg-[#0B1528]/90 px-3.5 py-2 backdrop-blur-md shadow-md text-white"
       >
-        <div className="flex items-center gap-2 font-mono text-[10.5px] font-bold tracking-wider text-[#00E5FF]">
+        <div className="flex items-center gap-2 font-mono text-[10.5px] font-bold tracking-wider text-sky-400">
           <span className="pulse-dot" />
           GLOBAL SPILL SURVEILLANCE
         </div>
         <div className="mt-0.5 text-[11px] text-slate-300 font-mono">
-          {cases.length} active observation markers · click for evidence summary
+          {cases.length} active observation markers · click to inspect
         </div>
       </div>
 
       {/* Bottom Map Legend */}
       <div
-        className="pointer-events-none absolute bottom-3.5 left-3.5 z-[1000] flex flex-wrap gap-2.5 rounded-lg border px-3 py-2 text-[10px] font-mono uppercase tracking-wider backdrop-blur-md shadow-md"
-        style={{ borderColor: "var(--border-default)", background: "rgba(8,14,26,0.85)" }}
+        className="pointer-events-none absolute bottom-3.5 left-3.5 z-[1000] flex flex-wrap gap-2.5 rounded-lg border border-slate-700/80 bg-[#0B1528]/90 px-3 py-2 text-[10px] font-mono uppercase tracking-wider backdrop-blur-md shadow-md"
       >
         {Object.entries(COLORS).map(([k, color]) => (
           <span key={k} className="flex items-center gap-1.5 text-slate-300">
-            <i className="h-2 w-2 rounded-full" style={{ background: color, boxShadow: `0 0 4px ${color}88` }} />
+            <i className="h-2 w-2 rounded-full" style={{ background: color }} />
             {k.replace(/_/g, " ")}
           </span>
         ))}
@@ -312,22 +306,28 @@ export default function Dashboard() {
 
   const kv = (v) => (statsErr ? "UNAVAILABLE" : stats ? v : "—");
 
+  // Modern hierarchical KPI cards
   const kpis = [
     {
       label: "Active Cases",
       sub: "Open investigations",
       value: kv(stats?.active_cases),
       icon: Waves,
-      color: "#EF4444",
+      theme: "critical", // red priority
+      accentColor: "#DC2626",
+      bgLight: "#FEF2F2",
+      borderLight: "#FECACA",
       to: "/?origin=real",
-      highlight: true,
     },
     {
       label: "Probable / Confirmed",
       sub: "Suspects attributed",
       value: kv(stats?.probable_confirmed),
       icon: Ship,
-      color: "#FF6B00",
+      theme: "warning", // amber priority
+      accentColor: "#D97706",
+      bgLight: "#FFFBEB",
+      borderLight: "#FDE68A",
       to: "/?origin=real&view=probable",
     },
     {
@@ -335,7 +335,10 @@ export default function Dashboard() {
       sub: "Awaiting analyst sign-off",
       value: kv(stats?.pending_review),
       icon: Clock,
-      color: "#F59E0B",
+      theme: "pending", // amber/blue
+      accentColor: "#B45309",
+      bgLight: "#FFFBEB",
+      borderLight: "#FDE68A",
       to: "/?origin=real&view=pending",
     },
     {
@@ -343,7 +346,10 @@ export default function Dashboard() {
       sub: "Spatio-temporal vectors",
       value: kv(stats?.ais_fixes_indexed),
       icon: FileCheck,
-      color: "#00E5FF",
+      theme: "marine", // sky/marine
+      accentColor: "#0284C7",
+      bgLight: "#F0F9FF",
+      borderLight: "#BAE6FD",
       to: "/ingest",
     },
     {
@@ -351,7 +357,10 @@ export default function Dashboard() {
       sub: "Corpus training data",
       value: kv(stats?.demo?.imported),
       icon: BookOpen,
-      color: "#94A3B8",
+      theme: "neutral", // slate
+      accentColor: "#475569",
+      bgLight: "#F8FAFC",
+      borderLight: "#E2E8F0",
       to: "/?origin=imported",
     },
   ];
@@ -367,34 +376,34 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="flex h-full overflow-hidden bg-[#070D18]">
+    <div className="flex h-full overflow-hidden bg-[#F8FAFC] text-slate-900">
       <main className="min-w-0 flex-1 overflow-y-auto p-4 sm:p-6 lg:p-7">
         {/* Console Header */}
         <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
           <div>
-            <div className="flex items-center gap-2">
-              <h1 className="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+            <div className="flex items-center gap-2.5">
+              <h1 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
                 Spill Surveillance Console
               </h1>
-              <span className="font-mono text-[10px] uppercase tracking-wider text-cyan-400 bg-cyan-400/10 px-2 py-0.5 rounded border border-cyan-400/20">
-                ACTIVE RADAR
+              <span className="font-mono text-[10px] uppercase tracking-wider text-sky-800 bg-sky-50 px-2.5 py-0.5 rounded-full border border-sky-200 font-semibold flex items-center gap-1.5">
+                <span className="pulse-dot" /> ACTIVE RADAR
               </span>
             </div>
-            <p className="label-mono mt-1 text-slate-400 text-xs">
-              AI-assisted multi-sensor radar detection &amp; AIS vessel correlation · Decision Support
+            <p className="mt-1 text-slate-500 text-xs">
+              AI-assisted multi-sensor radar detection &amp; AIS vessel correlation · Decision Support System
             </p>
           </div>
 
           {/* View Mode Toggle & Map Actions */}
           <div className="flex items-center gap-2">
-            <div className="flex rounded-lg border border-[#1B2B44] bg-[#0A1221] p-0.5">
+            <div className="flex rounded-xl border border-slate-200 bg-white p-1 shadow-xs">
               <button
                 type="button"
                 onClick={() => setActiveTab("map")}
-                className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider transition-all ${
+                className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider transition-all ${
                   activeTab === "map"
-                    ? "bg-[#00E5FF] text-[#070D18] shadow"
-                    : "text-slate-400 hover:text-white"
+                    ? "bg-[#0B1528] text-white shadow-xs"
+                    : "text-slate-600 hover:text-slate-900"
                 }`}
               >
                 <MapIcon size={13} /> Surveillance Map
@@ -402,10 +411,10 @@ export default function Dashboard() {
               <button
                 type="button"
                 onClick={() => setActiveTab("analytics")}
-                className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider transition-all ${
+                className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider transition-all ${
                   activeTab === "analytics"
-                    ? "bg-[#00E5FF] text-[#070D18] shadow"
-                    : "text-slate-400 hover:text-white"
+                    ? "bg-[#0B1528] text-white shadow-xs"
+                    : "text-slate-600 hover:text-slate-900"
                 }`}
               >
                 <BarChart3 size={13} /> Analytics &amp; Trends
@@ -414,7 +423,7 @@ export default function Dashboard() {
 
             <button
               onClick={locateSpill}
-              className="inline-flex items-center gap-2 rounded-lg border border-cyan-500/35 bg-cyan-500/10 px-3 py-1.5 font-mono text-[11px] font-bold uppercase tracking-wider text-cyan-300 hover:bg-cyan-500/20 transition-all shadow-sm"
+              className="inline-flex items-center gap-2 rounded-xl border border-sky-300 bg-sky-50 px-3.5 py-2 font-mono text-[11px] font-bold uppercase tracking-wider text-sky-900 hover:bg-sky-100 transition-all shadow-xs"
               data-testid="locate-spill"
               title="Fly to first mapped spill observation"
             >
@@ -430,41 +439,44 @@ export default function Dashboard() {
               type="button"
               key={k.label}
               onClick={() => nav(k.to)}
-              className="panel-interactive p-4 text-left group"
+              className="panel-interactive p-4 text-left group flex flex-col justify-between"
+              style={{
+                borderColor: k.borderLight,
+              }}
             >
               <div className="flex items-center justify-between">
-                <span className="label-mono text-[10.5px] text-slate-400 group-hover:text-slate-200 transition-colors">
+                <span className="label-mono text-[11px] text-slate-500 group-hover:text-slate-800 transition-colors">
                   {k.label}
                 </span>
                 <span
-                  className="grid h-7 w-7 place-items-center rounded-md transition-transform group-hover:scale-110"
-                  style={{ background: `${k.color}15`, border: `1px solid ${k.color}35` }}
+                  className="grid h-8 w-8 place-items-center rounded-lg transition-transform group-hover:scale-105 shadow-xs"
+                  style={{ background: k.bgLight, border: `1px solid ${k.borderLight}`, color: k.accentColor }}
                 >
-                  <k.icon size={14} style={{ color: k.color }} />
+                  <k.icon size={15} />
                 </span>
               </div>
-              <div className="mt-2.5 font-mono text-2xl font-bold tracking-tight text-white" style={{ color: k.color }}>
+              <div className="mt-3 font-mono text-2xl sm:text-3xl font-bold tracking-tight text-slate-900" style={{ color: k.accentColor }}>
                 {k.value}
               </div>
-              <p className="mt-1 text-[10px] text-slate-500 font-mono truncate">{k.sub}</p>
+              <p className="mt-1 text-[11px] text-slate-500 truncate">{k.sub}</p>
             </button>
           ))}
         </div>
 
         {/* Unified Search Bar */}
         <div className="relative mb-5">
-          <Search size={16} className="absolute left-3.5 top-3 text-slate-500" />
+          <Search size={16} className="absolute left-3.5 top-3 text-slate-400" />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && executeSearch()}
             placeholder="Search case number, MMSI, vessel name, or lat/lon coordinates (e.g. 18.92, 72.83)..."
-            className="w-full rounded-lg border border-[#1B2B44] bg-[#0A1221]/80 py-2.5 pl-10 pr-24 text-sm text-slate-100 placeholder:text-slate-500 outline-none transition-all focus:border-[#00E5FF] focus:ring-1 focus:ring-[#00E5FF]/30"
+            className="w-full rounded-xl border border-slate-300 bg-white py-2.5 pl-10 pr-24 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition-all focus:border-sky-500 focus:ring-2 focus:ring-sky-500/15 shadow-xs"
             data-testid="unified-case-search"
           />
           <button
             onClick={executeSearch}
-            className="absolute right-2 top-1.5 rounded-md bg-[#16233B] hover:bg-[#203254] px-3 py-1 font-mono text-[10.5px] font-bold uppercase tracking-wider text-cyan-300 transition-colors"
+            className="absolute right-2 top-1.5 rounded-lg bg-[#0B1528] hover:bg-[#162B4D] px-3.5 py-1.5 font-mono text-[10.5px] font-bold uppercase tracking-wider text-white transition-colors shadow-xs"
           >
             Search
           </button>
@@ -472,7 +484,7 @@ export default function Dashboard() {
           {/* Autocomplete Dropdown */}
           {searchResults.length > 0 && (
             <div
-              className="absolute left-0 right-0 top-12 z-[1100] rounded-lg border border-[#1E314B] bg-[#0A1221] p-1.5 shadow-2xl backdrop-blur-md"
+              className="absolute left-0 right-0 top-12 z-[1100] rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl"
             >
               {searchResults.map((c) => (
                 <button
@@ -481,11 +493,11 @@ export default function Dashboard() {
                     selectCase(c);
                     setQuery("");
                   }}
-                  className="flex w-full items-center justify-between rounded-md px-3 py-2 text-left text-xs hover:bg-[#121E33] transition-colors"
+                  className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-xs hover:bg-slate-50 transition-colors"
                 >
                   <span>
-                    <b className="font-mono text-[#00E5FF]">{c.case_number}</b>
-                    <span className="ml-2.5 text-slate-300 font-medium">
+                    <b className="font-mono text-sky-700">{c.case_number}</b>
+                    <span className="ml-2.5 text-slate-800 font-medium">
                       {c.vessel_name || c.vessel_mmsi || c.source || "spill observation"}
                     </span>
                   </span>
@@ -508,16 +520,16 @@ export default function Dashboard() {
               {/* Click-to-Summary Panel */}
               <section className="panel min-h-[520px] overflow-hidden flex flex-col" data-testid="click-summary">
                 {selected ? (
-                  <div className="flex h-full flex-col fade-up">
-                    <div className="border-b border-[#1B2B44] p-4 bg-[#0A1324]/50">
-                      <div className="label-mono text-[#00E5FF] font-bold">CASE SUMMARY DOSSIER</div>
+                  <div className="flex h-full flex-col">
+                    <div className="border-b border-slate-200 p-4 bg-slate-50/70">
+                      <div className="label-mono text-sky-700 font-bold">CASE SUMMARY DOSSIER</div>
                       <div className="mt-1.5 flex items-start justify-between gap-2">
-                        <h2 className="font-display text-xl font-bold text-white">
+                        <h2 className="font-display text-xl font-bold text-slate-900">
                           {selected.case_number}
                         </h2>
                         <StatusBadge status={selected.attribution_status} />
                       </div>
-                      <p className="mt-1.5 text-xs text-slate-400">
+                      <p className="mt-1 text-xs text-slate-500">
                         {selected.source || "Satellite observation"} · acquired{" "}
                         {fmtTime(selected.acquisition_time)}
                       </p>
@@ -526,33 +538,33 @@ export default function Dashboard() {
                     <div className="space-y-4 overflow-y-auto p-4 text-xs flex-1">
                       {/* Detection Metric & Candidates */}
                       <div className="grid grid-cols-2 gap-2.5">
-                        <div className="rounded-lg border border-[#1B2B44] bg-[#070D18] p-3">
-                          <span className="label-mono text-[10px]">SAR Confidence</span>
-                          <b className="mt-1 block text-lg font-mono text-amber-300">
+                        <div className="rounded-xl border border-slate-200 bg-slate-50/60 p-3">
+                          <span className="label-mono text-[10px] text-slate-500">SAR Confidence</span>
+                          <b className="mt-1 block text-lg font-mono text-amber-700">
                             {selected.detection_confidence_source === "detector"
                               ? pct(selected.detection_confidence)
                               : "N/A"}
                           </b>
                         </div>
-                        <div className="rounded-lg border border-[#1B2B44] bg-[#070D18] p-3">
-                          <span className="label-mono text-[10px]">Candidate Vessels</span>
-                          <b className="mt-1 block text-lg font-mono text-[#00E5FF]">
+                        <div className="rounded-xl border border-slate-200 bg-slate-50/60 p-3">
+                          <span className="label-mono text-[10px] text-slate-500">Candidate Vessels</span>
+                          <b className="mt-1 block text-lg font-mono text-sky-700">
                             {selected.candidate_count ?? "—"}
                           </b>
                         </div>
                       </div>
 
                       {/* Coordinates & Jurisdiction */}
-                      <div className="rounded-lg border border-[#1B2B44] bg-[#070D18] p-3 space-y-2">
+                      <div className="rounded-xl border border-slate-200 bg-slate-50/60 p-3 space-y-2">
                         <div>
-                          <span className="label-mono text-[9px] block text-slate-400">Coordinates</span>
-                          <span className="font-mono text-xs text-slate-200">
+                          <span className="label-mono text-[9.5px] block text-slate-500">Coordinates</span>
+                          <span className="font-mono text-xs text-slate-800 font-semibold">
                             {coordsOf(selected)?.map((x) => x.toFixed(5)).join("°, ") || "Not available"}°
                           </span>
                         </div>
                         <div>
-                          <span className="label-mono text-[9px] block text-slate-400">Maritime Jurisdiction</span>
-                          <span className="font-mono text-xs text-cyan-300">
+                          <span className="label-mono text-[9.5px] block text-slate-500">Maritime Jurisdiction</span>
+                          <span className="font-mono text-xs text-sky-800 font-semibold">
                             {selected.primary_jurisdiction?.name ||
                               selected.primary_jurisdiction?.code ||
                               "Global EEZ / Unassigned"}
@@ -560,7 +572,7 @@ export default function Dashboard() {
                         </div>
                       </div>
 
-                      <p className="text-xs leading-relaxed text-slate-300">
+                      <p className="text-xs leading-relaxed text-slate-600">
                         {selected.review_state === "pending"
                           ? "Awaiting analyst sign-off. Open full case to review AIS trajectories, candidate scoring matrix, and evidence chain."
                           : "Stored forensic package is available for export and legal review."}
@@ -568,7 +580,7 @@ export default function Dashboard() {
 
                       <button
                         onClick={() => nav(`/cases/${selected.id}`)}
-                        className="mt-auto inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#00E5FF] px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-[#070D18] shadow-lg shadow-cyan-500/20 hover:bg-[#38BDF8] transition-all"
+                        className="mt-auto inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#0B1528] px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-white shadow-xs hover:bg-[#162B4D] transition-all"
                       >
                         Open Full Case Dossier <ExternalLink size={13} />
                       </button>
@@ -577,11 +589,11 @@ export default function Dashboard() {
                 ) : (
                   <div className="grid h-full place-items-center p-8 text-center my-auto">
                     <div>
-                      <div className="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-full border border-dashed border-cyan-500/40 bg-cyan-500/10">
-                        <Crosshair className="text-cyan-400 animate-spin-slow" size={26} />
+                      <div className="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-2xl border border-dashed border-sky-300 bg-sky-50 text-sky-600">
+                        <Crosshair size={26} />
                       </div>
-                      <h2 className="font-display text-lg font-bold text-slate-200">Select a spill marker</h2>
-                      <p className="mt-1.5 text-xs text-slate-400 max-w-[240px] mx-auto leading-relaxed">
+                      <h2 className="font-display text-lg font-bold text-slate-800">Select a spill marker</h2>
+                      <p className="mt-1.5 text-xs text-slate-500 max-w-[240px] mx-auto leading-relaxed">
                         Click any observation marker on the map or search to view incident evidence and candidate vessel correlation.
                       </p>
                     </div>
@@ -593,25 +605,25 @@ export default function Dashboard() {
             {/* Cases Table Section */}
             <div className="mt-5 panel overflow-hidden">
               {/* Table Controls */}
-              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#1B2B44] px-4 py-3 bg-[#0A1324]/60">
-                <div className="flex items-center gap-2">
-                  <h2 className="font-display text-base font-bold text-white">Investigation Cases</h2>
-                  <span className="font-mono text-xs font-semibold text-cyan-300 bg-cyan-400/10 px-2 py-0.5 rounded border border-cyan-400/20">
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 px-5 py-3.5 bg-slate-50/60">
+                <div className="flex items-center gap-2.5">
+                  <h2 className="font-display text-base font-bold text-slate-900">Investigation Cases</h2>
+                  <span className="font-mono text-xs font-semibold text-sky-800 bg-sky-100/70 px-2.5 py-0.5 rounded-full border border-sky-200">
                     {shown.length} records
                   </span>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2">
                   {/* Origin Tabs */}
-                  <div className="flex rounded-md border border-[#1B2B44] bg-[#070D18] p-0.5">
+                  <div className="flex rounded-lg border border-slate-200 bg-white p-0.5 shadow-xs">
                     {["real", "imported", "demo", "all"].map((o) => (
                       <button
                         key={o}
                         onClick={() => setParams({ origin: o, ...(view !== "all" ? { view } : {}) })}
-                        className={`rounded px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider transition-colors ${
+                        className={`rounded-md px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider transition-colors ${
                           origin === o
-                            ? "bg-emerald-500/20 text-emerald-300 font-bold"
-                            : "text-slate-400 hover:text-slate-200"
+                            ? "bg-sky-600 text-white font-bold shadow-xs"
+                            : "text-slate-600 hover:text-slate-900"
                         }`}
                       >
                         {o}
@@ -623,7 +635,7 @@ export default function Dashboard() {
                   {hasRole(user, "supervisor") && origin === "real" && (
                     <button
                       onClick={analyzeEligible}
-                      className="rounded-md border border-cyan-500/40 bg-cyan-500/10 px-3 py-1 font-mono text-[10.5px] font-semibold uppercase tracking-wider text-cyan-300 hover:bg-cyan-500/20 transition-colors"
+                      className="rounded-lg border border-sky-300 bg-sky-50 px-3 py-1 font-mono text-[10.5px] font-semibold uppercase tracking-wider text-sky-900 hover:bg-sky-100 transition-colors shadow-xs"
                     >
                       Analyze Eligible Cases
                     </button>
@@ -638,8 +650,8 @@ export default function Dashboard() {
                           onClick={() => setFilter(f)}
                           className={`rounded-full border px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider transition-colors ${
                             filter === f
-                              ? "border-cyan-400/60 bg-cyan-400/15 text-cyan-300 font-semibold"
-                              : "border-[#1B2B44] text-slate-400 hover:border-slate-600 hover:text-slate-200"
+                              ? "border-sky-500 bg-sky-50 text-sky-800 font-bold"
+                              : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-slate-900"
                           }`}
                         >
                           {f.replace(/_/g, " ")}
@@ -654,9 +666,9 @@ export default function Dashboard() {
               <div className="overflow-x-auto">
                 <table className="w-full text-xs">
                   <thead>
-                    <tr className="label-mono text-left border-b border-[#1B2B44] bg-[#070D18]/70">
+                    <tr className="label-mono text-left border-b border-slate-200 bg-slate-50/70 text-slate-600">
                       <th
-                        className="px-4 py-3 font-semibold cursor-pointer hover:text-white"
+                        className="px-5 py-3 font-semibold cursor-pointer hover:text-slate-900"
                         onClick={() => toggleSort("case_number")}
                       >
                         <div className="flex items-center gap-1">
@@ -664,7 +676,7 @@ export default function Dashboard() {
                         </div>
                       </th>
                       <th
-                        className="px-4 py-3 font-semibold cursor-pointer hover:text-white"
+                        className="px-4 py-3 font-semibold cursor-pointer hover:text-slate-900"
                         onClick={() => toggleSort("acquisition_time")}
                       >
                         <div className="flex items-center gap-1">
@@ -673,7 +685,7 @@ export default function Dashboard() {
                       </th>
                       <th className="px-4 py-3 font-semibold">Source Sensor</th>
                       <th
-                        className="px-4 py-3 font-semibold cursor-pointer hover:text-white"
+                        className="px-4 py-3 font-semibold cursor-pointer hover:text-slate-900"
                         onClick={() => toggleSort("detection_confidence")}
                       >
                         <div className="flex items-center gap-1">
@@ -682,10 +694,10 @@ export default function Dashboard() {
                       </th>
                       <th className="px-4 py-3 font-semibold">Attribution Status</th>
                       <th className="px-4 py-3 font-semibold">Review State</th>
-                      <th className="px-4 py-3 font-semibold text-right">Action</th>
+                      <th className="px-5 py-3 font-semibold text-right">Action</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#1B2B44]/60">
+                  <tbody className="divide-y divide-slate-100 bg-white">
                     {shown.map((c) => {
                       const isSelected = selected?.id === c.id;
                       return (
@@ -693,43 +705,43 @@ export default function Dashboard() {
                           key={c.id}
                           onClick={() => selectCase(c)}
                           className={`cursor-pointer transition-colors ${
-                            isSelected ? "bg-cyan-500/10" : "hover:bg-[#0E182A]"
+                            isSelected ? "bg-sky-50/70" : "hover:bg-slate-50/80"
                           }`}
                         >
-                          <td className="px-4 py-3 font-mono font-bold text-[#00E5FF]">
+                          <td className="px-5 py-3.5 font-mono font-bold text-sky-800">
                             {c.case_number}
                           </td>
-                          <td className="px-4 py-3 font-mono text-slate-300">
+                          <td className="px-4 py-3.5 font-mono text-slate-700">
                             {fmtTime(c.acquisition_time)}
                           </td>
-                          <td className="px-4 py-3 text-slate-400">{c.source}</td>
-                          <td className="px-4 py-3 font-mono font-medium text-slate-200">
+                          <td className="px-4 py-3.5 text-slate-600">{c.source}</td>
+                          <td className="px-4 py-3.5 font-mono font-semibold text-slate-800">
                             {c.detection_confidence_source === "detector"
                               ? pct(c.detection_confidence)
                               : "N/A"}
                           </td>
-                          <td className="px-4 py-3">
+                          <td className="px-4 py-3.5">
                             <StatusBadge status={c.attribution_status} />
                           </td>
-                          <td className="px-4 py-3 font-mono text-[10px] uppercase text-slate-400">
+                          <td className="px-4 py-3.5 font-mono text-[10px] uppercase">
                             <span
-                              className={`px-2 py-0.5 rounded border ${
+                              className={`px-2 py-0.5 rounded-full font-semibold border ${
                                 c.review_state === "confirmed"
-                                  ? "border-emerald-500/30 text-emerald-300 bg-emerald-500/10"
-                                  : "border-[#1B2B44] text-slate-400 bg-[#0A1221]"
+                                  ? "border-emerald-200 text-emerald-800 bg-emerald-50"
+                                  : "border-slate-200 text-slate-600 bg-slate-50"
                               }`}
                             >
                               {c.review_state}
                             </span>
                           </td>
-                          <td className="px-4 py-3 text-right">
+                          <td className="px-5 py-3.5 text-right">
                             <button
                               type="button"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 nav(`/cases/${c.id}`);
                               }}
-                              className="inline-flex items-center gap-1 font-mono text-[10.5px] text-cyan-300 hover:text-cyan-100 hover:underline"
+                              className="inline-flex items-center gap-1 font-mono text-[10.5px] font-semibold text-sky-700 hover:text-sky-900 hover:underline"
                             >
                               Open <ChevronRight size={12} />
                             </button>
@@ -740,7 +752,7 @@ export default function Dashboard() {
 
                     {cases === null && (
                       <tr>
-                        <td colSpan={7} className="px-4 py-10 text-center text-slate-400">
+                        <td colSpan={7} className="px-5 py-10 text-center text-slate-500">
                           <div className="flex flex-col items-center justify-center gap-2">
                             <div className="skeleton-box h-4 w-48" />
                             <span className="font-mono text-xs">Loading surveillance telemetry…</span>
@@ -751,10 +763,10 @@ export default function Dashboard() {
 
                     {cases !== null && shown.length === 0 && (
                       <tr>
-                        <td colSpan={7} className="px-4 py-12 text-center text-slate-500">
-                          <Compass className="mx-auto mb-2 text-slate-600" size={28} />
-                          <p className="font-medium text-slate-400">No cases match the selected filter or timeframe.</p>
-                          <p className="text-xs text-slate-600 mt-0.5">Try resetting the attribution filter or changing the origin mode.</p>
+                        <td colSpan={7} className="px-5 py-12 text-center text-slate-500">
+                          <Compass className="mx-auto mb-2 text-slate-400" size={28} />
+                          <p className="font-semibold text-slate-700">No cases match the selected filter or timeframe.</p>
+                          <p className="text-xs text-slate-500 mt-0.5">Try resetting the attribution filter or changing the origin mode.</p>
                         </td>
                       </tr>
                     )}
@@ -767,28 +779,28 @@ export default function Dashboard() {
 
         {/* TAB 2: EXECUTIVE ANALYTICS DASHBOARD VIEW */}
         {activeTab === "analytics" && (
-          <div className="space-y-5 fade-up">
+          <div className="space-y-5">
             {/* Analytics Header Summary */}
-            <div className="panel p-6 border-[#1B2B44] bg-[#0A1424]">
-              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#1B2B44] pb-4 mb-4">
+            <div className="panel p-6">
+              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-4 mb-5">
                 <div>
-                  <h2 className="font-display text-xl font-bold text-white">
+                  <h2 className="font-display text-xl font-bold text-slate-900">
                     Operational Intelligence Breakdown
                   </h2>
-                  <p className="text-xs text-slate-400 mt-1">
+                  <p className="text-xs text-slate-500 mt-1">
                     Telemetry metrics, attribution probability distributions, and jurisdictional impact analysis.
                   </p>
                 </div>
-                <span className="font-mono text-xs text-cyan-400 bg-cyan-400/10 px-3 py-1 rounded border border-cyan-400/20 font-semibold">
+                <span className="font-mono text-xs text-sky-800 bg-sky-50 px-3 py-1 rounded-full border border-sky-200 font-semibold">
                   TOTAL CASES: {all.length}
                 </span>
               </div>
 
               {/* Analytics Metric Cards */}
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                <div className="rounded-lg border border-[#1E314B] bg-[#070D18] p-4">
-                  <div className="label-mono text-[10px] text-slate-400">Attribution Rate</div>
-                  <div className="mt-2 font-mono text-2xl font-bold text-emerald-400">
+                <div className="rounded-xl border border-slate-200 bg-slate-50/60 p-4">
+                  <div className="label-mono text-[10px] text-slate-500">Attribution Rate</div>
+                  <div className="mt-2 font-mono text-2xl font-bold text-emerald-700">
                     {all.length
                       ? pct(
                           all.filter((c) =>
@@ -802,9 +814,9 @@ export default function Dashboard() {
                   </p>
                 </div>
 
-                <div className="rounded-lg border border-[#1E314B] bg-[#070D18] p-4">
-                  <div className="label-mono text-[10px] text-slate-400">Pending Sign-off</div>
-                  <div className="mt-2 font-mono text-2xl font-bold text-amber-400">
+                <div className="rounded-xl border border-slate-200 bg-slate-50/60 p-4">
+                  <div className="label-mono text-[10px] text-slate-500">Pending Sign-off</div>
+                  <div className="mt-2 font-mono text-2xl font-bold text-amber-700">
                     {all.filter((c) => c.review_state === "pending").length}
                   </div>
                   <p className="mt-1 text-[11px] text-slate-500">
@@ -812,9 +824,9 @@ export default function Dashboard() {
                   </p>
                 </div>
 
-                <div className="rounded-lg border border-[#1E314B] bg-[#070D18] p-4">
-                  <div className="label-mono text-[10px] text-slate-400">High Confidence Slicks</div>
-                  <div className="mt-2 font-mono text-2xl font-bold text-cyan-400">
+                <div className="rounded-xl border border-slate-200 bg-slate-50/60 p-4">
+                  <div className="label-mono text-[10px] text-slate-500">High Confidence Slicks</div>
+                  <div className="mt-2 font-mono text-2xl font-bold text-sky-700">
                     {all.filter((c) => (c.detection_confidence || 0) >= 0.75).length}
                   </div>
                   <p className="mt-1 text-[11px] text-slate-500">
@@ -822,9 +834,9 @@ export default function Dashboard() {
                   </p>
                 </div>
 
-                <div className="rounded-lg border border-[#1E314B] bg-[#070D18] p-4">
-                  <div className="label-mono text-[10px] text-slate-400">Open Critical Alerts</div>
-                  <div className="mt-2 font-mono text-2xl font-bold text-rose-400">
+                <div className="rounded-xl border border-slate-200 bg-slate-50/60 p-4">
+                  <div className="label-mono text-[10px] text-slate-500">Open Critical Alerts</div>
+                  <div className="mt-2 font-mono text-2xl font-bold text-rose-700">
                     {alerts.filter((a) => !a.acknowledged).length}
                   </div>
                   <p className="mt-1 text-[11px] text-slate-500">
@@ -837,11 +849,11 @@ export default function Dashboard() {
             {/* Visual Distribution Grids */}
             <div className="grid gap-5 lg:grid-cols-2">
               {/* Attribution Status Breakdown */}
-              <div className="panel p-6 border-[#1B2B44] bg-[#0A1424]">
-                <h3 className="font-display text-base font-bold text-white mb-1">
+              <div className="panel p-6">
+                <h3 className="font-display text-base font-bold text-slate-900 mb-1">
                   Attribution Status Distribution
                 </h3>
-                <p className="text-xs text-slate-400 mb-4">
+                <p className="text-xs text-slate-500 mb-4">
                   Distribution of cases across forensic correlation certainty tiers.
                 </p>
 
@@ -852,10 +864,10 @@ export default function Dashboard() {
                     return (
                       <div key={status} className="space-y-1">
                         <div className="flex items-center justify-between text-xs">
-                          <span className="font-mono text-slate-300 capitalize">
+                          <span className="font-mono text-slate-700 font-medium capitalize">
                             {status.replace(/_/g, " ")}
                           </span>
-                          <span className="font-mono font-semibold" style={{ color }}>
+                          <span className="font-mono font-bold" style={{ color }}>
                             {count} ({pct(ratio)})
                           </span>
                         </div>
@@ -867,28 +879,28 @@ export default function Dashboard() {
               </div>
 
               {/* Jurisdiction Distribution */}
-              <div className="panel p-6 border-[#1B2B44] bg-[#0A1424]">
-                <h3 className="font-display text-base font-bold text-white mb-1">
+              <div className="panel p-6">
+                <h3 className="font-display text-base font-bold text-slate-900 mb-1">
                   Maritime Zone Impact
                 </h3>
-                <p className="text-xs text-slate-400 mb-4">
+                <p className="text-xs text-slate-500 mb-4">
                   Incident occurrences mapped against UNCLOS 1982 jurisdiction zones.
                 </p>
 
                 <div className="space-y-3.5">
                   {[
-                    { label: "Territorial Sea (12 nm)", code: "territorial", color: "#EF4444" },
-                    { label: "Contiguous Zone (24 nm)", code: "contiguous", color: "#F59E0B" },
-                    { label: "Exclusive Economic Zone (EEZ, 200 nm)", code: "eez", color: "#00E5FF" },
-                    { label: "High Seas / International Waters", code: "high_seas", color: "#38BDF8" },
+                    { label: "Territorial Sea (12 nm)", code: "territorial", color: "#DC2626" },
+                    { label: "Contiguous Zone (24 nm)", code: "contiguous", color: "#D97706" },
+                    { label: "Exclusive Economic Zone (EEZ, 200 nm)", code: "eez", color: "#0284C7" },
+                    { label: "High Seas / International Waters", code: "high_seas", color: "#0EA5E9" },
                   ].map((z) => {
                     const count = all.filter((c) => c.primary_jurisdiction?.kind === z.code).length;
                     const ratio = all.length ? count / all.length : 0;
                     return (
                       <div key={z.code} className="space-y-1">
                         <div className="flex items-center justify-between text-xs">
-                          <span className="text-slate-300 font-medium">{z.label}</span>
-                          <span className="font-mono font-semibold" style={{ color: z.color }}>
+                          <span className="text-slate-700 font-medium">{z.label}</span>
+                          <span className="font-mono font-bold" style={{ color: z.color }}>
                             {count} cases
                           </span>
                         </div>
@@ -905,23 +917,23 @@ export default function Dashboard() {
 
       {/* Live Alerts & Precision Right Sidebar */}
       <aside
-        className="hidden w-80 shrink-0 flex-col border-l border-[#1B2B44] bg-[#08101E] xl:flex"
+        className="hidden w-80 shrink-0 flex-col border-l border-slate-200 bg-white xl:flex"
       >
-        <div className="flex items-center gap-2 border-b border-[#1B2B44] px-4 py-3.5 bg-[#091322]">
-          <ShieldAlert size={15} className="text-rose-400" />
-          <h2 className="font-display text-sm font-bold text-white">Live Alert Stream</h2>
-          <span className="ml-auto font-mono text-[10.5px] font-bold text-rose-400 bg-rose-500/15 px-2 py-0.5 rounded border border-rose-500/30">
+        <div className="flex items-center gap-2 border-b border-slate-200 px-4 py-3.5 bg-slate-50/70">
+          <ShieldAlert size={16} className="text-rose-600" />
+          <h2 className="font-display text-sm font-bold text-slate-900">Live Alert Stream</h2>
+          <span className="ml-auto font-mono text-[10px] font-bold text-rose-800 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200">
             {alerts.filter((a) => !a.acknowledged).length} Open
           </span>
         </div>
 
         {/* Detector Precision Widget */}
-        <div className="border-b border-[#1B2B44] p-3.5 bg-[#0A1424]">
+        <div className="border-b border-slate-200 p-3.5 bg-white">
           <DetectorPrecision />
         </div>
 
         {/* Alerts List */}
-        <div className="flex-1 space-y-2 overflow-y-auto p-3 [&::-webkit-scrollbar]:w-1">
+        <div className="flex-1 space-y-2.5 overflow-y-auto p-3.5 [&::-webkit-scrollbar]:w-1">
           {alerts.length === 0 && (
             <div className="p-4 text-center text-xs text-slate-500">
               No tactical alerts active.
@@ -930,15 +942,15 @@ export default function Dashboard() {
           {alerts.map((a) => (
             <div
               key={a.id}
-              className="rounded-lg border p-3 text-xs transition-colors"
+              className="rounded-xl border p-3 text-xs transition-colors shadow-xs"
               style={{
-                borderColor: a.acknowledged ? "#1B2B44" : "rgba(239, 68, 68, 0.45)",
-                background: a.acknowledged ? "#091222" : "rgba(239, 68, 68, 0.06)",
+                borderColor: a.acknowledged ? "#E2E8F0" : "#FECACA",
+                background: a.acknowledged ? "#F8FAFC" : "#FEF2F2",
               }}
             >
               <div className="flex items-center justify-between">
                 <button
-                  className="font-mono text-[#00E5FF] font-semibold hover:underline"
+                  className="font-mono text-sky-800 font-bold hover:underline"
                   onClick={() => nav(`/cases/${a.case_id}`)}
                 >
                   {a.case_number}
@@ -947,11 +959,11 @@ export default function Dashboard() {
                   {fmtTime(a.created_at)}
                 </span>
               </div>
-              <p className="mt-1.5 text-slate-300 leading-snug text-[11px]">{a.message}</p>
+              <p className="mt-1.5 text-slate-700 leading-snug text-[11px]">{a.message}</p>
               {!a.acknowledged && hasRole(user, "supervisor") && (
                 <button
                   onClick={() => ack(a.id)}
-                  className="mt-2.5 inline-flex items-center gap-1 rounded bg-emerald-500/15 px-2 py-0.5 font-mono text-[10px] font-semibold uppercase text-emerald-300 hover:bg-emerald-500/25 transition-colors"
+                  className="mt-2.5 inline-flex items-center gap-1 rounded-lg bg-emerald-600 px-2.5 py-1 font-mono text-[10px] font-bold uppercase text-white hover:bg-emerald-700 transition-colors shadow-xs"
                 >
                   <Check size={11} /> Acknowledge
                 </button>

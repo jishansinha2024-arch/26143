@@ -22,7 +22,6 @@ import {
   ChevronsRight,
   X,
   Info,
-  Layers,
 } from "lucide-react";
 import { api, hasRole } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
@@ -58,14 +57,14 @@ const SECTIONS = [
 ];
 
 const itemBase =
-  "group relative flex items-center rounded-lg py-2 text-xs font-medium outline-none transition-all duration-150 focus-visible:ring-1 focus-visible:ring-cyan-400";
+  "group relative flex items-center rounded-lg py-2 text-xs font-medium outline-none transition-all duration-150 focus-visible:ring-2 focus-visible:ring-sky-400";
 const itemState = (isActive) =>
   isActive
-    ? "bg-[#111F36] text-[#00E5FF] shadow-sm font-semibold border-l-2 border-[#00E5FF]"
-    : "text-slate-400 hover:bg-[#0E182A] hover:text-slate-200 border-l-2 border-transparent";
+    ? "bg-sky-500/15 text-sky-400 shadow-xs font-semibold border-l-2 border-sky-400"
+    : "text-slate-400 hover:bg-[#162B4D]/60 hover:text-slate-200 border-l-2 border-transparent";
 
 const Tip = ({ label }) => (
-  <span className="pointer-events-none absolute left-full z-50 ml-2 hidden whitespace-nowrap rounded-md bg-[#0A1221] px-2.5 py-1 font-mono text-[10px] text-slate-100 shadow-xl border border-[#1E314B] group-hover:block group-focus-visible:block">
+  <span className="pointer-events-none absolute left-full z-50 ml-2.5 hidden whitespace-nowrap rounded-md bg-[#0F1D38] px-2.5 py-1 font-mono text-[10.5px] text-slate-100 shadow-lg border border-[#1E2E4A] group-hover:block group-focus-visible:block">
     {label}
   </span>
 );
@@ -83,7 +82,7 @@ const NavItem = ({ item, collapsed, onNavigate }) => {
         `${itemBase} ${itemState(isActive)} ${collapsed ? "justify-center px-0 mx-1" : "gap-2.5 px-3 mx-1"}`
       }
     >
-      <Icon size={15} className="shrink-0" />
+      <Icon size={16} className="shrink-0" />
       {!collapsed && <span className="truncate">{item.label}</span>}
       {collapsed && <Tip label={item.label} />}
     </NavLink>
@@ -102,13 +101,13 @@ const NavBody = ({ collapsed, onNavigate }) => {
 
   return (
     <nav
-      className="flex flex-1 flex-col gap-4 overflow-y-auto overflow-x-hidden px-1.5 py-3 [&::-webkit-scrollbar]:w-1"
+      className="flex flex-1 flex-col gap-4 overflow-y-auto overflow-x-hidden px-2 py-3.5 [&::-webkit-scrollbar]:w-1"
       data-testid="sidebar-nav"
     >
       {SECTIONS.map((sec) => (
         <div key={sec.title} className="flex flex-col gap-0.5">
           {!collapsed && (
-            <p className="label-mono px-3 pb-1 pt-1 text-[9px] text-slate-500 font-semibold tracking-[0.14em]">
+            <p className="label-mono px-3 pb-1 pt-1 text-[9px] text-slate-400 font-semibold tracking-[0.15em]">
               {sec.title}
             </p>
           )}
@@ -119,7 +118,7 @@ const NavBody = ({ collapsed, onNavigate }) => {
       ))}
 
       {/* Footer reference, admin and session links */}
-      <div className="mt-auto flex flex-col gap-0.5 border-t border-[#1B2B44] pt-2.5">
+      <div className="mt-auto flex flex-col gap-0.5 border-t border-[#1E2E4A] pt-2.5">
         {refPinned && (
           <div
             title={
@@ -129,12 +128,12 @@ const NavBody = ({ collapsed, onNavigate }) => {
                   : "Reference case not pinned"
                 : undefined
             }
-            className={`group relative flex items-center rounded-md py-1.5 ${
+            className={`group relative flex items-center rounded-lg py-1.5 ${
               collapsed ? "justify-center px-0 mx-1" : "gap-2.5 px-3 mx-1"
             }`}
             data-testid="sidebar-reference-status"
           >
-            <Bookmark size={14} className="shrink-0" style={{ color: refPinned ? "#10B981" : "#64748B" }} />
+            <Bookmark size={15} className="shrink-0" style={{ color: refPinned ? "#10B981" : "#64748B" }} />
             {!collapsed && (
               <span className="truncate font-mono text-[10px] leading-tight">
                 <span className="text-slate-400">Reference case</span>
@@ -142,7 +141,7 @@ const NavBody = ({ collapsed, onNavigate }) => {
                 {ref === null ? (
                   <span className="text-slate-500">checking…</span>
                 ) : refPinned ? (
-                  <span className="text-emerald-400 font-semibold" data-testid="sidebar-ref-pinned">
+                  <span className="text-emerald-400 font-bold" data-testid="sidebar-ref-pinned">
                     ✓ {ref.case_number || "Pinned"}
                   </span>
                 ) : (
@@ -161,7 +160,7 @@ const NavBody = ({ collapsed, onNavigate }) => {
         {hasRole(user, "admin") && (
           <>
             {!collapsed && (
-              <p className="label-mono px-3 pb-1 pt-2 text-[9px] text-slate-500 font-semibold tracking-[0.14em]">
+              <p className="label-mono px-3 pb-1 pt-2 text-[9px] text-slate-400 font-semibold tracking-[0.15em]">
                 Admin
               </p>
             )}
@@ -184,7 +183,7 @@ const NavBody = ({ collapsed, onNavigate }) => {
         )}
 
         {!collapsed && (
-          <p className="label-mono px-3 pb-1 pt-2 text-[9px] text-slate-500 font-semibold tracking-[0.14em]">
+          <p className="label-mono px-3 pb-1 pt-2 text-[9px] text-slate-400 font-semibold tracking-[0.15em]">
             Session
           </p>
         )}
@@ -209,7 +208,7 @@ export const Sidebar = ({ collapsed, onToggleCollapse, mobileOpen, onCloseMobile
     <aside
       className={`hidden shrink-0 flex-col border-r md:flex ${
         collapsed ? "w-[68px]" : "w-60"
-      } transition-[width] duration-200 z-30 bg-[#091120] border-[#1B2B44]`}
+      } transition-[width] duration-200 z-30 bg-[#0B1528] text-slate-100 border-[#1E2E4A] shadow-xs`}
       data-testid="sidebar-desktop"
     >
       <NavBody collapsed={collapsed} />
@@ -217,14 +216,14 @@ export const Sidebar = ({ collapsed, onToggleCollapse, mobileOpen, onCloseMobile
         data-testid="sidebar-collapse-toggle"
         onClick={onToggleCollapse}
         title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-        className="flex items-center justify-center gap-2 border-t border-[#1B2B44] py-2.5 text-slate-400 hover:bg-[#101C31] hover:text-cyan-300 transition-colors"
+        className="flex items-center justify-center gap-2 border-t border-[#1E2E4A] py-2.5 text-slate-400 hover:bg-[#162B4D] hover:text-sky-300 transition-colors"
       >
         {collapsed ? (
-          <ChevronsRight size={15} />
+          <ChevronsRight size={16} />
         ) : (
           <>
-            <ChevronsLeft size={15} />
-            <span className="font-mono text-[10px] uppercase tracking-wider">Collapse Menu</span>
+            <ChevronsLeft size={16} />
+            <span className="font-mono text-[10px] uppercase tracking-wider font-semibold">Collapse Sidebar</span>
           </>
         )}
       </button>
@@ -233,19 +232,19 @@ export const Sidebar = ({ collapsed, onToggleCollapse, mobileOpen, onCloseMobile
     {/* Mobile Drawer */}
     {mobileOpen && (
       <div className="fixed inset-0 z-50 md:hidden" data-testid="sidebar-mobile-overlay">
-        <div className="absolute inset-0 bg-black/75 backdrop-blur-sm" onClick={onCloseMobile} />
+        <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-xs" onClick={onCloseMobile} />
         <aside
-          className="absolute left-0 top-0 flex h-full w-64 flex-col border-r bg-[#091120] border-[#1B2B44] shadow-2xl"
+          className="absolute left-0 top-0 flex h-full w-64 flex-col border-r bg-[#0B1528] text-slate-100 border-[#1E2E4A] shadow-2xl"
           data-testid="sidebar-mobile"
         >
-          <div className="flex h-14 shrink-0 items-center justify-between border-b border-[#1B2B44] px-4">
+          <div className="flex h-14 shrink-0 items-center justify-between border-b border-[#1E2E4A] px-4">
             <span className="flex items-center gap-2 font-display text-base font-bold text-white">
-              <Radar size={16} className="text-[#00E5FF]" /> Varuna <span className="text-[#00E5FF]">Netra</span>
+              <Radar size={17} className="text-sky-400" /> Varuna <span className="text-sky-400">Netra</span>
             </span>
             <button
               data-testid="sidebar-mobile-close"
               onClick={onCloseMobile}
-              className="rounded-md p-1.5 text-slate-400 hover:bg-[#16233B] hover:text-white"
+              className="rounded-lg p-1.5 text-slate-400 hover:bg-[#162B4D] hover:text-white"
             >
               <X size={18} />
             </button>

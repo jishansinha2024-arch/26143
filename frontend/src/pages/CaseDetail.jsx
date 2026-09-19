@@ -32,7 +32,7 @@ import { AssetSearch, assetBounds } from "@/components/map/AssetSearch";
 import { useLive } from "@/context/LiveFeed";
 
 const TABS = [["candidates", "Candidates"], ["comparison", "Why not #2?"], ["assistant", "AI assistant"], ["summary", "Investigation summary"], ["review", "Analyst review"], ["response", "Response"], ["precedents", "Related precedent"], ["vulnerability", "Vulnerability"], ["timeline", "Timeline"], ["files", "Files"], ["beforeafter", "Before / After"], ["scenes", "Scene timeline"], ["evidence", "Evidence & audit"], ["log", "Processing log"]];
-const overlayBtn = { background: "rgba(10,14,23,0.85)", border: "1px solid var(--border-highlight)", backdropFilter: "blur(12px)" };
+const overlayBtn = { background: "rgba(11,21,40,0.92)", border: "1px solid rgba(30,46,74,0.85)", backdropFilter: "blur(12px)", color: "#F8FAFC" };
 
 export default function CaseDetail() {
   const { id } = useParams();
@@ -178,34 +178,34 @@ export default function CaseDetail() {
         </div>
       </div>
 
-      <aside className="flex w-[520px] shrink-0 flex-col border-l overflow-hidden" style={{ borderColor: "var(--border-default)", background: "var(--bg-secondary)" }}>
-        <div className="border-b p-4" style={{ borderColor: "var(--border-default)" }}>
+      <aside className="flex w-[520px] shrink-0 flex-col border-l border-slate-200 overflow-hidden bg-white text-slate-900">
+        <div className="border-b border-slate-200 p-4 bg-slate-50/70">
           <div className="flex items-start justify-between gap-3">
             <div>
-              <p className="label-mono">{c.source} · det. conf {c.source === "dark_spot_detector" ? pct(c.detection_confidence) : <span title="value supplied at registration, not produced by a detector">N/A (registrant-supplied)</span>}</p>
-              <h1 className="font-display text-2xl font-bold tracking-tight" data-testid="case-number">{c.case_number}</h1>
-              <p className="font-mono text-xs text-slate-400">Acquired {fmtTime(c.acquisition_time)} · {spill?.estimated_area_km2} km² · v{c.latest_result_version}</p>
+              <p className="label-mono text-slate-500">{c.source} · det. conf {c.source === "dark_spot_detector" ? pct(c.detection_confidence) : <span title="value supplied at registration, not produced by a detector">N/A (registrant-supplied)</span>}</p>
+              <h1 className="font-display text-2xl font-bold tracking-tight text-slate-900" data-testid="case-number">{c.case_number}</h1>
+              <p className="font-mono text-xs text-slate-500">Acquired {fmtTime(c.acquisition_time)} · {spill?.estimated_area_km2} km² · v{c.latest_result_version}</p>
             </div>
             <div className="flex flex-col items-end gap-1.5">
               <StatusBadge status={c.attribution_status} testId="case-attribution-status" />
-              <span className="font-mono text-[10px] text-slate-400">band <BandBadge band={c.confidence_band} /> · <span data-testid="case-review-state">{c.review_state}</span></span>
+              <span className="font-mono text-[10px] text-slate-500">band <BandBadge band={c.confidence_band} /> · <span data-testid="case-review-state">{c.review_state}</span></span>
             </div>
           </div>
-          <div className="mt-2 flex flex-wrap gap-1.5">
-            {c.primary_jurisdiction && <span data-testid="case-jurisdiction-chip" title={c.primary_jurisdiction.name} className="rounded px-1.5 py-0.5 font-mono text-[10px] text-cyan-300" style={{ background: "rgba(0,240,255,0.08)", border: "1px solid rgba(0,240,255,0.35)" }}>⚖ {c.primary_jurisdiction.code} · {c.primary_jurisdiction.zone_label || c.primary_jurisdiction.zone_type} · {c.primary_jurisdiction.authority}</span>}
-            {c.jurisdictions?.filter((z) => z.code !== c.primary_jurisdiction?.code).map((z) => <span key={z.code} data-testid={`case-jurisdiction-other-${z.code}`} className="rounded px-1.5 py-0.5 font-mono text-[10px] text-slate-400" style={{ border: "1px solid var(--border-highlight)" }}>also {z.code} · {z.zone_label || z.zone_type} ({Math.round(z.overlap_fraction * 100)}%)</span>)}
-            {!c.primary_jurisdiction && <span data-testid="case-jurisdiction-none" className="rounded px-1.5 py-0.5 font-mono text-[10px] text-slate-500" style={{ border: "1px solid var(--border-highlight)" }}>jurisdiction unassigned</span>}
-            {c.icg && <span data-testid="case-icg-chip" title={`${c.icg.region} (HQ ${c.icg.region_hq}) · ${c.icg.note}`} className="rounded px-1.5 py-0.5 font-mono text-[10px] text-emerald-300" style={{ background: "rgba(16,185,129,0.08)", border: "1px solid rgba(16,185,129,0.4)" }}>⚓ {c.icg.code} · {c.icg.district_hq} · {c.icg.region.replace("Coast Guard Region", "CG Region")}{c.icg.approximate ? " · approx." : ""}</span>}
-            {spill?.quality_flags?.map((f) => <span key={f} data-testid={`spill-flag-${f}`} className={`rounded px-1.5 py-0.5 font-mono text-[10px] ${f === "experimental_detector" ? "text-rose-200" : "text-amber-300"}`} style={f === "experimental_detector" ? { background: "rgba(255,42,109,0.15)", border: "1px dashed rgba(255,42,109,0.7)" } : { background: "rgba(255,183,3,0.12)", border: "1px solid rgba(255,183,3,0.4)" }}>{f === "experimental_detector" ? "⚠ EXPERIMENTAL dark-spot detector" : f}</span>)}
-            {cands?.degraded && <span data-testid="degraded-flag" className="rounded px-1.5 py-0.5 font-mono text-[10px] text-purple-300" style={{ background: "rgba(157,78,221,0.12)", border: "1px solid rgba(157,78,221,0.4)" }}>degraded: no drift inputs</span>}
-            {cands?.ambiguous_multiple_vessels && <span data-testid="ambiguous-flag" className="rounded px-1.5 py-0.5 font-mono text-[10px] text-amber-300" style={{ background: "rgba(255,183,3,0.12)", border: "1px solid rgba(255,183,3,0.4)" }}>multiple-vessel ambiguity</span>}
-            {c.confirmed_vessel_mmsi && <span data-testid="confirmed-vessel" className="rounded px-1.5 py-0.5 font-mono text-[10px] text-emerald-300" style={{ background: "rgba(16,185,129,0.12)", border: "1px solid rgba(16,185,129,0.4)" }}>confirmed MMSI {c.confirmed_vessel_mmsi}</span>}
+          <div className="mt-2.5 flex flex-wrap gap-1.5">
+            {c.primary_jurisdiction && <span data-testid="case-jurisdiction-chip" title={c.primary_jurisdiction.name} className="rounded-md px-2 py-0.5 font-mono text-[10px] text-sky-800 bg-sky-50 border border-sky-200 font-medium">⚖ {c.primary_jurisdiction.code} · {c.primary_jurisdiction.zone_label || c.primary_jurisdiction.zone_type} · {c.primary_jurisdiction.authority}</span>}
+            {c.jurisdictions?.filter((z) => z.code !== c.primary_jurisdiction?.code).map((z) => <span key={z.code} data-testid={`case-jurisdiction-other-${z.code}`} className="rounded-md px-2 py-0.5 font-mono text-[10px] text-slate-600 bg-slate-100 border border-slate-200">also {z.code} · {z.zone_label || z.zone_type} ({Math.round(z.overlap_fraction * 100)}%)</span>)}
+            {!c.primary_jurisdiction && <span data-testid="case-jurisdiction-none" className="rounded-md px-2 py-0.5 font-mono text-[10px] text-slate-500 border border-slate-200">jurisdiction unassigned</span>}
+            {c.icg && <span data-testid="case-icg-chip" title={`${c.icg.region} (HQ ${c.icg.region_hq}) · ${c.icg.note}`} className="rounded-md px-2 py-0.5 font-mono text-[10px] text-emerald-800 bg-emerald-50 border border-emerald-200 font-medium">⚓ {c.icg.code} · {c.icg.district_hq} · {c.icg.region.replace("Coast Guard Region", "CG Region")}{c.icg.approximate ? " · approx." : ""}</span>}
+            {spill?.quality_flags?.map((f) => <span key={f} data-testid={`spill-flag-${f}`} className={`rounded-md px-2 py-0.5 font-mono text-[10px] ${f === "experimental_detector" ? "text-rose-800 bg-rose-50 border border-rose-200" : "text-amber-800 bg-amber-50 border border-amber-200"}`}>{f === "experimental_detector" ? "⚠ EXPERIMENTAL dark-spot detector" : f}</span>)}
+            {cands?.degraded && <span data-testid="degraded-flag" className="rounded-md px-2 py-0.5 font-mono text-[10px] text-purple-800 bg-purple-50 border border-purple-200">degraded: no drift inputs</span>}
+            {cands?.ambiguous_multiple_vessels && <span data-testid="ambiguous-flag" className="rounded-md px-2 py-0.5 font-mono text-[10px] text-amber-800 bg-amber-50 border border-amber-200">multiple-vessel ambiguity</span>}
+            {c.confirmed_vessel_mmsi && <span data-testid="confirmed-vessel" className="rounded-md px-2 py-0.5 font-mono text-[10px] text-emerald-800 bg-emerald-50 border border-emerald-200 font-medium">confirmed MMSI {c.confirmed_vessel_mmsi}</span>}
           </div>
         </div>
         <CorrelatePanel key={`${c.latest_result_version}-${spill?.wind?.speed_ms}-${spill?.current?.speed_ms}`} caseId={id} defaults={config?.correlation_params} spill={spill} onDone={load} />
-        <div className="flex border-b overflow-x-auto [&::-webkit-scrollbar]:h-1 bg-[#091222]/80" style={{ borderColor: "var(--border-default)" }}>
+        <div className="flex border-b border-slate-200 overflow-x-auto [&::-webkit-scrollbar]:h-1 bg-slate-50">
           {TABS.map(([k, l]) => (
-            <button key={k} data-testid={`tab-${k}`} onClick={() => setTab(k)} className={`shrink-0 px-3.5 py-2 font-mono text-[10.5px] uppercase tracking-wider transition-all ${tab === k ? "text-[#00E5FF] border-b-2 border-[#00E5FF] font-bold bg-cyan-400/10" : "text-slate-400 hover:text-slate-100 hover:bg-[#0E182A]"}`}>{l}</button>
+            <button key={k} data-testid={`tab-${k}`} onClick={() => setTab(k)} className={`shrink-0 px-3.5 py-2.5 font-mono text-[10.5px] uppercase tracking-wider transition-all ${tab === k ? "text-sky-800 border-b-2 border-sky-600 font-bold bg-white shadow-2xs" : "text-slate-500 hover:text-slate-900 hover:bg-slate-100"}`}>{l}</button>
           ))}
         </div>
         <div className="flex-1 overflow-y-auto">

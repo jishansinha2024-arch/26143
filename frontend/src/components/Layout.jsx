@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
 import { Outlet, useNavigate, NavLink, useLocation, Link } from "react-router-dom";
-import { Radar, ShieldAlert, LogOut, Menu, MapPin, Info, Sparkles } from "lucide-react";
+import { Radar, ShieldAlert, LogOut, Menu, MapPin, Info } from "lucide-react";
 import { api } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
 import { LiveBell, CriticalBanner } from "@/components/LiveBell";
 import { Sidebar } from "@/components/Sidebar";
 
 const ROLE_COLOR = {
-  guest: "#94A3B8",
-  viewer: "#38BDF8",
-  analyst: "#00E5FF",
-  supervisor: "#F59E0B",
-  admin: "#F43F5E",
+  guest: "#64748B",
+  viewer: "#0284C7",
+  analyst: "#0EA5E9",
+  supervisor: "#D97706",
+  admin: "#E11D48",
 };
 
 const COLLAPSE_KEY = "vn_sidebar_collapsed";
@@ -64,15 +64,15 @@ export const Layout = () => {
   }, []);
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden text-slate-100 bg-[#070D18]">
+    <div className="flex h-screen flex-col overflow-hidden text-slate-900 bg-[#F8FAFC]">
       {/* Top Tactical Command Header */}
       <header
-        className="flex h-14 shrink-0 items-center gap-3.5 border-b px-4 z-40 bg-[#0B1424]/90 backdrop-blur-md border-[#1B2B44]"
+        className="flex h-14 shrink-0 items-center gap-3.5 border-b px-4 z-40 bg-[#0B1528] text-slate-100 border-[#1E2E4A] shadow-xs"
       >
         <button
           data-testid="mobile-menu-button"
           onClick={() => setMobileOpen(true)}
-          className="rounded-md p-1.5 text-slate-300 hover:bg-[#16233B] hover:text-white md:hidden transition-colors"
+          className="rounded-lg p-1.5 text-slate-300 hover:bg-[#162B4D] hover:text-white md:hidden transition-colors"
           aria-label="Open navigation menu"
         >
           <Menu size={18} />
@@ -81,17 +81,13 @@ export const Layout = () => {
         {/* Brand */}
         <NavLink to="/" data-testid="nav-brand" className="flex shrink-0 items-center gap-2.5 group">
           <span
-            className="grid h-8 w-8 place-items-center rounded-lg shadow-md transition-transform group-hover:scale-105"
-            style={{
-              background: "linear-gradient(135deg, rgba(0,229,255,0.2), rgba(56,189,248,0.08))",
-              border: "1px solid rgba(0,229,255,0.45)",
-            }}
+            className="grid h-8 w-8 place-items-center rounded-lg shadow-sm bg-gradient-to-br from-sky-500/25 to-sky-600/10 border border-sky-400/30 text-sky-400 group-hover:scale-105 transition-transform"
           >
-            <Radar size={16} className="text-[#00E5FF]" />
+            <Radar size={17} />
           </span>
           <div className="flex flex-col">
             <span className="whitespace-nowrap font-display text-lg font-bold tracking-tight text-white leading-none">
-              Varuna <span className="text-[#00E5FF]">Netra</span>
+              Varuna <span className="text-sky-400 font-extrabold">Netra</span>
             </span>
             <span className="font-mono text-[8.5px] uppercase tracking-[0.2em] text-slate-400 mt-0.5">
               Command Console
@@ -105,25 +101,25 @@ export const Layout = () => {
         {/* Tactical Counters & Live Status */}
         <div className="ml-auto flex shrink-0 items-center gap-3.5 sm:gap-4">
           {(stats || statsErr) && (
-            <div className="hidden items-center gap-4 xl:flex border-r border-[#1B2B44] pr-4" title="Real database counts (demo/mock records excluded)">
+            <div className="hidden items-center gap-4 xl:flex border-r border-[#1E2E4A] pr-4" title="Real database counts (demo/mock records excluded)">
               <Stat
                 label="Active cases"
                 value={statsErr ? "Unavailable" : stats.active_cases}
-                color="#EF4444"
+                color="#F87171"
                 testId="nav-stat-cases"
                 onClick={() => nav("/?origin=real")}
               />
               <Stat
                 label="Pending review"
                 value={statsErr ? "Unavailable" : stats.pending_review}
-                color="#F59E0B"
+                color="#FBBF24"
                 testId="nav-stat-pending"
                 onClick={() => nav("/?origin=real&view=pending")}
               />
               <Stat
                 label="Alerts"
                 value={statsErr ? "Unavailable" : stats.alerts.unread}
-                color="#F43F5E"
+                color="#FB7185"
                 icon={<ShieldAlert size={12} className="text-rose-400" />}
                 testId="nav-stat-alerts"
                 onClick={() => nav("/alerts?alerts=unread")}
@@ -150,25 +146,25 @@ export const Layout = () => {
           )}
 
           {!stats && !statsErr && (
-            <div className="hidden items-center gap-4 xl:flex border-r border-[#1B2B44] pr-4" data-testid="nav-stats-loading">
+            <div className="hidden items-center gap-4 xl:flex border-r border-[#1E2E4A] pr-4" data-testid="nav-stats-loading">
               <Stat label="Cases" value="—" />
-              <Stat label="Pending" value="—" color="#F59E0B" />
-              <Stat label="Alerts" value="—" color="#F43F5E" />
+              <Stat label="Pending" value="—" color="#FBBF24" />
+              <Stat label="Alerts" value="—" color="#FB7185" />
             </div>
           )}
 
           {/* Quick About Link */}
           <Link
             to="/about"
-            className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-cyan-500/25 bg-cyan-500/10 px-2.5 py-1 text-[11px] font-mono text-cyan-300 hover:bg-cyan-500/20 transition-colors"
+            className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-sky-400/30 bg-sky-950/60 px-2.5 py-1 text-[11px] font-mono text-sky-300 hover:bg-sky-900/40 transition-colors shadow-xs"
             title="About Varuna Netra & System Architecture"
           >
-            <Info size={11} /> About
+            <Info size={12} /> About
           </Link>
 
           {/* UTC Clock */}
           <div
-            className="hidden shrink-0 items-center gap-2 whitespace-nowrap font-mono text-xs text-slate-300 sm:flex bg-[#070D18]/70 border border-[#1B2B44] px-2.5 py-1 rounded-md shadow-sm"
+            className="hidden shrink-0 items-center gap-2 whitespace-nowrap font-mono text-xs text-slate-300 sm:flex bg-[#070E1A] border border-[#1E2E4A] px-2.5 py-1 rounded-lg shadow-xs"
             data-testid="utc-clock"
           >
             <span className="pulse-dot" />
@@ -181,18 +177,13 @@ export const Layout = () => {
           {/* User Status / Account Dropdown */}
           {user && (
             <div
-              className="flex items-center gap-2 border-l border-[#1B2B44] pl-3.5"
+              className="flex items-center gap-2 border-l border-[#1E2E4A] pl-3.5"
               data-testid="user-chip"
             >
               {user.role === "guest" && (
                 <span
                   data-testid="guest-badge"
-                  className="hidden rounded-full border px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider sm:inline"
-                  style={{
-                    color: "#94A3B8",
-                    borderColor: "rgba(148,163,184,0.3)",
-                    background: "rgba(148,163,184,0.08)",
-                  }}
+                  className="hidden rounded-full border px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider sm:inline text-slate-400 border-slate-600/40 bg-slate-800/60"
                 >
                   Guest · Read Only
                 </span>
@@ -203,7 +194,7 @@ export const Layout = () => {
                 data-testid="nav-account-link"
                 className="hidden text-right leading-tight sm:block hover:opacity-85 transition-opacity"
               >
-                <div className="text-xs font-medium text-slate-200" data-testid="user-name">
+                <div className="text-xs font-semibold text-slate-200" data-testid="user-name">
                   {user.name}
                 </div>
                 <div
@@ -222,9 +213,9 @@ export const Layout = () => {
                   nav("/login");
                 }}
                 title="Sign out of console"
-                className="rounded-md p-1.5 text-slate-400 hover:bg-[#16233B] hover:text-rose-300 transition-colors"
+                className="rounded-lg p-1.5 text-slate-400 hover:bg-[#162B4D] hover:text-rose-300 transition-colors"
               >
-                <LogOut size={15} />
+                <LogOut size={16} />
               </button>
             </div>
           )}
@@ -242,7 +233,7 @@ export const Layout = () => {
           mobileOpen={mobileOpen}
           onCloseMobile={() => setMobileOpen(false)}
         />
-        <main className="flex-1 overflow-hidden bg-[#070D18]">
+        <main className="flex-1 overflow-hidden bg-[#F8FAFC]">
           <Outlet />
         </main>
       </div>
@@ -279,7 +270,7 @@ const ContextChip = () => {
     let cancel = false;
     const m = loc.pathname.match(/^\/cases\/([^/]+)/);
     if (m) {
-      setTone("#00E5FF");
+      setTone("#38BDF8");
       api
         .get(`/cases/${m[1]}`)
         .then((r) => {
@@ -313,14 +304,10 @@ const ContextChip = () => {
     <div
       title={label}
       data-testid="context-chip"
-      className="hidden max-w-[280px] items-center gap-1.5 rounded-full border px-3 py-1 lg:flex shadow-sm"
-      style={{
-        borderColor: "rgba(56,189,248,0.25)",
-        background: "rgba(56,189,248,0.06)",
-      }}
+      className="hidden max-w-[280px] items-center gap-1.5 rounded-full border border-sky-500/25 bg-sky-950/40 px-3 py-1 lg:flex shadow-xs"
     >
       <MapPin size={12} color={tone} className="shrink-0" />
-      <span className="truncate font-mono text-[11px] font-medium" style={{ color: tone }}>
+      <span className="truncate font-mono text-[11px] font-semibold" style={{ color: tone }}>
         {label}
       </span>
     </div>

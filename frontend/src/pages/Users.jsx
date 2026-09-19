@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { UserPlus, Trash2, ShieldCheck, Ban, CheckCircle2, Check, X, Users as UsersIcon, Shield, Key } from "lucide-react";
+import { UserPlus, Trash2, ShieldCheck, Ban, CheckCircle2, Check, X, Shield, Key } from "lucide-react";
 import { api, apiError, fmtTime } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
 import { EmailSettings } from "@/components/admin/EmailSettings";
 
 const inputCls =
-  "w-full rounded-lg border border-[#1E314B] bg-[#070D18] px-3 py-2 text-xs text-slate-100 placeholder:text-slate-600 outline-none transition-all focus:border-[#00E5FF] focus:ring-1 focus:ring-[#00E5FF]/40";
+  "w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs text-slate-900 placeholder:text-slate-400 outline-none transition-all focus:border-sky-500 focus:ring-2 focus:ring-sky-500/15";
 
 const ROLE_COLOR = {
-  viewer: "#38BDF8",
-  analyst: "#00E5FF",
-  supervisor: "#F59E0B",
-  admin: "#EF4444",
+  viewer: "#0284C7",
+  analyst: "#0EA5E9",
+  supervisor: "#D97706",
+  admin: "#DC2626",
 };
 
 export default function Users() {
@@ -86,12 +86,12 @@ export default function Users() {
   };
 
   return (
-    <div className="h-full overflow-y-auto p-4 sm:p-6 lg:p-8 bg-[#070D18]" data-testid="users-page">
+    <div className="h-full overflow-y-auto p-4 sm:p-6 lg:p-8 bg-[#F8FAFC] text-slate-900" data-testid="users-page">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <div className="border-b border-[#1B2B44] pb-5">
-          <p className="label-mono text-cyan-400 mb-1">Administrative Governance</p>
-          <h1 className="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+        <div className="border-b border-slate-200 pb-5">
+          <p className="label-mono text-sky-700 mb-1">Administrative Governance</p>
+          <h1 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
             User Accounts &amp; Role-Based Access
           </h1>
         </div>
@@ -99,14 +99,14 @@ export default function Users() {
         {/* User Create Form & User List */}
         <div className="grid gap-6 xl:grid-cols-[380px_1fr]">
           {/* Create User Panel */}
-          <div className="panel p-6 border-[#1B2B44] bg-[#0A1424] shadow-xl fade-up" data-testid="user-create-form">
+          <div className="panel p-6 border-slate-200 bg-white shadow-xs" data-testid="user-create-form">
             <div className="mb-4 flex items-center gap-2">
-              <UserPlus size={17} className="text-[#00E5FF]" />
-              <h2 className="font-display text-base font-bold text-white">Provision Account</h2>
+              <UserPlus size={18} className="text-sky-600" />
+              <h2 className="font-display text-base font-bold text-slate-900">Provision Account</h2>
             </div>
-            <div className="space-y-3">
+            <div className="space-y-3.5">
               <label className="block">
-                <span className="label-mono mb-1.5 block text-slate-300">Email Address</span>
+                <span className="label-mono mb-1.5 block text-slate-700">Email Address</span>
                 <input
                   data-testid="user-email-input"
                   className={inputCls}
@@ -117,7 +117,7 @@ export default function Users() {
               </label>
 
               <label className="block">
-                <span className="label-mono mb-1.5 block text-slate-300">Full Name</span>
+                <span className="label-mono mb-1.5 block text-slate-700">Full Name</span>
                 <input
                   data-testid="user-name-input"
                   className={inputCls}
@@ -128,7 +128,7 @@ export default function Users() {
               </label>
 
               <label className="block">
-                <span className="label-mono mb-1.5 block text-slate-300">Initial Role</span>
+                <span className="label-mono mb-1.5 block text-slate-700">Initial Role</span>
                 <select
                   data-testid="user-role-select"
                   className={inputCls}
@@ -143,7 +143,7 @@ export default function Users() {
               </label>
 
               <label className="block">
-                <span className="label-mono mb-1.5 block text-slate-300">Initial Password (min 8)</span>
+                <span className="label-mono mb-1.5 block text-slate-700">Initial Password (min 8)</span>
                 <input
                   data-testid="user-password-input"
                   type="password"
@@ -158,7 +158,7 @@ export default function Users() {
                 data-testid="btn-create-user"
                 disabled={busy}
                 onClick={create}
-                className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#00E5FF] px-4 py-2 font-mono text-xs font-bold uppercase tracking-wider text-[#070D18] shadow-lg shadow-cyan-500/20 hover:bg-[#38BDF8] disabled:opacity-50 transition-all"
+                className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#0B1528] px-4 py-2 font-mono text-xs font-bold uppercase tracking-wider text-white shadow-xs hover:bg-[#162B4D] disabled:opacity-50 transition-all"
               >
                 {busy ? "Creating Account…" : "Provision User"}
               </button>
@@ -166,23 +166,23 @@ export default function Users() {
           </div>
 
           {/* User Accounts Table */}
-          <div className="panel overflow-hidden border-[#1B2B44] bg-[#0A1424] shadow-xl fade-up" data-testid="users-list">
-            <div className="border-b border-[#1B2B44] px-4 py-3 bg-[#08101E]">
-              <h2 className="font-display text-sm font-bold text-white">Active Agency Users</h2>
+          <div className="panel overflow-hidden border-slate-200 bg-white shadow-xs" data-testid="users-list">
+            <div className="border-b border-slate-200 px-5 py-3.5 bg-slate-50/70">
+              <h2 className="font-display text-sm font-bold text-slate-900">Active Agency Users</h2>
             </div>
 
             <div className="overflow-x-auto">
               <table className="w-full text-xs">
                 <thead>
-                  <tr className="label-mono text-left border-b border-[#1B2B44] bg-[#070D18]">
+                  <tr className="label-mono text-left border-b border-slate-200 bg-slate-50/70 text-slate-600">
                     {["Name", "Email", "Role", "Status", "Alert Emails", "Last Login", "Actions"].map((h) => (
-                      <th key={h} className="px-4 py-3 font-semibold text-slate-400">
+                      <th key={h} className="px-4 py-3 font-semibold">
                         {h}
                       </th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#1B2B44]/60">
+                <tbody className="divide-y divide-slate-100 bg-white">
                   {users === null && (
                     <tr>
                       <td colSpan={7} className="px-4 py-10 text-center font-mono text-xs text-slate-500" data-testid="users-loading">
@@ -194,13 +194,13 @@ export default function Users() {
                     <tr
                       key={u.id}
                       data-testid={`user-row-${u.email}`}
-                      className="hover:bg-[#0E182A] transition-colors"
+                      className="hover:bg-slate-50/80 transition-colors"
                     >
-                      <td className="px-4 py-3 font-medium text-slate-200">
+                      <td className="px-4 py-3 font-medium text-slate-900">
                         {u.name}
-                        {u.id === me?.id && <span className="ml-1 text-cyan-400 font-mono text-[10px]">(you)</span>}
+                        {u.id === me?.id && <span className="ml-1 text-sky-700 font-mono text-[10px]">(you)</span>}
                       </td>
-                      <td className="px-4 py-3 font-mono text-slate-300">{u.email}</td>
+                      <td className="px-4 py-3 font-mono text-slate-600">{u.email}</td>
                       <td className="px-4 py-3">
                         <select
                           data-testid={`user-role-${u.email}`}
@@ -209,14 +209,14 @@ export default function Users() {
                           onChange={(e) =>
                             patch(u.id, { role: e.target.value }, `Role updated to ${e.target.value}`)
                           }
-                          className="rounded-md border bg-[#070D18] px-2 py-0.5 font-mono text-[10.5px] uppercase tracking-wider outline-none"
+                          className="rounded-md border bg-white px-2 py-0.5 font-mono text-[10.5px] uppercase tracking-wider outline-none"
                           style={{
                             color: ROLE_COLOR[u.role],
                             borderColor: `${ROLE_COLOR[u.role]}55`,
                           }}
                         >
                           {["viewer", "analyst", "supervisor", "admin"].map((r) => (
-                            <option key={r} value={r} style={{ color: "#F8FAFC", background: "#0A1424" }}>
+                            <option key={r} value={r} style={{ color: "#0F172A", background: "#FFFFFF" }}>
                               {r}
                             </option>
                           ))}
@@ -225,20 +225,20 @@ export default function Users() {
                       <td className="px-4 py-3">
                         <span
                           className="inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-wider font-semibold"
-                          style={{ color: u.active ? "#10B981" : "#94A3B8" }}
+                          style={{ color: u.active ? "#059669" : "#64748B" }}
                         >
                           <span
                             className="h-1.5 w-1.5 rounded-full"
-                            style={{ background: u.active ? "#10B981" : "#94A3B8" }}
+                            style={{ background: u.active ? "#059669" : "#64748B" }}
                           />
                           {u.active ? "active" : "deactivated"}
                         </span>
                       </td>
                       <td className="px-4 py-3">
                         {u.role === "analyst" ? (
-                          <span className="font-mono text-[10px] text-slate-600">—</span>
+                          <span className="font-mono text-[10px] text-slate-400">—</span>
                         ) : (
-                          <label className="flex items-center gap-1.5 font-mono text-[10px] text-slate-300 cursor-pointer">
+                          <label className="flex items-center gap-1.5 font-mono text-[10px] text-slate-700 cursor-pointer">
                             <input
                               type="checkbox"
                               data-testid={`user-notify-${u.email}`}
@@ -250,13 +250,13 @@ export default function Users() {
                                   e.target.checked ? "Alert emails enabled" : "Alert emails muted"
                                 )
                               }
-                              className="rounded border-[#1E314B] bg-[#070D18] text-cyan-400 focus:ring-cyan-400"
+                              className="rounded border-slate-300 text-sky-600 focus:ring-sky-500"
                             />{" "}
                             {u.notify_alerts !== false ? "on" : "muted"}
                           </label>
                         )}
                       </td>
-                      <td className="px-4 py-3 font-mono text-[11px] text-slate-400">
+                      <td className="px-4 py-3 font-mono text-[11px] text-slate-500">
                         {fmtTime(u.last_login)}
                       </td>
                       <td className="px-4 py-3">
@@ -272,9 +272,9 @@ export default function Users() {
                                 u.active ? "Account deactivated" : "Account activated"
                               )
                             }
-                            className="rounded p-1 text-slate-400 hover:text-amber-300 disabled:opacity-30 hover:bg-[#16233B] transition-colors"
+                            className="rounded p-1 text-slate-500 hover:text-amber-600 disabled:opacity-30 hover:bg-slate-100 transition-colors"
                           >
-                            {u.active ? <Ban size={13} /> : <CheckCircle2 size={13} />}
+                            {u.active ? <Ban size={14} /> : <CheckCircle2 size={14} />}
                           </button>
                           <button
                             data-testid={`user-reset-password-${u.email}`}
@@ -283,18 +283,18 @@ export default function Users() {
                               const p = window.prompt(`New password for ${u.email} (min 8 chars)`);
                               if (p) patch(u.id, { password: p }, "Password reset");
                             }}
-                            className="rounded p-1 text-slate-400 hover:text-cyan-300 hover:bg-[#16233B] transition-colors"
+                            className="rounded p-1 text-slate-500 hover:text-sky-600 hover:bg-slate-100 transition-colors"
                           >
-                            <ShieldCheck size={13} />
+                            <ShieldCheck size={14} />
                           </button>
                           <button
                             data-testid={`user-delete-${u.email}`}
                             disabled={u.id === me?.id}
                             title="Delete Account"
                             onClick={() => remove(u)}
-                            className="rounded p-1 text-slate-400 hover:text-rose-400 disabled:opacity-30 hover:bg-[#16233B] transition-colors"
+                            className="rounded p-1 text-slate-500 hover:text-rose-600 disabled:opacity-30 hover:bg-slate-100 transition-colors"
                           >
-                            <Trash2 size={13} />
+                            <Trash2 size={14} />
                           </button>
                         </div>
                       </td>
@@ -312,10 +312,10 @@ export default function Users() {
         </div>
 
         {/* Role Requests Table */}
-        <div className="panel overflow-hidden border-[#1B2B44] bg-[#0A1424] shadow-xl fade-up" data-testid="role-requests">
-          <div className="flex items-center justify-between border-b border-[#1B2B44] px-4 py-3 bg-[#08101E]">
-            <h2 className="font-display text-sm font-bold text-white">Elevated Access Requests</h2>
-            <span className="font-mono text-[10px] uppercase tracking-wider text-slate-400">
+        <div className="panel overflow-hidden border-slate-200 bg-white shadow-xs" data-testid="role-requests">
+          <div className="flex items-center justify-between border-b border-slate-200 px-5 py-3.5 bg-slate-50/70">
+            <h2 className="font-display text-sm font-bold text-slate-900">Elevated Access Requests</h2>
+            <span className="font-mono text-[10px] uppercase tracking-wider text-slate-500">
               Viewers requesting Analyst / Supervisor privileges
             </span>
           </div>
@@ -323,7 +323,7 @@ export default function Users() {
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
-                <tr className="label-mono text-left border-b border-[#1B2B44] bg-[#070D18]">
+                <tr className="label-mono text-left border-b border-slate-200 bg-slate-50/70 text-slate-600">
                   {[
                     "Requested at",
                     "User",
@@ -335,25 +335,25 @@ export default function Users() {
                     "Status",
                     "Actions",
                   ].map((h) => (
-                    <th key={h} className="px-4 py-3 font-semibold text-slate-400">
+                    <th key={h} className="px-4 py-3 font-semibold">
                       {h}
                     </th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#1B2B44]/60">
+              <tbody className="divide-y divide-slate-100 bg-white">
                 {(reqs || []).map((r) => (
                   <tr
                     key={r.id}
                     data-testid={`role-request-row-${r.id}`}
-                    className="hover:bg-[#0E182A] transition-colors"
+                    className="hover:bg-slate-50/80 transition-colors"
                   >
-                    <td className="px-4 py-3 font-mono text-slate-400">{fmtTime(r.requested_at)}</td>
-                    <td className="px-4 py-3 text-slate-200 font-medium">{r.name || "—"}</td>
-                    <td className="px-4 py-3 font-mono text-slate-300">{r.email}</td>
+                    <td className="px-4 py-3 font-mono text-slate-500">{fmtTime(r.requested_at)}</td>
+                    <td className="px-4 py-3 text-slate-900 font-medium">{r.name || "—"}</td>
+                    <td className="px-4 py-3 font-mono text-slate-600">{r.email}</td>
                     <td
                       className="px-4 py-3 font-mono text-[10px] uppercase font-semibold"
-                      style={{ color: ROLE_COLOR[r.current_role] || "#94A3B8" }}
+                      style={{ color: ROLE_COLOR[r.current_role] || "#64748B" }}
                     >
                       {r.current_role}
                     </td>
@@ -363,8 +363,8 @@ export default function Users() {
                     >
                       {r.requested_role}
                     </td>
-                    <td className="px-4 py-3 text-slate-400">{r.organization || "—"}</td>
-                    <td className="px-4 py-3 text-slate-300 max-w-[220px] truncate" title={r.reason || ""}>
+                    <td className="px-4 py-3 text-slate-600">{r.organization || "—"}</td>
+                    <td className="px-4 py-3 text-slate-700 max-w-[220px] truncate" title={r.reason || ""}>
                       {r.reason || "—"}
                     </td>
                     <td
@@ -372,10 +372,10 @@ export default function Users() {
                       style={{
                         color:
                           r.status === "pending"
-                            ? "#F59E0B"
+                            ? "#D97706"
                             : r.status === "approved"
-                            ? "#10B981"
-                            : "#94A3B8",
+                            ? "#059669"
+                            : "#64748B",
                       }}
                     >
                       {r.status}
@@ -387,21 +387,21 @@ export default function Users() {
                             data-testid={`approve-request-${r.id}`}
                             title="Approve"
                             onClick={() => decide(r.id, "approve", r.email)}
-                            className="rounded p-1 text-emerald-400 hover:bg-emerald-400/15"
+                            className="rounded p-1 text-emerald-700 hover:bg-emerald-50"
                           >
-                            <Check size={14} />
+                            <Check size={15} />
                           </button>
                           <button
                             data-testid={`reject-request-${r.id}`}
                             title="Reject"
                             onClick={() => decide(r.id, "reject", r.email)}
-                            className="rounded p-1 text-rose-400 hover:bg-rose-400/15"
+                            className="rounded p-1 text-rose-700 hover:bg-rose-50"
                           >
-                            <X size={14} />
+                            <X size={15} />
                           </button>
                         </div>
                       ) : (
-                        <span className="text-slate-600">—</span>
+                        <span className="text-slate-400">—</span>
                       )}
                     </td>
                   </tr>
@@ -419,12 +419,12 @@ export default function Users() {
         </div>
 
         {/* Reset Requests Table */}
-        <div className="panel overflow-hidden border-[#1B2B44] bg-[#0A1424] shadow-xl fade-up" data-testid="reset-requests">
-          <div className="flex items-center justify-between border-b border-[#1B2B44] px-4 py-3 bg-[#08101E]">
-            <h2 className="font-display text-sm font-bold text-white">Password Reset Ledgers</h2>
+        <div className="panel overflow-hidden border-slate-200 bg-white shadow-xs" data-testid="reset-requests">
+          <div className="flex items-center justify-between border-b border-slate-200 px-5 py-3.5 bg-slate-50/70">
+            <h2 className="font-display text-sm font-bold text-slate-900">Password Reset Ledgers</h2>
             <span
               className="font-mono text-[10px] uppercase tracking-wider"
-              style={{ color: resets?.email_configured ? "#10B981" : "#F59E0B" }}
+              style={{ color: resets?.email_configured ? "#059669" : "#D97706" }}
               data-testid="email-delivery-status"
             >
               {resets?.email_configured
@@ -436,32 +436,32 @@ export default function Users() {
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
-                <tr className="label-mono text-left border-b border-[#1B2B44] bg-[#070D18]">
+                <tr className="label-mono text-left border-b border-slate-200 bg-slate-50/70 text-slate-600">
                   {["Requested at", "Email", "Delivery", "Status", "Link"].map((h) => (
-                    <th key={h} className="px-4 py-3 font-semibold text-slate-400">
+                    <th key={h} className="px-4 py-3 font-semibold">
                       {h}
                     </th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#1B2B44]/60">
+              <tbody className="divide-y divide-slate-100 bg-white">
                 {(resets?.requests || []).map((r) => {
                   const expired = new Date(r.expires_at) < new Date();
                   return (
                     <tr
                       key={r.id}
                       data-testid={`reset-request-${r.id}`}
-                      className="hover:bg-[#0E182A] transition-colors"
+                      className="hover:bg-slate-50/80 transition-colors"
                     >
-                      <td className="px-4 py-3 font-mono text-slate-400">{fmtTime(r.created_at)}</td>
-                      <td className="px-4 py-3 font-mono text-slate-200 font-medium">{r.email}</td>
+                      <td className="px-4 py-3 font-mono text-slate-500">{fmtTime(r.created_at)}</td>
+                      <td className="px-4 py-3 font-mono text-slate-900 font-medium">{r.email}</td>
                       <td
                         className="px-4 py-3 font-mono text-[10px] uppercase font-semibold"
-                        style={{ color: r.delivery === "email" ? "#10B981" : "#F59E0B" }}
+                        style={{ color: r.delivery === "email" ? "#059669" : "#D97706" }}
                       >
                         {r.delivery}
                       </td>
-                      <td className="px-4 py-3 font-mono text-[10px] uppercase text-slate-400">
+                      <td className="px-4 py-3 font-mono text-[10px] uppercase text-slate-500">
                         {r.used ? "used" : expired ? "expired" : "pending"}
                       </td>
                       <td className="px-4 py-3">
@@ -472,12 +472,12 @@ export default function Users() {
                               navigator.clipboard?.writeText(r.link);
                               toast.success("Reset link copied to clipboard");
                             }}
-                            className="font-mono text-[10.5px] uppercase tracking-wider text-cyan-300 hover:underline"
+                            className="font-mono text-[10.5px] uppercase tracking-wider text-sky-700 hover:underline font-semibold"
                           >
                             Copy Link
                           </button>
                         ) : (
-                          <span className="text-slate-600">—</span>
+                          <span className="text-slate-400">—</span>
                         )}
                       </td>
                     </tr>
