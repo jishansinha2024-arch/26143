@@ -49,7 +49,10 @@ async def login(body: LoginRequest, request: Request, response: Response):
     ident = f"{ip}:{email}"
     await check_lockout(ident)
     user = await db.users.find_one({"email": email})
-    if not user or not verify_password(body.password, user["password_hash"]):
+    if user and not user.get("password_hash"):
+        # Google-provisioned account with no password set: say so instead of a misleading "invalid password".
+        raise HTTPException(401, "This account signs in with Google. Use 'Continue with Google', or set a password via Create account.")
+    if not user or not verify_password(body.password, user.get("password_hash")):
         await record_failure(ident)
         raise HTTPException(401, "Invalid email or password")
     if not user.get("active", True):
@@ -121,7 +124,12 @@ async def google_session(body: GoogleSession, request: Request, response: Respon
 @router.post("/auth/guest")
 async def guest_session(request: Request, response: Response):
     """Public, server-issued READ-ONLY session (role=guest). No account, no DB user; every write is denied server-side."""
-    await rate_limit(f"guest:{_client_ip(request)}", 60, 3600)
+    try:
+        await rate_limit(f"guest:{_client_ip(request)}", 60, 3600)
+    except HTTPException:
+        raise
+    except Exception:  # noqa: BLE001 — the limiter is best-effort; a read-only guest token must not 500 because of it
+        logger.exception("guest rate limiter unavailable — issuing guest session anyway")
     token = create_guest_token()
     _set_auth_cookie(response, token, GUEST_ACCESS_HOURS * 3600)
     return {"access_token": token, "token_type": "bearer", "user": {"id": "guest", "email": None, "name": "Guest", "role": "guest", "active": True, "is_guest": True}}

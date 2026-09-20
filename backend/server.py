@@ -4,6 +4,8 @@ import os
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, APIRouter, Depends, Request
+from fastapi.responses import JSONResponse
+from pymongo.errors import PyMongoError
 from starlette.middleware.cors import CORSMiddleware
 
 from db import db, client, ensure_indexes
@@ -76,6 +78,20 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="Varuna Netra — Oil-Spill Detection & Vessel Correlation", version="0.1.0", lifespan=lifespan)
 api = APIRouter(prefix="/api")
+
+
+@app.exception_handler(PyMongoError)
+async def _db_error(request: Request, exc: PyMongoError):
+    """Database trouble is an availability problem (503), and the UI gets a message it can show."""
+    logger.error("database error on %s %s: %s: %s", request.method, request.url.path, type(exc).__name__, exc)
+    return JSONResponse(status_code=503, content={"detail": "The database is unreachable right now. Check MONGO_URL and the Atlas network allow-list, then retry."})
+
+
+@app.exception_handler(Exception)
+async def _unhandled_error(request: Request, exc: Exception):
+    """Any other bug: log the traceback and return JSON (never an opaque text/html 500)."""
+    logger.exception("unhandled error on %s %s", request.method, request.url.path)
+    return JSONResponse(status_code=500, content={"detail": f"Server error ({type(exc).__name__}). See the service logs for the traceback."})
 
 
 @app.get("/health")

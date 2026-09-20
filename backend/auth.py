@@ -1,5 +1,7 @@
+import logging
 import os
 import re
+import secrets
 from datetime import datetime, timedelta, timezone
 
 import bcrypt
@@ -9,6 +11,7 @@ from fastapi import Depends, HTTPException, Request
 from db import db, audit
 from models import new_id
 
+logger = logging.getLogger("auth")
 ALG = "HS256"
 ROLES = ["analyst", "supervisor", "admin"]  # legacy staff roles
 ALL_ROLES = ["guest", "viewer", "analyst", "supervisor", "admin"]
@@ -20,25 +23,48 @@ LOCKOUT_ATTEMPTS, LOCKOUT_MINUTES = 5, 15
 GUEST_USER = {"id": "guest", "email": None, "name": "Guest", "role": "guest", "active": True, "is_guest": True}
 
 
+_FALLBACK_SECRET: str = ""
+
+
+def jwt_secret() -> str:
+    """JWT signing key from JWT_SECRET. If the deployment forgot to set it, fall back to a per-process
+    random key (and warn) instead of crashing every login/guest request with a 500. Sessions then only
+    survive until the next restart, which is the safe failure mode."""
+    global _FALLBACK_SECRET
+    sec = os.environ.get("JWT_SECRET", "").strip()
+    if sec:
+        return sec
+    if not _FALLBACK_SECRET:
+        _FALLBACK_SECRET = secrets.token_urlsafe(48)
+        logger.warning("JWT_SECRET is not set — using an ephemeral signing key. Set JWT_SECRET so sessions survive restarts.")
+    return _FALLBACK_SECRET
+
+
 def hash_password(p: str) -> str:
-    return bcrypt.hashpw(p.encode(), bcrypt.gensalt()).decode()
+    return bcrypt.hashpw(p.encode()[:72], bcrypt.gensalt()).decode()
 
 
-def verify_password(p: str, h: str) -> bool:
-    return bcrypt.checkpw(p.encode(), h.encode())
+def verify_password(p: str, h) -> bool:
+    """Never raises: a missing/non-bcrypt hash (e.g. Google-only account) or odd input is simply 'wrong password'."""
+    if not h or not isinstance(h, str):
+        return False
+    try:
+        return bcrypt.checkpw(p.encode()[:72], h.encode())
+    except (ValueError, TypeError):
+        return False
 
 
 def create_access_token(user: dict) -> str:
     payload = {"sub": user["id"], "email": user["email"], "role": user["role"], "type": "access",
                "exp": datetime.now(timezone.utc) + timedelta(hours=ACCESS_HOURS)}
-    return jwt.encode(payload, os.environ["JWT_SECRET"], algorithm=ALG)
+    return jwt.encode(payload, jwt_secret(), algorithm=ALG)
 
 
 def create_guest_token() -> str:
     """Server-issued read-only session. No DB user — role 'guest' is denied every write by require_role."""
     payload = {"sub": "guest", "email": "guest", "role": "guest", "type": "access",
                "exp": datetime.now(timezone.utc) + timedelta(hours=GUEST_ACCESS_HOURS)}
-    return jwt.encode(payload, os.environ["JWT_SECRET"], algorithm=ALG)
+    return jwt.encode(payload, jwt_secret(), algorithm=ALG)
 
 
 def validate_password(p: str) -> None:
@@ -74,7 +100,7 @@ async def get_current_user(request: Request) -> dict:
     if not token:
         raise HTTPException(401, "Not authenticated")
     try:
-        payload = jwt.decode(token, os.environ["JWT_SECRET"], algorithms=[ALG])
+        payload = jwt.decode(token, jwt_secret(), algorithms=[ALG])
     except jwt.ExpiredSignatureError:
         raise HTTPException(401, "Token expired")
     except jwt.InvalidTokenError:
@@ -120,7 +146,7 @@ async def upsert_user(email: str, password: str, name: str, role: str):
     if not existing:
         await db.users.insert_one({"id": new_id(), "email": email, "password_hash": hash_password(password), "name": name, "role": role,
                                    "active": True, "created_at": datetime.now(timezone.utc)})
-    elif not verify_password(password, existing["password_hash"]):
+    elif not verify_password(password, existing.get("password_hash")):
         await db.users.update_one({"email": email}, {"$set": {"password_hash": hash_password(password)}})
 
 

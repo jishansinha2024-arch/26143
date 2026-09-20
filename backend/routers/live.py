@@ -1,5 +1,4 @@
 import asyncio
-import os
 from datetime import datetime, timezone
 from typing import Literal, Optional
 
@@ -8,7 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
-from auth import ALG, get_current_user, require_role
+from auth import ALG, GUEST_USER, get_current_user, jwt_secret, require_role
 from db import db, clean, audit
 from events import publish, subscribe, unsubscribe, subscriber_count
 from models import new_id
@@ -19,9 +18,11 @@ FP_REASONS = ["low_wind", "wake", "upwelling", "land_shore", "biogenic_slick", "
 
 async def _user_from_token(token: str) -> dict:
     try:
-        payload = jwt.decode(token, os.environ["JWT_SECRET"], algorithms=[ALG])
+        payload = jwt.decode(token, jwt_secret(), algorithms=[ALG])
     except jwt.InvalidTokenError:
         raise HTTPException(401, "invalid token")
+    if payload.get("role") == "guest":  # read-only public session: no DB user, but may watch the live stream
+        return dict(GUEST_USER)
     user = await db.users.find_one({"id": payload.get("sub"), "active": True}, {"_id": 0})
     if not user:
         raise HTTPException(401, "user not found")
