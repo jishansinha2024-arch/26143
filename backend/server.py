@@ -31,6 +31,12 @@ logger = logging.getLogger("sentinelmar")
 async def _startup_tasks():
     """Indexes, seeds and background workers — run after the server is listening so health probes pass immediately."""
     try:
+        try:
+            await db.command("ping")
+            logger.info("MongoDB connection OK (db=%s)", db.name)
+        except Exception as exc:  # noqa: BLE001
+            logger.error("MongoDB connection FAILED at startup — %s | raw: %s: %s", _db_hint(exc), type(exc).__name__, exc)
+            raise
         await ensure_indexes()
         await seed_users()
         from dashboard import tag_origins
@@ -80,11 +86,26 @@ app = FastAPI(title="Varuna Netra — Oil-Spill Detection & Vessel Correlation",
 api = APIRouter(prefix="/api")
 
 
+def _db_hint(exc: Exception) -> str:
+    """Plain-language cause for a MongoDB failure (class + hint only — never the raw message, which can contain hosts/credentials)."""
+    name = type(exc).__name__
+    msg = str(exc).lower()
+    if "authentication failed" in msg or "bad auth" in msg or getattr(exc, "code", None) == 18:
+        why = "Atlas rejected the username/password in MONGO_URL (check Database Access; URL-encode special characters in the password)."
+    elif "ssl" in msg or "tls" in msg or "timed out" in msg or name == "ServerSelectionTimeoutError":
+        why = "Cannot connect to the cluster: add 0.0.0.0/0 in Atlas Network Access, make sure the cluster is not paused, and check the host in MONGO_URL."
+    elif name in ("ConfigurationError", "InvalidURI") or "srv" in msg or "dns" in msg:
+        why = "MONGO_URL is malformed or its hostname does not resolve (copy the mongodb+srv:// string from Atlas > Connect > Drivers)."
+    else:
+        why = "Check MONGO_URL, DB_NAME and the Atlas network allow-list."
+    return f"{name}: {why}"
+
+
 @app.exception_handler(PyMongoError)
 async def _db_error(request: Request, exc: PyMongoError):
     """Database trouble is an availability problem (503), and the UI gets a message it can show."""
     logger.error("database error on %s %s: %s: %s", request.method, request.url.path, type(exc).__name__, exc)
-    return JSONResponse(status_code=503, content={"detail": "The database is unreachable right now. Check MONGO_URL and the Atlas network allow-list, then retry."})
+    return JSONResponse(status_code=503, content={"detail": f"The database is unreachable right now. {_db_hint(exc)}"})
 
 
 @app.exception_handler(Exception)
@@ -104,12 +125,15 @@ async def api_health(request: Request):
     """Deployment health: production/demo mode, AIS key presence (boolean only) and truthful AIS runtime state. Never starts workers, never exposes secrets."""
     st = await ais_live.status_async()
     db_ok = True
+    db_error = None
     try:
         await db.command("ping")
-    except Exception:  # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         db_ok = False
+        db_error = _db_hint(exc)
+        logger.error("health ping failed: %s: %s", type(exc).__name__, exc)
     from google_auth import capabilities
-    return {"status": "ok" if db_ok else "degraded", "ready": bool(getattr(app.state, "ready", False)), "environment": APP_ENV, "request_origin_seen": request.headers.get("origin"), "demo_mode": DEMO_MODE, "database": "online" if db_ok else "offline",
+    return {"status": "ok" if db_ok else "degraded", "ready": bool(getattr(app.state, "ready", False)), "environment": APP_ENV, "request_origin_seen": request.headers.get("origin"), "demo_mode": DEMO_MODE, "database": "online" if db_ok else "offline", "database_error": db_error,
             "authentication": capabilities()["authentication"],
             "ais": {"key_configured": st["configured"], "state": st["state"], "feed": st.get("feed"), "connected": st["connected"], "subscription_confirmed": st["subscription_confirmed"],
                     "messages_received": st["messages_received"], "positions_stored": st["positions_stored"], "vessels_active": st["vessels_active"], "last_message_at": st["last_message_at"],
