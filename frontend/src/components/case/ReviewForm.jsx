@@ -4,7 +4,7 @@ import { ShieldAlert } from "lucide-react";
 import { api, apiError, hasRole, STATUS_LABEL } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
 
-const inputCls = "w-full rounded border bg-mist px-2.5 py-1.5 text-sm text-slate-800 outline-none focus:border-tide/60";
+const inputCls = "w-full rounded border bg-slate-900/60 px-2.5 py-1.5 text-sm text-slate-100 outline-none focus:border-cyan-400/60";
 const bd = { borderColor: "var(--border-highlight)" };
 
 export const ReviewForm = ({ caseId, candidates, reasonCodes, resultVersion, onSaved }) => {
@@ -29,15 +29,15 @@ export const ReviewForm = ({ caseId, candidates, reasonCodes, resultVersion, onS
 
   return (
     <div className="space-y-4 p-4" data-testid="review-form">
-      <p className="text-xs text-slate-400">Decisions are immutable and signed as <span className="font-mono text-slate-700" data-testid="review-signer">{user?.name} · {user?.email} · {user?.role}</span>. Prior automated results are preserved.</p>
+      <p className="text-xs text-slate-400">Decisions are immutable and signed as <span className="font-mono text-slate-200" data-testid="review-signer">{user?.name} · {user?.email} · {user?.role}</span>. Prior automated results are preserved.</p>
       <div className="grid grid-cols-3 gap-2">
-        {[["confirm", "Confirm", "#2E8B6A", "btn-confirm-analyst-review"], ["reject", "Reject", "#D4604D", "btn-reject-analyst-review"], ["needs_more_data", "Needs data", "#C48A22", "btn-needs-data-analyst-review"]].map(([v, l, col, tid]) => (
+        {[["confirm", "Confirm", "#006a61", "btn-confirm-analyst-review"], ["reject", "Reject", "#ba1a1a", "btn-reject-analyst-review"], ["needs_more_data", "Needs data", "#b26a00", "btn-needs-data-analyst-review"]].map(([v, l, col, tid]) => (
           <button key={v} data-testid={tid} onClick={() => setDecision(v)} className="rounded border px-2 py-2 font-mono text-[11px] uppercase tracking-wider transition-colors"
-            style={{ borderColor: decision === v ? col : "var(--border-highlight)", color: decision === v ? col : "#7D919C", background: decision === v ? `${col}18` : "transparent" }}>{l}</button>
+            style={{ borderColor: decision === v ? col : "var(--border-highlight)", color: decision === v ? col : "#707881", background: decision === v ? `${col}18` : "transparent" }}>{l}</button>
         ))}
       </div>
       <div>
-        <label className="label-mono block mb-1">Vessel {decision === "confirm" && <span style={{ color: "#D4604D" }}>*</span>}</label>
+        <label className="label-mono block mb-1">Vessel {decision === "confirm" && <span style={{ color: "#ba1a1a" }}>*</span>}</label>
         <select data-testid="review-vessel-select" value={mmsi} onChange={(e) => setMmsi(e.target.value)} className={inputCls} style={bd}>
           <option value="">— none —</option>
           {candidates?.map((c) => <option key={c.mmsi} value={c.mmsi}>{`#${c.rank} ${c.vessel_name || c.mmsi} (${c.mmsi})`}</option>)}
@@ -48,7 +48,7 @@ export const ReviewForm = ({ caseId, candidates, reasonCodes, resultVersion, onS
         <div className="flex flex-wrap gap-1.5">
           {Object.entries(reasonCodes || {}).map(([code, desc]) => (
             <button key={code} title={desc} data-testid={`reason-code-${code}`} onClick={() => toggle(code)}
-              className={`rounded px-2 py-1 font-mono text-[10px] transition-colors ${codes.includes(code) ? "bg-tide/15 text-tide border border-tide/50" : "border border-slate-700 text-slate-400 hover:text-slate-800"}`}>{code.split("_")[0]}</button>
+              className={`rounded px-2 py-1 font-mono text-[10px] transition-colors ${codes.includes(code) ? "bg-cyan-400/15 text-cyan-300 border border-cyan-400/50" : "border border-slate-700 text-slate-400 hover:text-on-surface"}`}>{code.split("_")[0]}</button>
           ))}
         </div>
         {codes.length > 0 && <p className="mt-1.5 text-[11px] text-slate-400">{codes.map((c) => reasonCodes[c]).join(" · ")}</p>}
@@ -57,7 +57,7 @@ export const ReviewForm = ({ caseId, candidates, reasonCodes, resultVersion, onS
         <label className="label-mono block mb-1">Notes</label>
         <textarea data-testid="review-notes-input" value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} className={inputCls} style={bd} placeholder="Corroborating intel, inspection results, uncertainty remarks…" />
       </div>
-      <button data-testid="review-submit-button" disabled={busy} onClick={submit} className="rounded bg-ink px-4 py-1.5 font-mono text-xs font-semibold uppercase tracking-wider text-paper hover:bg-tide disabled:opacity-50">
+      <button data-testid="review-submit-button" disabled={busy} onClick={submit} className="rounded bg-cyan-400 px-4 py-1.5 font-mono text-xs font-semibold uppercase tracking-wider text-slate-950 hover:bg-cyan-300 disabled:opacity-50">
         {busy ? "Saving…" : "Record decision"}
       </button>
       {hasRole(user, "supervisor") && <OverrideForm caseId={caseId} candidates={candidates} onSaved={onSaved} />}
@@ -79,8 +79,8 @@ const OverrideForm = ({ caseId, candidates, onSaved }) => {
     } catch (e) { toast.error(apiError(e)); } finally { setBusy(false); }
   };
   return (
-    <div className="mt-2 rounded border p-3" style={{ borderColor: "rgba(184,134,42,0.4)", background: "rgba(184,134,42,0.05)" }} data-testid="override-panel">
-      <button data-testid="btn-override-toggle" onClick={() => setOpen(!open)} className="flex w-full items-center gap-2 font-mono text-[11px] uppercase tracking-wider text-amber-700"><ShieldAlert size={13} /> Supervisor override {open ? "▾" : "▸"}</button>
+    <div className="mt-2 rounded border p-3" style={{ borderColor: "rgba(178,106,0,0.4)", background: "rgba(178,106,0,0.05)" }} data-testid="override-panel">
+      <button data-testid="btn-override-toggle" onClick={() => setOpen(!open)} className="flex w-full items-center gap-2 font-mono text-[11px] uppercase tracking-wider text-amber-300"><ShieldAlert size={13} /> Supervisor override {open ? "▾" : "▸"}</button>
       {open && (
         <div className="mt-3 space-y-2 fade-up">
           <p className="text-[11px] text-slate-400">Force the attribution status and close the case. Logged as an immutable override decision.</p>
@@ -92,7 +92,7 @@ const OverrideForm = ({ caseId, candidates, onSaved }) => {
             {candidates?.map((c) => <option key={c.mmsi} value={c.mmsi}>{`#${c.rank} ${c.vessel_name || c.mmsi} (${c.mmsi})`}</option>)}
           </select>
           <textarea data-testid="override-notes-input" rows={2} className={inputCls} style={bd} value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Justification (required)" />
-          <button data-testid="btn-override-submit" disabled={busy || notes.trim().length < 3} onClick={submit} className="rounded px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-slate-950 disabled:opacity-50" style={{ background: "#C48A22" }}>{busy ? "Saving…" : "Apply override"}</button>
+          <button data-testid="btn-override-submit" disabled={busy || notes.trim().length < 3} onClick={submit} className="rounded px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-slate-950 disabled:opacity-50" style={{ background: "#b26a00" }}>{busy ? "Saving…" : "Apply override"}</button>
         </div>
       )}
     </div>

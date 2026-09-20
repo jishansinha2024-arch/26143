@@ -74,7 +74,7 @@ def ingest_enabled() -> bool:
     return os.environ.get("AIS_INGEST_ENABLED", "true").strip().lower() not in ("0", "false", "no")
 
 
-KEY_CONFLICT_REASON = "AISStream allows only 1 active connection per user account. Another instance (e.g. preview, local dev, or previous deployment container) is connected. Ensure AIS_INGEST_ENABLED=false on secondary instances or wait for previous container to spin down, then click Reconnect now."
+KEY_CONFLICT_REASON = "Another environment/client currently owns this AISStream API key (one connection per key). Production must own the feed; set AIS_INGEST_ENABLED=false on preview or use a separate key."
 STANDBY_DISABLED_REASON = "AIS ingestion disabled on this instance (AIS_INGEST_ENABLED=false) to protect the production live feed."
 
 
@@ -289,8 +289,8 @@ def _handshake_message(status: int, phrase: str, body: str) -> tuple:
     if status in (401, 403):
         return (f"HANDSHAKE_REJECTED: AISStream answered HTTP {status} {phrase}".strip() + " before the socket opened. The key was refused or this host's IP is blocked — "
                 f"create a fresh key at aisstream.io, make sure it is Active, and paste it into AISSTREAM_API_KEY with no spaces/quotes.{extra}", 120.0)
-    if status == 429 or "concurrent connections" in body.lower():
-        return (f"KEY_CONFLICT: AISStream answered HTTP 429 (concurrent connections per user exceeded). Another client, preview instance, or prior container is connected.{extra}", 300.0)
+    if status == 429:
+        return (f"HANDSHAKE_REJECTED: AISStream answered HTTP 429 (too many connection attempts from this host). Backing off automatically — do not redeploy repeatedly.{extra}", 300.0)
     if status >= 500:
         return (f"HANDSHAKE_REJECTED: AISStream answered HTTP {status} {phrase}".strip() + f" — their service is temporarily unavailable. Retrying automatically with back-off.{extra}", 90.0)
     return (f"HANDSHAKE_REJECTED: AISStream answered HTTP {status} {phrase}".strip() + f" instead of opening a WebSocket.{extra}", 120.0)
@@ -308,8 +308,7 @@ def reconnect_now() -> dict:
     """Operator action: forget the failure streak / conflict verdict and dial AISStream again immediately."""
     state["kicks"] = 0
     state["handshake_fails"] = 0
-    state["last_http_status"] = None
-    if str(state.get("error") or "").startswith(("KEY_IN_USE_ELSEWHERE", "KEY_ROTATED", "KEY_CONFLICT", "HANDSHAKE_REJECTED")):
+    if str(state.get("error") or "").startswith(("KEY_IN_USE_ELSEWHERE", "KEY_ROTATED", "HANDSHAKE_REJECTED")):
         state["error"] = None
     _reconnect_event.set()
     return {"ok": True, "message": "Reconnecting to AISStream now"}
@@ -405,6 +404,16 @@ def stop() -> None:
         _task.cancel()
 
 
+async def stop_and_wait(timeout: float = 6.0) -> None:
+    """Shutdown path: cancel the worker AND wait for it, so the AISStream socket gets a proper close handshake.
+    A container that is killed with the socket still open leaves AISStream believing the connection is alive for a few
+    minutes — the replacement instance is then refused with HTTP 429 (concurrent connections per user exceeded)."""
+    t = _task
+    if t and not t.done():
+        t.cancel()
+        await asyncio.wait({t}, timeout=timeout)
+
+
 def connection_state() -> str:
     """NOT_CONFIGURED | STANDBY (ingest disabled or another worker holds the lease) | CONNECTING | CONNECTED (no regional data yet) | LIVE | STALE | RECONNECTING | KEY_CONFLICT | OFFLINE."""
     if state["role"] == "disabled":
@@ -420,8 +429,7 @@ def connection_state() -> str:
         if state["last_position_at"] and (now - state["last_position_at"]).total_seconds() > STALE_MIN * 60:
             return "STALE"
         return "CONNECTED"
-    err_str = str(state.get("error") or "")
-    if err_str.startswith(("KEY_IN_USE_ELSEWHERE", "KEY_CONFLICT")) or state.get("last_http_status") == 429 or "concurrent connections" in err_str.lower():
+    if str(state["error"] or "").startswith("KEY_IN_USE_ELSEWHERE"):
         return "KEY_CONFLICT"
     if state["socket_open"]:
         return "CONNECTING"  # handshake done, waiting ≤5 s for AISStream to accept/reject the subscription
@@ -434,7 +442,7 @@ def connection_state() -> str:
 
 def _feed_label(st: str) -> str:
     return {"LIVE": "LIVE", "CONNECTED": "CONNECTED — NO REGIONAL AIS COVERAGE (no positions yet in the selected AOI)", "STALE": "STALE — connected, no positions for >%d min" % STALE_MIN,
-            "CONNECTING": "CONNECTING", "RECONNECTING": "RECONNECTING", "OFFLINE": "OFFLINE", "NOT_CONFIGURED": "UNCONFIGURED", "KEY_CONFLICT": "CONNECTION LIMIT — another client is connected (one connection per account)",
+            "CONNECTING": "CONNECTING", "RECONNECTING": "RECONNECTING", "OFFLINE": "OFFLINE", "NOT_CONFIGURED": "UNCONFIGURED", "KEY_CONFLICT": "KEY CONFLICT — another environment owns this AISStream key",
             "STANDBY": "STANDBY — AIS ingestion disabled on this instance" if state["role"] == "disabled" else "STANDBY (another backend worker holds the single AISStream connection)"}.get(st, st)
 
 
@@ -453,8 +461,8 @@ def _status_fields() -> dict:
             "reason": None if (state["socket_open"] and state["subscription_confirmed"]) else (
                 STANDBY_DISABLED_REASON if state["role"] == "disabled" else
                 "API key not configured" if not key_configured() else
-                KEY_CONFLICT_REASON if st == "KEY_CONFLICT" else
                 state["error"] if str(state["error"] or "").startswith("HANDSHAKE_REJECTED") else
+                KEY_CONFLICT_REASON if st == "KEY_CONFLICT" else
                 "WebSocket authentication failed (AISStream rejected the API key)" if state["error"] and ("api key" in str(state["error"]).lower() or "1008" in str(state["error"])) else
                 "Connection lost — reconnecting with backoff" if state["error"] else "Connecting")}
 

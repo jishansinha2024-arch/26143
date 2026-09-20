@@ -20,11 +20,11 @@ export default function AuthCallback() {
   }, [loc, loginWithGoogleSession, nav]);
 
   return (
-    <div className="daylight grid h-screen place-items-center p-6" data-testid="auth-callback">
+    <div className="grid h-screen place-items-center p-6" style={{ background: "var(--bg-primary)" }} data-testid="auth-callback">
       {!error ? <p className="font-mono text-xs text-slate-400" data-testid="auth-callback-busy">Completing Google sign-in…</p> : (
         <div className="panel max-w-md p-6 text-center">
-          <p className="text-sm" style={{ color: "#D4604D" }} data-testid="auth-callback-error">{error}</p>
-          <Link to="/login" className="mt-4 inline-block font-mono text-[11px] uppercase tracking-wider text-tide" data-testid="auth-callback-back">Back to sign in</Link>
+          <p className="text-sm" style={{ color: "#ba1a1a" }} data-testid="auth-callback-error">{error}</p>
+          <Link to="/login" className="mt-4 inline-block font-mono text-[11px] uppercase tracking-wider text-cyan-300" data-testid="auth-callback-back">Back to sign in</Link>
         </div>
       )}
     </div>

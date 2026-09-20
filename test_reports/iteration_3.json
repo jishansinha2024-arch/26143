@@ -1,0 +1,27 @@
+{
+  "summary": "Iteration 3 testing complete. Backend: 23/23 pytest tests PASSED (password reset flow incl. logged fallback + admin list + short/reused/wrong token errors + password restore; CSV preview/ingest/dedup + semicolon/lowercase auto-detect + missing-column + empty + unauth; jurisdictions seeded (6 zones) + geojson + seeded cases NLD-EEZ + Rotterdam PS wins over EEZ + far-outside null + admin CRUD (create/dup/invalid zone_type/invalid geometry/analyst 403/update/delete) + resolve-all + resolve-case + PDF still 200; vessel profile NORDIC TRADER with appearances/ais_summary/decisions/summary + review integration + 404 unknown + 401 unauth). Frontend: verified /login forgot-password-link → /forgot-password page → forgot-password-done + fallback text; /reset-password without token → reset-missing-token; admin /users shows reset-requests table with 3 copy-reset-link buttons and email-delivery-status text ('email delivery not configured'); /zones page loads Leaflet map with 6 zones (BEL/DEU/DNK/GBR/NLD-EEZ + NLD-PS-RTM), admin sees zone-create-form + btn-resolve-all; analyst sees list only (no create-form, no toggle/delete); dashboard case-jurisdiction-SPL-20260610-001='NLD-EEZ'; case detail case-jurisdiction-chip='NLD-EEZ · Rijkswaterstaat / Netherlands Coastguard', map-toggle-zones-layer present, vessel-history-link-244123456 navigates to /vessels/244123456 showing NORDIC TRADER with all KPIs, vessel-cases (4 rows incl. vessel-case-SPL-20260610-001), vessel-decisions (iter3 test review), vessel-ais-summary; /ingest ais-mode-csv + ais-mode-json toggles, csv-dropzone + csv-file-input upload → csv-preview '3 rows' → btn-csv-ingest enabled → csv-result 'rows 3 · inserted 2 · duplicates 0 · flagged 0 · row errors 1'; vessels-list + vessel-link-244123456 present; /vessels/000000000 shows vessel-error.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "test_report_links": [
+    "/app/backend/tests/test_iteration3.py",
+    "/app/test_reports/pytest/iter3_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "routers/auth.py password reset: token stored as sha256 hash, one-hour expiry, single-use (used flag + link nulled), 422 for token<16 chars via pydantic min_length, generic message for unknown emails (no enumeration). Clean.",
+    "routers/ingest.py CSV: 25MB cap, empty-body 400, missing-required 400 with 'no valid rows parsed / missing required column mapping'. Header auto-detect covers common AIS/MMSI aliases and semicolon delimiter. dedup working via dedup_hash.",
+    "routers/jurisdictions.py: proper RBAC (admin for CRUD/resolve-all, analyst for resolve one), zone_type validation, geometry validation, duplicate code rejected. NL port_state correctly wins over eez in primary selection.",
+    "routers/ingest.py vessel_profile: excludes _id, aggregates latest correlation per case, correctly reports confirmed_this_vessel, top_ranked, and includes decisions with case_number lookup. 404 for unknown MMSI.",
+    "Frontend uses data-testid consistently — every element referenced in the review request was present and functional."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_iteration3.py (new — 23 tests)"
+  ],
+  "success_rate": {"backend": "100% (23/23)", "frontend": "100% (all iteration-3 flows verified)"},
+  "test_credentials": "admin shawpriyanshu950@gmail.com/Admin#2026, supervisor supervisor@sentinelmar.demo/Supervisor#2026, analyst analyst@sentinelmar.demo/Analyst#2026 — all working. Analyst password was reset to NewPass#2026 during flow tests and restored back to Analyst#2026 via admin PATCH.",
+  "seed_data_creation": "Backend tests created: (a) a fresh spill observation inside Rotterdam PS box and one far outside (10W 40N) — added 2 new SPL cases; (b) TEST_-prefixed jurisdiction 'TEST-Z-<epoch>' created/updated/deleted; (c) AIS positions for MMSI 999000111 and 999000222 via CSV ingest; (d) UI test also ingested MMSI 999000333 via /ingest. Analyst posted a needs_more_data review on SPL-20260610-002 naming MMSI 244123456 (visible now on vessel profile decisions list). Multiple password_reset_tokens rows exist (some used).",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Analyst password confirmed restored to Analyst#2026 at end. SPL-20260610-002 now has an analyst review naming MMSI 244123456. A few extra unresolved SPL cases from Rotterdam/far-outside spill tests exist; harmless. RESEND_API_KEY stays empty by design → password reset falls back to logged with link surfaced via GET /api/auth/reset-requests and /users page. No blocking issues found.",
+  "rca of the issue": "N/A — no failures."
+}

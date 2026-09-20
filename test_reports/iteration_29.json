@@ -1,0 +1,26 @@
+{
+  "summary": "Iteration 29 SIH judge-readiness audit — 19/19 backend pytest tests PASS and all frontend acceptance criteria verified. Backend: /api/auth/capabilities public with google.status=READY, email_password=true, demo_mode=false, no secrets; /api/health authentication block matches; bogus /api/auth/google/session → 401 with user-friendly message and no traceback, password login unaffected; admin login OK, wrong password → 401 generic 'Invalid email or password', /api/users → 401 unauth / 403 analyst / 200 admin with NO password_hash on any of the users; JWT survives `sudo supervisorctl restart backend` (5s wait) and /api/auth/me still 200; /api/auth/logout ok. Cases: 112 real cases returned, every row has origin_label ∈ {LIVE DETECTED, ANALYST CREATED}, correlation_state ∈ {NOT_ANALYZED, NO_AIS_COVERAGE, NO_CANDIDATE_IN_TIME_WINDOW, SCORED} with matching label; dark_spot_detector rows have detection_confidence_source='detector', others 'registrant'; latest_result_version 0/None ⇒ NOT_ANALYZED holds; SPL-20260910-106 (252e536c…) is SCORED with candidate_count=5. Imported cases (85): all origin_label='IMPORTED HISTORICAL'. cases?origin=all count=197 == summary.cases.all_records. Dashboard summary source='database', live_cases=107 exactly matches count of open real cases; imported (85) excluded. Provenance: detector case has data_mode 'LIVE DETECTED', badge EXPERIMENTAL, numeric confidence, source detector; imported case has data_mode 'IMPORTED HISTORICAL' (never 'LIVE'), confidence null, confidence_note contains 'N/A'; SPL-20260910-106 provenance shows analysis.candidates=5 and ais.observations=35. Candidates factor sum equals score within 0.01 for all 5 candidates (weights from result.params, no frontend numbers). Frontend: /login shows email+password form, 'or' divider and Continue with Google (data-testid=google-signin-button); demo accounts block hidden; clicking Google navigates to https://auth.emergentagent.com/?redirect=… (captured on outgoing request). /#session_id=bogus-iter29 renders auth-callback-error 'Google sign-in could not be verified. Please try again.' plus 'Back to sign in' link, no crash, no redirect loop. Admin dashboard: heading 'Investigation cases · 112' matches API count; 112 origin pills, 112 conf cells, 112 band cells, 112 topscore cells; samples confirm ANALYST CREATED shows Det.conf 'N/A' while LIVE DETECTED rows show percentages; band/top score show truthful 'NOT ANALYZED'/'NO AIS COVERAGE'/'low'/'0.373' — no bare em-dashes for analyzed rows; SPL-20260910-106 row shows LOW / 0.373 / 5 candidates as expected; KPI live_cases 107 / pending 107 / AIS 333 identical to /api/dashboard/summary; 0 console errors (tile-noise filtered). /health page has data-testid='health-auth' card containing 'READY' and 'ENABLED'. Logout via data-testid='logout-button' in layout redirects to /login and browser-context /api/auth/me subsequently returns 401. No app-blocking issues found.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "test_report_links": [
+    "/app/backend/tests/test_iteration29.py",
+    "/app/test_reports/pytest/iter29_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Positive: google_session error responses use user-friendly detail, no stack trace leakage; capabilities endpoint filters out client_secret/api_key fields correctly.",
+    "Positive: annotate_cases in dashboard.py produces mutually-exclusive correlation_state values that align with latest_result_version (NOT_ANALYZED is enforced when lrv is 0/None). Verified on all 112 real rows.",
+    "Positive: candidate factors carry weight+contribution from result.params — sum equals top score within 1e-4 for all 5 candidates on SPL-20260910-106, so Why-This-Vessel breakdown is fully backend-driven.",
+    "Nit: /api/cases limit maxes at 1000 (422 above). all_records=197 currently fits, but if the corpus grows past 1000, cases?origin=all vs dashboard.cases.all_records will silently drift. Consider paginating or raising the cap for admin GETs."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_iteration29.py"
+  ],
+  "success_rate": {"backend": "100% (19/19)", "frontend": "100% (all acceptance criteria met)"},
+  "test_credentials": "admin shawpriyanshu950@gmail.com / Admin#2026, analyst analyst@sentinelmar.demo / Analyst#2026 — both OK.",
+  "seed_data_creation": "None — read-only, no cases/spills created.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Iteration 29 verified SIH judge-readiness surface: capabilities/health auth block, google gating + failure paths, Investigation Cases provenance labels & correlation states, dashboard live_cases vs imported split, provenance for detector/imported/target cases, candidates factor sums, logout. Real case count is 112, imported 85, all_records 197, live_cases 107. Target case SPL-20260910-106 (id 252e536c-1d84-4f65-9b23-5a8836d9f57b) is SCORED with 5 candidates, top score 0.373, 35 AIS observations. pytest file: /app/backend/tests/test_iteration29.py — reuse as regression suite.",
+  "rca_of_the_issue": "n/a — no bugs found in this iteration."
+}

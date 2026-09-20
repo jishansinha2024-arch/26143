@@ -4,12 +4,12 @@ import { Activity, Satellite, Radio, Database, Cpu, Trash2, Download, ShieldAler
 import { api, apiError, fmtTime, hasRole, pollJob } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
 
-const Dot = ({ ok, warn }) => <span className={`inline-block h-2 w-2 rounded-full ${ok ? "bg-emerald-400 shadow-[0_0_8px_#2E8B6A]" : warn ? "bg-amber-400 shadow-[0_0_8px_#C48A22]" : "bg-rose-500 shadow-[0_0_8px_#D4604D]"}`} />;
+const Dot = ({ ok, warn }) => <span className={`inline-block h-2 w-2 rounded-full ${ok ? "bg-emerald-400 shadow-[0_0_8px_#006a61]" : warn ? "bg-amber-400 shadow-[0_0_8px_#b26a00]" : "bg-rose-500 shadow-[0_0_8px_#ba1a1a]"}`} />;
 const card = { border: "1px solid var(--border-default)", background: "var(--bg-secondary)" };
 const Card = ({ icon: Icon, title, ok, warn, children, testid }) => (
   <section className="rounded p-4" style={card} data-testid={testid}>
-    <div className="mb-2 flex items-center gap-2"><Icon size={14} className="text-tide" /><h2 className="font-display text-sm font-semibold">{title}</h2><span className="ml-auto flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider text-slate-400"><Dot ok={ok} warn={warn} />{ok ? "online" : warn ? "connecting" : "offline"}</span></div>
-    <div className="space-y-1 font-mono text-[11px] text-slate-600">{children}</div>
+    <div className="mb-2 flex items-center gap-2"><Icon size={14} className="text-cyan-300" /><h2 className="font-display text-sm font-semibold">{title}</h2><span className="ml-auto flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider text-slate-400"><Dot ok={ok} warn={warn} />{ok ? "online" : warn ? "connecting" : "offline"}</span></div>
+    <div className="space-y-1 font-mono text-[11px] text-slate-300">{children}</div>
   </section>
 );
 const Row = ({ k, v, testid }) => <div className="flex justify-between gap-3"><span className="text-slate-500">{k}</span><span className="text-right" data-testid={testid}>{v ?? "—"}</span></div>;
@@ -48,21 +48,21 @@ export default function SystemHealth() {
     <div className="h-full overflow-y-auto p-6" data-testid="system-health-page">
       <div className="mb-4 flex flex-wrap items-center gap-3">
         <div><p className="label-mono">Data sources · system health</p><h1 className="font-display text-2xl font-extrabold tracking-tight">Live operations</h1></div>
-        <span data-testid="data-mode-badge" className={`rounded px-2 py-1 font-mono text-[11px] font-bold uppercase tracking-[0.2em] ${dm.mode === "PRODUCTION" ? "bg-emerald-400/15 text-emerald-700 border border-emerald-400/50" : "bg-amber-400/15 text-amber-700 border border-amber-400/50"}`}>{dm.mode} mode</span>
+        <span data-testid="data-mode-badge" className={`rounded px-2 py-1 font-mono text-[11px] font-bold uppercase tracking-[0.2em] ${dm.mode === "PRODUCTION" ? "bg-emerald-400/15 text-emerald-300 border border-emerald-400/50" : "bg-amber-400/15 text-amber-300 border border-amber-400/50"}`}>{dm.mode} mode</span>
         <span className="font-mono text-[11px] text-slate-400">checked {fmtTime(h.checked_at)} · backend uptime {Math.floor(h.uptime_s / 60)} min · refreshes every 15 s</span>
         <span className="ml-auto flex gap-2">
-          {hasRole(user, "supervisor") && <button data-testid="btn-ingest-now" disabled={busy} onClick={ingest} className="inline-flex items-center gap-1 rounded bg-ink px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-paper disabled:opacity-50"><Download size={12} /> Ingest last 7 days of Sentinel-1</button>}
-          {hasRole(user, "admin") && dm.demo_data_present && <button data-testid="btn-purge-demo" disabled={busy} onClick={purge} className="inline-flex items-center gap-1 rounded border border-rose-500/60 px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider text-rose-600 hover:bg-rose-500/10 disabled:opacity-50"><Trash2 size={12} /> Purge demo data</button>}
+          {hasRole(user, "supervisor") && <button data-testid="btn-ingest-now" disabled={busy} onClick={ingest} className="inline-flex items-center gap-1 rounded bg-cyan-400 px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-slate-950 disabled:opacity-50"><Download size={12} /> Ingest last 7 days of Sentinel-1</button>}
+          {hasRole(user, "admin") && dm.demo_data_present && <button data-testid="btn-purge-demo" disabled={busy} onClick={purge} className="inline-flex items-center gap-1 rounded border border-rose-500/60 px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider text-rose-300 hover:bg-rose-500/10 disabled:opacity-50"><Trash2 size={12} /> Purge demo data</button>}
         </span>
       </div>
       {!h.ais.connected && (
         <div className="mb-4 flex items-start gap-2 rounded border border-amber-400/50 bg-amber-400/5 px-3 py-2 text-xs" data-testid="ais-unavailable-banner">
-          <ShieldAlert size={14} className="mt-0.5 shrink-0 text-amber-700" /><div><b className="text-amber-700">AISStream {h.ais.state}</b> — {h.ais.reason}. {h.ais.note} Satellite investigation continues in {dm.mode} mode. {!h.ais.configured && <span className="text-slate-400">Add <code>AISSTREAM_API_KEY</code> (free at aisstream.io) to the <b>backend</b> deployment environment, then redeploy the backend. No demo vessels are ever substituted.</span>}</div>
+          <ShieldAlert size={14} className="mt-0.5 shrink-0 text-amber-300" /><div><b className="text-amber-300">AISStream {h.ais.state}</b> — {h.ais.reason}. {h.ais.note} Satellite investigation continues in {dm.mode} mode. {!h.ais.configured && <span className="text-slate-400">Add <code>AISSTREAM_API_KEY</code> (free at aisstream.io) to the <b>backend</b> deployment environment, then redeploy the backend. No demo vessels are ever substituted.</span>}</div>
         </div>
       )}
       {h.ais.connected && h.ais.state !== "LIVE" && (
-        <div className="mb-4 flex items-start gap-2 rounded border border-tide/40 bg-tide/5 px-3 py-2 text-xs" data-testid="ais-no-coverage-banner">
-          <Radio size={14} className="mt-0.5 shrink-0 text-tide" /><div><b className="text-tide">AISStream connected · no recent AIS observations in this AOI</b> — terrestrial AIS receivers are sparse for {h.ais.coverage_name}. Connection and subscription are healthy; switch to a dense region to see genuine live traffic.</div>
+        <div className="mb-4 flex items-start gap-2 rounded border border-cyan-400/40 bg-cyan-400/5 px-3 py-2 text-xs" data-testid="ais-no-coverage-banner">
+          <Radio size={14} className="mt-0.5 shrink-0 text-cyan-300" /><div><b className="text-cyan-300">AISStream connected · no recent AIS observations in this AOI</b> — terrestrial AIS receivers are sparse for {h.ais.coverage_name}. Connection and subscription are healthy; switch to a dense region to see genuine live traffic.</div>
         </div>
       )}
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
@@ -86,12 +86,12 @@ export default function SystemHealth() {
           {h.ais.last_error && <Row k="last error" v={`${h.ais.last_error}${h.ais.last_close_code ? ` (close ${h.ais.last_close_code})` : ""}`} testid="health-ais-error" />}
           <Row k="ingest worker" v={`${h.ais.worker_role || "—"} · ${h.ais.worker_owner || "—"}`} testid="health-ais-worker" />
           <Row k="coverage" v={`${h.ais.coverage_mode.toUpperCase()} · ${h.ais.coverage_name}`} testid="health-ais-coverage" /><Row k="bbox [S,W,N,E]" v={h.ais.coverage_bbox.map((b) => b.map((x) => x.toFixed(1)).join(",")).join(" | ")} />
-          {h.ais.state === "CONNECTED" && hasRole(user, "supervisor") && <button data-testid="btn-view-live-ais-region" disabled={busy} onClick={() => setRegion("malacca_singapore")} className="mt-2 rounded border border-tide/50 px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-tide hover:bg-tide/10">View live AIS region (Singapore Strait — dense terrestrial coverage)</button>}
+          {h.ais.state === "CONNECTED" && hasRole(user, "supervisor") && <button data-testid="btn-view-live-ais-region" disabled={busy} onClick={() => setRegion("malacca_singapore")} className="mt-2 rounded border border-cyan-400/50 px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-cyan-300 hover:bg-cyan-400/10">View live AIS region (Singapore Strait — dense terrestrial coverage)</button>}
           {hasRole(user, "supervisor") && (
             <div className="mt-2 flex flex-wrap gap-1" data-testid="monitor-region-select">
               <span className="label-mono mr-1 self-center">Monitor region</span>
               {[["west_coast", "West Coast"], ["east_coast", "East Coast"], ["south_india", "South India"], ["andaman_nicobar", "Andaman & Nicobar"], ["default", "All India"]].map(([k, l]) => (
-                <button key={k} data-testid={`region-${k}`} disabled={busy} onClick={() => setRegion(k)} className="rounded border px-2 py-0.5 text-[10px] uppercase text-slate-600 hover:text-white disabled:opacity-50" style={{ borderColor: "var(--border-highlight)" }}>{l}</button>
+                <button key={k} data-testid={`region-${k}`} disabled={busy} onClick={() => setRegion(k)} className="rounded border px-2 py-0.5 text-[10px] uppercase text-slate-300 hover:text-on-surface disabled:opacity-50" style={{ borderColor: "var(--border-highlight)" }}>{l}</button>
               ))}
             </div>
           )}

@@ -12,13 +12,13 @@ const FitTo = ({ bounds }) => {
   return null;
 };
 
-const RANK_COLORS = ["#D4604D", "#C48A22", "#2A93A8", "#8B6BCB", "#1F7F93", "#2E8B6A"];
+const RANK_COLORS = ["#ba1a1a", "#b26a00", "#006194", "#6f4fa8", "#007bb9", "#006a61"];
 export const ZONE_STYLE = {
-  territorial: { color: "#D9762E", weight: 2.2, opacity: 0.9, dashArray: null, fillColor: "#D9762E" },
-  contiguous: { color: "#C48A22", weight: 1.6, opacity: 0.85, dashArray: "8,5", fillColor: "#C48A22" },
-  eez: { color: "#1F7F93", weight: 1.2, opacity: 0.7, dashArray: "2,6", fillColor: "#1F7F93" },
-  port_state: { color: "#2E8B6A", weight: 1.4, opacity: 0.8, dashArray: "1,4", fillColor: "#2E8B6A" },
-  custom: { color: "#7D919C", weight: 1, opacity: 0.6, dashArray: "4,4", fillColor: "#7D919C" },
+  territorial: { color: "#c2410c", weight: 2.2, opacity: 0.9, dashArray: null, fillColor: "#c2410c" },
+  contiguous: { color: "#b26a00", weight: 1.6, opacity: 0.85, dashArray: "8,5", fillColor: "#b26a00" },
+  eez: { color: "#007bb9", weight: 1.2, opacity: 0.7, dashArray: "2,6", fillColor: "#007bb9" },
+  port_state: { color: "#006a61", weight: 1.4, opacity: 0.8, dashArray: "1,4", fillColor: "#006a61" },
+  custom: { color: "#707881", weight: 1, opacity: 0.6, dashArray: "4,4", fillColor: "#707881" },
 };
 export const ZONE_LABEL = { territorial: "Territorial Sea (12 NM)", contiguous: "Contiguous Zone (24 NM)", eez: "EEZ (200 NM)", port_state: "Port state waters", custom: "Custom zone" };
 const rankColorFor = (rank) => RANK_COLORS[Math.min((rank || 1) - 1, RANK_COLORS.length - 1)];
@@ -26,26 +26,26 @@ const rankColorFor = (rank) => RANK_COLORS[Math.min((rank || 1) - 1, RANK_COLORS
 const MAP_CENTER = [53.5, 3.8];
 const FIT_PAD = { padding: [80, 80], maxZoom: 13, duration: 0.8 };
 const FOCUS_OFFSET = [0, -14];
-const ASSET_STYLE = { color: "#C48A22", weight: 2, dashArray: "8,4", fillColor: "#C48A22", fillOpacity: 0.06 };
-const CORRIDOR_STYLE = { color: "#2A93A8", weight: 1, dashArray: "6,6", fillColor: "#2A93A8", fillOpacity: 0.05 };
-const DRIFT_ENV_STYLE = { color: "#A98BDB", weight: 1.5, dashArray: "2,4", fillColor: "#8B6BCB", fillOpacity: 0.12 };
-const DRIFT_LIKELY_STYLE = { color: "#A98BDB", weight: 2, fillColor: "#A98BDB", fillOpacity: 0.22 };
-const DRIFT_PATH_OPTS = { color: "#A98BDB", weight: 2, dashArray: "1,6", opacity: 0.9 };
+const ASSET_STYLE = { color: "#b26a00", weight: 2, dashArray: "8,4", fillColor: "#b26a00", fillOpacity: 0.06 };
+const CORRIDOR_STYLE = { color: "#006194", weight: 1, dashArray: "6,6", fillColor: "#006194", fillOpacity: 0.05 };
+const DRIFT_ENV_STYLE = { color: "#8a63d2", weight: 1.5, dashArray: "2,4", fillColor: "#6f4fa8", fillOpacity: 0.12 };
+const DRIFT_LIKELY_STYLE = { color: "#8a63d2", weight: 2, fillColor: "#8a63d2", fillOpacity: 0.22 };
+const DRIFT_PATH_OPTS = { color: "#8a63d2", weight: 2, dashArray: "1,6", opacity: 0.9 };
 const HIGHLIGHT_OPTS = {
-  confirmed: { color: "#D4604D", weight: 3, fillOpacity: 0.15, dashArray: null },
-  candidate: { color: "#C48A22", weight: 3, fillOpacity: 0.15, dashArray: "4,4" },
+  confirmed: { color: "#ba1a1a", weight: 3, fillOpacity: 0.15, dashArray: null },
+  candidate: { color: "#b26a00", weight: 3, fillOpacity: 0.15, dashArray: "4,4" },
 };
 const zoneStyle = (ft) => ({ ...ZONE_STYLE[ft.properties.zone_type] || ZONE_STYLE.custom, fillOpacity: 0.05 });
 const zoneTooltip = (ft, layer) => layer.bindTooltip(`${ft.properties.name || ft.properties.code} · ${ZONE_LABEL[ft.properties.zone_type] || ft.properties.zone_type} · ${ft.properties.authority}`, { sticky: true });
 const toLatLng = (coords) => coords.map(([lon, lat]) => [lat, lon]);
 const spillStyle = (color, visible) => ({ color, weight: 2, dashArray: "4,4", fillColor: color, fillOpacity: visible ? 0.35 : 0.06, opacity: visible ? 1 : 0.35 });
 const trackOpts = (color, dim, interpolated) => ({ color, weight: dim ? 1.5 : interpolated ? 2 : 3, opacity: dim ? 0.3 : interpolated ? 0.7 : 0.85, dashArray: interpolated ? "6,8" : null });
-const headOpts = (fill, dim, gap) => ({ color: "#F7F6F2", fillColor: fill, fillOpacity: dim ? 0.3 : 1, weight: 2, dashArray: gap ? "3,3" : null, opacity: dim ? 0.3 : 1 });
+const headOpts = (fill, dim, gap) => ({ color: "#191c1e", fillColor: fill, fillOpacity: dim ? 0.3 : 1, weight: 2, dashArray: gap ? "3,3" : null, opacity: dim ? 0.3 : 1 });
 const fixOpts = (color, isSelected) => ({ color, fillColor: color, fillOpacity: isSelected ? 1 : 0.7, weight: 2 });
-const bpOpts = (fill, dimmed) => ({ color: "#F7F6F2", fillColor: fill, fillOpacity: 0.9, weight: 1, dashArray: "2,2", opacity: dimmed ? 0.2 : 0.9 });
-const DARK_BOX = { color: "#D4604D", weight: 2, fillOpacity: 0.08, fillColor: "#D4604D" };
-const AIS_BOX = { color: "#7D919C", weight: 1, fillOpacity: 0.03, dashArray: "2,3" };
-const DARK_TRAJ = { color: "#D4604D", weight: 1.5, dashArray: "6,6", opacity: 0.8 };
+const bpOpts = (fill, dimmed) => ({ color: "#191c1e", fillColor: fill, fillOpacity: 0.9, weight: 1, dashArray: "2,2", opacity: dimmed ? 0.2 : 0.9 });
+const DARK_BOX = { color: "#ba1a1a", weight: 2, fillOpacity: 0.08, fillColor: "#ba1a1a" };
+const AIS_BOX = { color: "#707881", weight: 1, fillOpacity: 0.03, dashArray: "2,3" };
+const DARK_TRAJ = { color: "#ba1a1a", weight: 1.5, dashArray: "6,6", opacity: 0.8 };
 const darkBounds = (t) => { const [w, s, e, n] = t.bbox; const pad = 0.01; return [[s - pad, w - pad], [n + pad, e + pad]]; };
 
 const FitBounds = ({ geojson }) => {
@@ -203,7 +203,7 @@ export const CaseMap = ({ geojson, selected, onSelect, showTracks = true, showCo
       )}
       {showCorridor && <DriftLayers layers={layers} />}
       {layers.spill.map((f, i) => (
-        <GeoJSON key={`s${i}-${f.properties.id}-${spillVisible}`} data={f} style={spillStyle(sideColors?.[f.properties.side] || "#D4604D", spillVisible)}>
+        <GeoJSON key={`s${i}-${f.properties.id}-${spillVisible}`} data={f} style={spillStyle(sideColors?.[f.properties.side] || "#ba1a1a", spillVisible)}>
           <Popup><b>Spill observation</b><br />Acquired {fmtTime(f.properties.acquisition_time)}<br />Confidence {Math.round(f.properties.detection_confidence * 100)}% · {f.properties.estimated_area_km2} km²<br />{f.properties.quality_flags?.join(", ") || "no quality flags"}</Popup>
         </GeoJSON>
       ))}

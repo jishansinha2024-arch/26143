@@ -1,0 +1,31 @@
+{
+  "summary": "Iteration 27 — Why-This-Vessel verified end-to-end against the real Chennai correlation (case 252e536c-1d84-4f65-9b23-5a8836d9f57b, SPL-20260910-106). Backend pytest test_iteration27.py: 8/8 passed. Case found by /api/cases?origin=all&limit=1000. GET /api/cases/{id}/candidates returned dict {case_id, version, candidates:[5], overall_status, message} — 5 real candidates, top MMSI 419001814 'DP W THAMIRABARANI' score 0.373 status=insufficient_evidence. All six factor keys present (spatial/temporal/continuity/heading/drift/reliability) with score/weight/contribution/detail; weights exactly 0.3/0.2/0.1/0.1/0.15/0.15 for every candidate; |Σcontribution − score| ≤ 0.001 for all 5. Regression: /api/health environment=production 200; /api/dashboard/summary 200; CORS OPTIONS own-origin 200, evil origin 400. UI (analyst login) at /cases/252e536c…: candidate-vessel-row-419001814 present; clicking score-breakdown-toggle-419001814 opens score-breakdown-419001814; why-summary-419001814 = 'CANDIDATE VESSEL · investigation priority #1 · Correlation score 37/100 = Σ weight × factor ÷ Σ weights (spatial 0.3 · temporal 0.2 · continuity 0.1 · heading 0.1 · drift 0.15 · reliability 0.15)'. Six factor cards render with factor-points-{k}-419001814: spatial 2/30 (0.05), temporal 1/20 (0.05), continuity 10/10 (1.00), heading 7/10 (0.75), drift 2/15 (0.15), reliability 15/15 (1.00) — sum a=37 matches round(0.373*100)=37 and sum b=100 = Σ weight%; b == round(weight/Σweight × 100) verified for all six. why-disclaimer-419001814 contains 'not legal proof'. candidate-status badge shows 'Insufficient evidence'. 0 console errors on case page. HOWEVER, DEMO STEP 6 STILL FAILS: /demo picks SPL-20260910-197 (case 9dcdc77b, Arabian Sea) which has 0 candidates and renders demo-no-candidates. SihDemo.jsx line 23 hard-codes an Arabian Sea bbox filter (cases with centroid lon 66–78 AND lat 8–24) — this EXCLUDES the Chennai case 252e536c (lon ~80°E) where the only real correlation with candidates was run. Fixing the dict-shape parsing (r.data?.candidates || []) was correct, but the geo filter must also be relaxed so the walkthrough picks the case that actually has candidates. Demo navigation (steps 1-9, prev/next, restart, demo-open-case → /cases/9dcdc77b…) otherwise works, 0 console errors on /demo.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "SihDemo.jsx", "issue": "Geographic filter (line 23: centroid.coordinates[0] > 66 && < 78) restricts the demo's candidate search to the Arabian Sea, excluding the Chennai case SPL-20260910-106 at lon ~80°E that has the 5 real AIS candidates. Result: /demo picks SPL-20260910-197 (no candidates) and step 6 renders demo-no-candidates, contradicting the iteration requirement.", "selector": "[data-testid=\"demo-no-candidates\"]", "priority": "HIGH"}
+    ],
+    "integration_issues": [
+      {"flow": "Demo step 6 → CandidatesTable", "issue": "The dict-shape parsing r.data?.candidates || [] is correct, but no case in the current filter matches, so CandidatesTable never renders in /demo. Widen the filter (e.g., include Bay of Bengal lon 78–92, lat 8–22) or drop the bbox constraint and simply pick the first case whose /candidates returns a non-empty list.", "affected_selectors": ["[data-testid=\"demo-reference-label\"]", "[data-testid=\"candidate-vessel-row-419001814\"]", "[data-testid=\"demo-no-candidates\"]"]}
+    ],
+    "design_issues": []
+  },
+  "test_report_links": ["/app/backend/tests/test_iteration27.py", "/app/test_reports/pytest/iter27_results.xml"],
+  "action_items": [
+    "Update /app/frontend/src/pages/SihDemo.jsx line 23: remove or widen the hard-coded Arabian Sea bbox so the walkthrough picks SPL-20260910-106 (or any case whose /candidates returns a non-empty list). Suggested: drop the bbox check and rank cases by cands.length descending, or extend lon range to 66–92 to cover both coasts. After fix, demo-reference-label should show SPL-20260910-106 and step 6 must render candidate-vessel-row-419001814 with a working 'Why this vessel?' expansion."
+  ],
+  "critical_code_review_comments": [
+    "correlation._weighted() invariant confirmed on real data (5/5 candidates satisfy |Σcontribution − score| ≤ 0.001).",
+    "CandidatesTable.jsx correctly renders the six factor cards and computes factor-points as round(contribution*100)/round(weight/Σweight*100) with score to 2 decimals — matches spec exactly.",
+    "SihDemo.jsx dict-parsing fix (line 25 `r.data?.candidates || []`) is correct, but the geo pre-filter (line 23) was NOT updated, so the walkthrough still never surfaces the case that has candidates. Two independent conditions had to change; only one did.",
+    "SihDemo.jsx also caps the scan at cases.slice(0, 80) — safe but combined with the bbox filter it's brittle; ranking by 'has candidates' rather than pre-filtering would be more robust."
+  ],
+  "updated_files": ["/app/backend/tests/test_iteration27.py"],
+  "success_rate": {"backend": "100% (8/8)", "frontend": "case-page 100%; /demo 90% (navigation OK, step 6 CandidatesTable not rendered due to geo filter)"},
+  "test_credentials": "analyst@sentinelmar.demo / Analyst#2026 — login OK, redirect goes to '/' not '/dashboard' but app still functional.",
+  "seed_data_creation": "None. No DB writes.",
+  "retest_needed": true,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Case 252e536c-1d84-4f65-9b23-5a8836d9f57b (SPL-20260910-106, Chennai, lon ~80°E) has 5 real AIS candidates from a genuine AISStream correlation; top MMSI 419001814 score 0.373 status insufficient_evidence — use this as the canonical case for WHY-THIS-VESSEL UI tests. The bug to retest after main agent fix is /demo picking that case (demo-reference-label = SPL-20260910-106) and step-6 candidate-vessel-row-419001814 rendering.",
+  "rca_of_the_issue": "SihDemo.jsx filters cases by an Arabian Sea bounding box (lon 66–78, lat 8–24) BEFORE probing /candidates. The only case with a completed real correlation is at Chennai (~80°E) on the east coast, so it never enters the probe loop; the loop exhausts 80 Arabian-Sea cases (all empty), pick.cands stays [], and step 6 renders demo-no-candidates. Fix: drop or widen the bbox and/or iterate all cases, breaking on the first with candidates."
+}

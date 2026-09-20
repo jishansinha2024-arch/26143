@@ -1,0 +1,184 @@
+{
+  "project_info": {
+    "name": "SentinelMar - Maritime Oil-Spill Detection & Vessel Correlation Decision-Support System",
+    "app_type": "Dashboard / Operations Command Console",
+    "target_audience": "Maritime Safety Authorities, Coast Guard Officers, Marine Environmental Analysts",
+    "tech_stack": {
+      "frontend": "React (JSX/JS), Tailwind CSS, Leaflet / React-Leaflet, Lucide Icons, Recharts, Shadcn UI primitives, Sonner",
+      "backend": "FastAPI (Python)"
+    }
+  },
+  "theme_and_colors": {
+    "recommended_theme": "Dark Command Center Mode (Default) with subtle light high-contrast alternative mode option",
+    "color_archetype": "ARCHETYPE 7 & 4 (Tactical Marine Command & High-Contrast Swiss Intelligence)",
+    "palette": {
+      "bg_primary": "#0A0E17",
+      "bg_secondary": "#111827",
+      "bg_card": "#162032",
+      "bg_overlay": "rgba(10, 14, 23, 0.82)",
+      "border_default": "#1E293B",
+      "border_highlight": "#334155",
+      "text_primary": "#F8FAFC",
+      "text_muted": "#94A3B8",
+      "accent_ocean_cyan": "#00F0FF",
+      "accent_radar_amber": "#FFB703",
+      "accent_spill_crimson": "#FF2A6D",
+      "accent_success_emerald": "#10B981",
+      "accent_purple_telemetry": "#9D4EDD"
+    },
+    "status_colors": {
+      "possible": {
+        "badge_bg": "rgba(255, 183, 3, 0.15)",
+        "badge_text": "#FFB703",
+        "border": "#FFB703"
+      },
+      "probable": {
+        "badge_bg": "rgba(255, 107, 0, 0.18)",
+        "badge_text": "#FF6B00",
+        "border": "#FF6B00"
+      },
+      "insufficient_evidence": {
+        "badge_bg": "rgba(148, 163, 184, 0.15)",
+        "badge_text": "#94A3B8",
+        "border": "#64748B"
+      },
+      "analyst_confirmed": {
+        "badge_bg": "rgba(16, 185, 129, 0.15)",
+        "badge_text": "#10B981",
+        "border": "#10B981"
+      },
+      "indeterminate": {
+        "badge_bg": "rgba(157, 78, 221, 0.15)",
+        "badge_text": "#C77DFF",
+        "border": "#9D4EDD"
+      }
+    }
+  },
+  "typography": {
+    "font_families": {
+      "display_heading": "Outfit, sans-serif",
+      "tactical_data_mono": "'JetBrains Mono', 'Fira Code', monospace",
+      "body_sans": "'IBM Plex Sans', sans-serif"
+    },
+    "hierarchy": {
+      "h1_hero": "text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight",
+      "h2_section": "text-xl sm:text-2xl font-bold tracking-tight",
+      "h3_card_header": "text-lg font-semibold tracking-normal",
+      "mono_data_label": "text-xs font-mono uppercase tracking-widest text-slate-400",
+      "body_text": "text-sm sm:text-base leading-relaxed text-slate-200"
+    }
+  },
+  "layout_and_spacing": {
+    "structure": "Density Grid Mode B (Operations Command Dashboard)",
+    "nav_bar": "Sticky top bar with tactical status indicator, live UTC clock, active spill counters, search bar, and view toggle",
+    "main_container": "Flex h-screen overflow-hidden text-slate-100 bg-[#0A0E17]",
+    "map_view": "Interactive full-height Leaflet viewport with custom dark tile basemap layer, spill polygon overlays, vessel AIS trajectory vectors, and corridor radiuses",
+    "side_panels": "Collapsible dual-side command panels (Left: Cases & Ingestion, Right: Candidate Analysis & Audit Timeline)",
+    "spacing_scale": "p-4, p-6, gap-4, gap-6 (Tight, dense layout maximizing data correlation per pixel without visual crowding)"
+  },
+  "geospatial_leaflet_guidelines": {
+    "map_tiles": "CartoDB Dark Matter / Esri Dark Gray Canvas or OpenStreetMap with CSS dark inversion filter",
+    "spill_polygon_style": {
+      "fillColor": "#FF2A6D",
+      "fillOpacity": 0.35,
+      "color": "#FF2A6D",
+      "weight": 2,
+      "dashArray": "4, 4"
+    },
+    "search_corridor_style": {
+      "fillColor": "#00F0FF",
+      "fillOpacity": 0.08,
+      "color": "#00F0FF",
+      "weight": 1,
+      "dashArray": "6, 6"
+    },
+    "ais_track_line_style": {
+      "color": "#38BDF8",
+      "weight": 2,
+      "opacity": 0.8
+    },
+    "candidate_vessel_markers": {
+      "rank_1_top_suspect": "Pulsing red radar icon with heading direction arrow",
+      "secondary_candidates": "Amber/Cyan directional markers with popup telemetry details"
+    }
+  },
+  "key_views_and_features": [
+    {
+      "view_id": "dashboard_overview",
+      "name": "Spill Surveillance Dashboard",
+      "components": [
+        "High-level KPI metrics bar (Total Detections, High-Confidence Alerts, Pending Review, Confirmed Spills)",
+        "Cases table list with sortable columns, confidence score bands (0-100%), and status tags",
+        "Quick filter options (Timeframe, Corridor Size, Confidence, Status)"
+      ]
+    },
+    {
+      "view_id": "case_detail_workspace",
+      "name": "Interactive Case Detail & Correlation Workspace",
+      "components": [
+        "Split view: Synchronized Leaflet Map + Candidate Ranking Matrix",
+        "Ranked candidate vessels table with transparent factor breakdowns (Spatial distance, Time gap, Track continuity, Heading consistency, Drift plausibility, AIS reliability)",
+        "Interactive slider for SAR time window scrubbing",
+        "Interactive vessel telemetry profile drawer"
+      ]
+    },
+    {
+      "view_id": "analyst_review_panel",
+      "name": "Analyst Evidence & Review Console",
+      "components": [
+        "Decision submission form (Confirm / Reject / Needs More Data) with standardized IMO/MARPOL reason codes",
+        "Auditable timeline log of analyst annotations, evidence extractions, and state transitions",
+        "Export bundle trigger (GeoJSON / Legal Evidence Package PDF/JSON)"
+      ]
+    },
+    {
+      "view_id": "ingestion_and_jobs",
+      "name": "Satellite Scene Ingestion & Batch AIS Upload",
+      "components": [
+        "SAR Scene Register form with GeoJSON polygon editor/dropzone",
+        "Batch AIS Position CSV/JSON upload drag-and-drop",
+        "Corridor parameter configuration (Search distance nautical miles, temporal window hrs, drift factors)",
+        "Real-time processing job execution log stream"
+      ]
+    }
+  ],
+  "image_urls": {
+    "satellite_coastline_thumb": "https://images.unsplash.com/photo-1722082839899-96d085732e5d?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzNTl8MHwxfHNlYXJjaHw0fHxtYXJpdGltZSUyMHZlc3NlbCUyMHNhdGVsbGl0ZSUyMG9jZWFufGVufDB8fHx8MTc4ODYwNTQxNXww&ixlib=rb-4.1.0&q=85",
+    "vessel_radar_dish": "https://images.unsplash.com/photo-1773161960044-4636c76b22fc?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzNTl8MHwxfHNlYXJjaHwxfHxtYXJpdGltZSUyMHZlc3NlbCUyMHNhdGVsbGl0ZSUyMG9jZWFufGVufDB8fHx8MTc4ODYwNTQxNXww&ixlib=rb-4.1.0&q=85",
+    "research_vessel": "https://images.unsplash.com/photo-1779050808954-6ca410ad2406?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzNTl8MHwxfHNlYXJjaHszfHxtYXJpdGltZSUyMHZlc3NlbCUyMG9jZWFufGVufDB8fHx8MTc4ODYwNTQxNXww&ixlib=rb-4.1.0&q=85",
+    "seatel_satellite_antenna": "https://images.pexels.com/photos/35342834/pexels-photo-35342834.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+  },
+  "data_testid_conventions": {
+    "rule": "Every interactive element, tab, button, input, status badge, map control, and data table row MUST include a explicit data-testid attribute in kebab-case format.",
+    "examples": [
+      "data-testid='nav-dashboard-link'",
+      "data-testid='nav-cases-link'",
+      "data-testid='nav-ingest-link'",
+      "data-testid='nav-jobs-link'",
+      "data-testid='case-row-case-101'",
+      "data-testid='status-badge-possible'",
+      "data-testid='btn-confirm-analyst-review'",
+      "data-testid='btn-reject-analyst-review'",
+      "data-testid='input-spill-geojson'",
+      "data-testid='btn-correlate-run'",
+      "data-testid='map-toggle-ais-layer'",
+      "data-testid='candidate-vessel-row-imo-9483210'",
+      "data-testid='score-breakdown-modal-trigger'"
+    ]
+  },
+  "instructions_to_main_agent": [
+    "Ensure all components use standard .js or .jsx extension since typescript syntax isn't active in this setup.",
+    "Import Lucide icons for tactical indicators (Radar, ShieldAlert, Navigation, Layers, Clock, FileCheck, Anchor, Satellite, Activity, Download).",
+    "Always provide realistic mock fallback data for satellite spill polygons, AIS trajectories, vessel candidates, score breakdowns, and audit timelines if API is idle.",
+    "Ensure Leaflet maps render reliably with react-leaflet or vanilla leaflet. Handle resize events so map container populates full spatial boundaries.",
+    "Use Sonner for user toasts on action submissions (e.g., analyst review saved, scene registered, correlation job launched).",
+    "Explicitly set text colors on hover/focus states to avoid low-contrast inheritance."
+  ],
+  "UNIVERSAL GUIDELINES FOR MAIN AGENT": [
+    "Avoid generic centered white layouts. Maintain the dark tactical command-center theme throughout.",
+    "Include high-contrast data visual badges and progress bars for confidence score breakdowns.",
+    "Never use raw transparent header/modal backgrounds that bleed text onto map canvas; always use backdrop-blur with semi-opaque dark slate fills.",
+    "Make sure all interactive elements feature data-testid attributes for E2E automated testing.",
+    "Provide clear clear disclaimers that output offers ranked vessel candidates for decision support, not legal conclusions."
+  ]
+}

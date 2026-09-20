@@ -1,0 +1,32 @@
+{
+  "summary": "Iteration 10 (Indian maritime territories) tested end-to-end. Backend: 10/10 pytest pass in /app/backend/tests/test_iteration10.py (~22s) — (a) GET /api/jurisdictions includes IND-TS/IND-CZ/IND-EEZ all official:true with zone_label + correct zone_type (territorial/contiguous/eez); GET /api/jurisdictions/geojson features have properties.zone_type covering all three kinds. (b) POST /api/jurisdictions/import/marine-regions RBAC — analyst 403, admin+bogus-layer 400, admin+{iso3:['IND'],layers:['eez_12nm'],replace_demo:false} -> 202 with job id (not waited). (c) Spill zone resolution: polygon at (72.62,18.95) -> primary IND-TS 'Territorial Sea (12 NM)' with IND-EEZ in jurisdictions[]; (72.45,18.95) -> IND-CZ 'Contiguous Zone (24 NM)'; (71.0,18.9) -> IND-EEZ; (60,10) -> primary null (open ocean). (d) Candidate zones on SPL-20260610-001: POST /correlate {sync:true} then GET /candidates returns 12 candidates all with zones[] and zone.code=NLD-EEZ, zone_label='Exclusive Economic Zone (200 NM)'.\n\nFrontend (Playwright, public URL, wait_until='domcontentloaded' per SSE note): (a) Analyst -> /cases/{SPL-001-id}: case-jurisdiction-chip renders '⚖ NLD-EEZ · Exclusive Economic Zone (200 NM) · Rijkswaterstaat / Netherlands Coastguard' — includes zone_label. (b) zone-kind-toggles container visible with zone-kind-territorial / zone-kind-contiguous / zone-kind-eez buttons; toggling zone-kind-eez off reduces svg path count 210 -> 203 (EEZ polygons removed); re-toggling restores; map-toggle-zones-layer click removes the zone-kind-toggles container entirely. (c) Candidates table on SPL-001 shows 12 candidate-zone-<mmsi> chips (task expected NLD-EEZ) — first chip text 'NLD-EEZ · EXCLUSIVE ECONOMIC ZONE (200 NM)'. (d) /zones page legend rows for IND-TS/IND-CZ render labels 'Territorial Sea (12 NM)' and 'Contiguous Zone (24 NM)' (CSS-uppercased in-view, base text correct — verified via screenshot showing IND-TS 'TERRITORIAL SEA (12 NM)' and IND-CZ 'CONTIGUOUS ZONE (24 NM)' rows). (e) Admin /zones: zone-import-layers checkbox group with eez/eez_24nm/eez_12nm present; zone-import-india-preset click sets ISO input to 'IND' and checks all 3 layer checkboxes; analyst does NOT see zone-import-form. (f) Regression: /, /events, /explorer all load clean.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Case detail map (carry-over from iter 9)", "issues": ["Recharts warning 'The width(-1) and height(-1) of chart should be greater than 0' still fires on initial mount — cosmetic, chart renders correctly after container measures."]}
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_iteration10.py",
+    "/app/test_reports/pytest/iter10_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "backend/marine_regions.py fetch_eez: correctly special-cases eez vs eez_12nm/eez_24nm — for full EEZ it drops island holes via `Polygon(p.exterior)` (land irrelevant for jurisdiction), but for 12/24 NM bands it preserves interior rings so the band excludes the inner zone. This is exactly right and directly enables the TS-vs-CZ-vs-EEZ resolution to differentiate the three concentric bands. Nice.",
+    "backend/jurisdiction.py TYPE_PRIORITY = {port_state:0, territorial:1, contiguous:2, eez:3, custom:4}: correctly prioritizes narrowest band as primary when a point is inside multiple concentric zones. Resolve_point_zones sorts by this + returns first as candidate.zone — validated by test (spill at 72.62,18.95 picked IND-TS over IND-EEZ).",
+    "routers/watchlist.py ImportRequest validation: whitelist check `l not in ('eez','eez_24nm','eez_12nm')` is duplicated with LAYERS keys in marine_regions.py — consider `l not in LAYERS` for DRY (single source of truth for supported layers).",
+    "frontend CaseMap.jsx ZONE_STYLE: distinct styles (solid orange TS, dashed amber CZ, dotted blue EEZ) match the task spec; GeoJSON key includes zoneKinds join for re-render on toggle. Filter fn correctly hides features when zoneKinds[zone_type]===false.",
+    "frontend CandidatesTable.jsx: candidate-zone chip shows code + zone_label with title tooltip for full name+authority — clean.",
+    "frontend Zones.jsx zone-import-india-preset: `onClick={() => { setIso('IND'); setImportLayers(['eez','eez_24nm','eez_12nm']); }}` — simple and correct."
+  ],
+  "updated_files": ["/app/backend/tests/test_iteration10.py (new — 10 pytest tests across 4 classes: TestJurisdictions, TestImportRBAC, TestSpillZoneResolution, TestCandidateZones)"],
+  "success_rate": {"backend": "100% (10/10)", "frontend": "100% of iteration-10 flows"},
+  "test_credentials": "admin shawpriyanshu950@gmail.com/Admin#2026, supervisor supervisor@sentinelmar.demo/Supervisor#2026, analyst analyst@sentinelmar.demo/Analyst#2026 — all working.",
+  "seed_data_creation": "TestSpillZoneResolution creates 4 new spill observations (72.62/18.95, 72.45/18.95, 71.0/18.9, 60/10) via POST /api/spill-observations as analyst. These persist in db.cases with sensor_metadata.sensor='TEST_iter10' — not cleaned up (spill observations are the primary case source; no delete endpoint). They will accumulate ~4 cases per iter10 run. Consider adding a DELETE /api/spill-observations/{id} admin endpoint for test hygiene.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Run backend: pytest /app/backend/tests/test_iteration10.py -v -o addopts='' --tb=short. BASE_URL read from /app/frontend/.env if REACT_APP_BACKEND_URL env var unset (utility _read_base_url in the test file). Gotchas: (1) SSE /api/alerts/stream stays open — Playwright wait_until='networkidle' will time out; use 'domcontentloaded' + explicit waits. (2) SPL-20260610-001 case_id — do NOT hardcode; fetch via `GET /api/cases?limit=200` and filter by case_number. (3) The candidates 'zone' enrichment happens in services.py after correlate_case runs — must POST /correlate {sync:true} before GET /candidates or old candidates won't have zone[]. (4) Zones page legend labels display in ALL-CAPS due to CSS text-transform uppercase; the underlying text is correctly 'Territorial Sea (12 NM)' / 'Contiguous Zone (24 NM)' — use case-insensitive assertions or check textContent vs innerText carefully.",
+  "rca_of_the_issue": "N/A — no bugs found. All 10 backend tests + all 6 frontend flows for iteration 10 (Indian maritime territories layer) pass on first run."
+}

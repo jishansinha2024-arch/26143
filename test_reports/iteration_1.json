@@ -1,0 +1,44 @@
+{
+  "summary": "First-pass testing of SentinelMar backend + frontend. Built comprehensive pytest suite (20 tests) covering stats, cases, candidates, correlate (sync/async/params override), review flows (confirm success + 3x 400 error cases), evidence, geojson (backprojected only on non-degraded), AIS ingest (dupe/flags/invalid lat), spill validation (bowtie/Point/unknown-flag/unknown-scene), scene create+duplicate+detect, alerts ack, jobs list/404, config defaults, audit, case 404. All 20 backend tests pass (100%). Frontend Playwright verified Dashboard KPIs+rows+filters+alerts ack, CaseDetail (case-number, attribution, tabs review/evidence/log, candidates+factor cards, disclaimer, correlate params toggle, export/AIS toggle), Ingest (register scene, mock detect->navigate to case, create spill->navigate, AIS ingest with duplicate/flagged counts), and Jobs page (26 job rows + 34 alerts).",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "POST /api/spill-observations", "issue": "Documented behavior: rejects invalid geometry with 400 (correctly). Note: Pydantic-level required-field errors return 422 which is normal FastAPI behavior."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "CaseMap.jsx (react-leaflet MapContainer)", "issue": "data-testid=\"case-map\" is set on <MapContainer> but react-leaflet does NOT forward arbitrary DOM attrs to the underlying container div, so [data-testid=case-map] cannot be located via automation. The .leaflet-container div renders correctly. Recommend wrapping <MapContainer> in a <div data-testid=\"case-map\"> or attaching via whenCreated ref.", "selector": "[data-testid=\"case-map\"]", "priority": "MEDIUM"},
+      {"component": "Jobs.jsx", "issue": "React warning: 'Each child in a list should have a unique key prop' — the .map() returns bare React fragments <>...</> containing two <tr> siblings; fragments cannot carry a key. Use <React.Fragment key={j.id}> instead.", "selector": "jobs table rows", "priority": "LOW"},
+      {"component": "ReviewForm.jsx (review-vessel-select)", "issue": "Hydration warning: <span> rendered as child of <option>. Some wrapper (likely a badge/StatusBadge) is nested inside an <option> element which is not valid HTML.", "selector": "[data-testid=\"review-vessel-select\"] option", "priority": "LOW"}
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_sentinelmar_backend.py",
+    "/app/test_reports/pytest/sentinelmar_results.xml"
+  ],
+  "action_items": [
+    "Fix CaseMap data-testid forwarding (wrap MapContainer in a div with data-testid=\"case-map\")",
+    "Fix React fragment key warning in Jobs.jsx (use React.Fragment with key)",
+    "Fix invalid HTML in ReviewForm review-vessel-select options (no <span> inside <option>)"
+  ],
+  "critical_code_review_comments": [
+    "CaseDetail attribution_status for SPL-20260610-001 permanently becomes 'analyst_confirmed' once the confirm test runs; documented in review_request. Test suite is idempotent (uses in/2xx range) and orders error-cases before confirm.",
+    "Correlate endpoint returns HTTP 202 for both sync:true and sync:false; only body.status distinguishes (succeeded vs queued). Consider returning 200 for synchronous completions to better follow HTTP semantics.",
+    "Backend jobs collection accumulates without bound; consider a retention/TTL policy or paginated /api/jobs endpoint.",
+    "MongoDB _id is correctly excluded from responses across all routers.",
+    "Env vars sourced from REACT_APP_BACKEND_URL and MONGO_URL correctly; no hardcoded URLs found."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_sentinelmar_backend.py (new)"
+  ],
+  "success_rate": {"backend": "100% (20/20)", "frontend": "~95% (all critical flows working; 3 minor issues)"},
+  "test_credentials": "None — open API, no auth (per problem statement)",
+  "seed_data_creation": "Backend tests created additional cases/scenes/AIS positions (TEST_ prefix where possible). SPL-20260610-001 permanently transitioned to analyst_confirmed by test_review_confirm_success. Total 26 jobs and many alerts accumulated during testing.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "SPL-20260610-001 is now analyst_confirmed (irreversible per design). Candidate count on -001 is 7 (not 5) because AIS test-ingest positions in the same corridor added 2 TEST vessels. Run tests are idempotent thereafter. case-map testid issue may block map-related UI tests until fixed.",
+  "rca of the issue": "case-map missing: react-leaflet's MapContainer only forwards a whitelist of props (className, style, id, ref). Arbitrary attributes like data-testid are dropped. Fix by wrapping in <div data-testid=\"case-map\"><MapContainer .../></div>."
+}

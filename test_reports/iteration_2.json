@@ -1,0 +1,45 @@
+{
+  "summary": "Iteration 2 testing complete. Backend: 16/16 pytest passing (auth login/lockout/me/logout, RBAC on ack/override/users/seed, identity in audit/reviews/jobs, live Open-Meteo weather fetch + persistence + correlate integration, PDF evidence export with audit event, iteration-1 regression + geojson track properties). Frontend: verified login redirect, demo login, wrong-password error, logout, header user-name/role. Admin: nav-users-link visible, /users page CRUD (create/toggle/delete via confirm dialog). Analyst: no nav-users-link, /users redirects to /, alert-ack-locked shown (no ack button), no override-panel, btn-fetch-weather succeeds with live Open-Meteo values (wind 8.35m/s from 270°, current 0.222 m/s → 153°, source open-meteo era5-reanalysis), btn-export-pdf triggers download named SPL-20260610-003-evidence.pdf, review-signer shows 'Marine Analyst · analyst@sentinelmar.demo · analyst'. Supervisor: 4 real ack buttons on dashboard, time-scrubber wrapper + slider + time + relative + play + reset all work on SPL-006 (with tracks), param-live-environment checkbox present after opening PARAMETERS, override-panel + override-notes-input validation (submit disabled when notes <3 chars, enabled at ≥3).",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "POST /api/auth/login", "issue": "Brute-force lockout requires >5 attempts in practice because identifier is 'client_host:email' and behind the K8s ingress request.client.host varies across requests, fragmenting the failure counter. Lockout DOES eventually trigger (~10–15 attempts). Consider hashing on X-Forwarded-For first hop or just email for identifier."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "TimeScrubber / CaseMap", "issue": "React console warning: 'Cannot update a component while rendering a different component' fires during scrubber ArrowLeft/play. Likely a setState in a parent (CaseDetail/CaseMap) triggered from a child render (TimeScrubber onChange). Move setState to useEffect or event handler.", "selector": "[data-testid=scrubber-slider]", "priority": "LOW"},
+      {"component": "Users.jsx (users-list)", "issue": "Initial render of admin /users page showed 0 rows before data hydrated (data appeared after create). No visible loading state. Users see empty table momentarily. Add a loading skeleton or verify GET /api/users promise is awaited before rendering the tbody.", "selector": "[data-testid=users-list]", "priority": "LOW"}
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_iteration2_auth_rbac.py",
+    "/app/backend/tests/test_sentinelmar_backend.py",
+    "/app/test_reports/pytest/iter2_results.xml"
+  ],
+  "action_items": [
+    "(LOW) Fix TimeScrubber setState-during-render warning (setState in effect not in render path).",
+    "(LOW) Add loading state to Users page /users-list so it doesn't flash empty before data load.",
+    "(OPTIONAL) Consider using X-Forwarded-For or email-only identifier for lockout so brute-force protection triggers at 5 attempts behind ingress."
+  ],
+  "critical_code_review_comments": [
+    "auth.py: bcrypt used correctly ($2b$ hash), JWT with HS256, cookie httpOnly+secure+samesite=none, Bearer header fallback — all clean.",
+    "seed_users() upserts admin/supervisor/analyst by email and rotates password if changed — meets playbook requirement.",
+    "cases.py override_case correctly writes review with decision 'supervisor_override', review_state 'supervisor_override', and honors close_case flag. Attribution and confirmed_vessel_mmsi transitions correct.",
+    "PDF export path: build_pdf produces valid PDF (%PDF header, >20KB in tests) and audit.evidence.exported captures actor email — verified end-to-end.",
+    "Weather integration: apply_live_environment persists wind/current on spill_observation and marks environment.source='open-meteo'. Live call succeeded in tests against archive-api.open-meteo.com.",
+    "MongoDB _id excluded via clean()/projection={_id:0} consistently."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_iteration2_auth_rbac.py (new)"
+  ],
+  "success_rate": {"backend": "100% (16/16)", "frontend": "~97% (all critical flows work; 2 low-priority polish issues)"},
+  "test_credentials": "admin shawpriyanshu950@gmail.com/Admin#2026, supervisor supervisor@sentinelmar.demo/Supervisor#2026, analyst analyst@sentinelmar.demo/Analyst#2026 (all working).",
+  "seed_data_creation": "Backend tests created SPL-20260610-004/005/006 through fresh spill observations for destructive override/review flows. Test user pw_test_*@x.com created and deleted during admin CRUD test. Small number of TEST_ scenes/AIS added.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "SPL-20260610-004 is now 'supervisor_override' (closed, insufficient_evidence). SPL-20260610-005 is 'needs_more_data'. SPL-20260610-006 remained 'probable' after override tests up to notes fill (submit not clicked in second supervisor run to preserve state). SPL-20260610-003 now has wind/current populated by weather-fetch tests. Lockout table entries exist for random 'nonexistent_*@example.test' identifiers; safe to ignore. Demo accounts were never locked out.",
+  "rca of the issue": "Brute-force lockout requires >5 attempts: identifier = f'{request.client.host}:{email}' but the app runs behind K8s ingress → request.client.host is the ingress pod IP which rotates. Each rotated IP has its own failure counter, so 5 consecutive failures don't reliably accumulate under one key. Fix: use request.headers.get('x-forwarded-for', request.client.host).split(',')[0].strip() as the host component, or use email-only for identifier (accept the trade-off of denial-of-service on legitimate users)."
+}

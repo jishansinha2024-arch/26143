@@ -1,7 +1,7 @@
 .App { height: 100%; }
 
-.focus-tip { background: rgba(10,14,23,0.92); color: #F8FAFC; border: 1px solid #FFB703; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
-.focus-tip::before { border-top-color: #FFB703; }
+.focus-tip { background: rgba(255,255,255,0.97); color: #191c1e; border: 1px solid #b26a00; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; box-shadow: 0 4px 12px rgba(25,28,30,.12); }
+.focus-tip::before { border-top-color: #b26a00; }
 
-.critical-banner { background: #B4123F; color: #fff; border-bottom: 1px solid #FF2A6D; animation: critical-pulse 1.2s ease-in-out infinite; }
-@keyframes critical-pulse { 0%, 100% { background: #B4123F; } 50% { background: #FF2A6D; } }
+.critical-banner { background: #ba1a1a; color: #fff; border-bottom: 1px solid #93000a; animation: critical-pulse 1.2s ease-in-out infinite; }
+@keyframes critical-pulse { 0%, 100% { background: #ba1a1a; } 50% { background: #93000a; } }

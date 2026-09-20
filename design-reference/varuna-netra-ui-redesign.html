@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"inverse-surface":"#2d3133","background":"#f7f9fb","surface-bright":"#f7f9fb","on-surface-variant":"#3f4850","surface-variant":"#e0e3e5","surface-tint":"#006398","surface-container-highest":"#e0e3e5","on-secondary-fixed":"#00201d","primary-container":"#007bb9","secondary-container":"#86f2e4","secondary-fixed":"#89f5e7","primary-fixed":"#cce5ff","on-primary":"#ffffff","outline-variant":"#bfc7d2","tertiary-fixed-dim":"#bec6e0","tertiary-fixed":"#dae2fd","on-secondary":"#ffffff","surface-dim":"#d8dadc","secondary":"#006a61","surface-container-low":"#f2f4f6","on-background":"#191c1e","on-surface":"#191c1e","on-error":"#ffffff","surface":"#f7f9fb","secondary-fixed-dim":"#6bd8cb","surface-container":"#eceef0","error":"#ba1a1a","primary":"#006194","on-tertiary":"#ffffff","on-tertiary-fixed":"#131b2e","primary-fixed-dim":"#93ccff","on-secondary-fixed-variant":"#005049","inverse-on-surface":"#eff1f3","tertiary-container":"#6c748b","tertiary":"#545c72","surface-container-high":"#e6e8ea","outline":"#707881","on-tertiary-container":"#fefcff","on-primary-container":"#fdfcff","on-primary-fixed":"#001d31","inverse-primary":"#93ccff","on-tertiary-fixed-variant":"#3f465c","error-container":"#ffdad6","on-error-container":"#93000a","surface-container-lowest":"#ffffff","on-primary-fixed-variant":"#004b73","on-secondary-container":"#006f66"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"space-lg":"1rem","margin":"1rem","space-xs":"0.25rem","gutter":"0.75rem","space-sm":"0.5rem","space-xl":"1.5rem","space-md":"0.75rem"},"fontFamily":{"headline-lg":["Geist"],"code-telemetry":["JetBrains Mono"],"body-md":["Inter"],"code-telemetry-sm":["JetBrains Mono"],"label-md":["Inter"],"display-lg":["Geist"],"label-lg":["Inter"],"body-sm":["Inter"],"headline-md":["Geist"],"headline-sm":["Geist"],"body-lg":["Inter"]},"fontSize":{"headline-lg":["24px",{"lineHeight":"32px","letterSpacing":"-0.015em","fontWeight":"600"}],"code-telemetry":["12px",{"lineHeight":"16px","letterSpacing":"-0.01em","fontWeight":"500"}],"body-md":["13px",{"lineHeight":"18px","fontWeight":"400"}],"code-telemetry-sm":["10px",{"lineHeight":"12px","letterSpacing":"0.02em","fontWeight":"500"}],"label-md":["11px",{"lineHeight":"14px","letterSpacing":"0.02em","fontWeight":"500"}],"display-lg":["32px",{"lineHeight":"40px","letterSpacing":"-0.02em","fontWeight":"600"}],"label-lg":["12px",{"lineHeight":"16px","letterSpacing":"0.01em","fontWeight":"600"}],"body-sm":["12px",{"lineHeight":"16px","fontWeight":"400"}],"headline-md":["18px",{"lineHeight":"24px","letterSpacing":"-0.01em","fontWeight":"600"}],"headline-sm":["15px",{"lineHeight":"20px","letterSpacing":"-0.005em","fontWeight":"600"}],"body-lg":["15px",{"lineHeight":"22px","fontWeight":"400"}]}}}}</script></head><body class="bg-background font-body-md text-on-surface antialiased"><header class="fixed top-0 left-0 right-0 z-50 h-16 bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="w-full h-full px-space-lg flex items-center justify-between gap-space-lg"><div class="flex items-center gap-space-md shrink-0"><img alt="Varuna Netra Radar Emblem" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1Wp94y8-WIcK4W5voh13qDX5rhcuoLnlpsiB7QM2TkvOL032ZoMsQ7Rweiwc1dauH4tQEbyNk5spE88n6MNqgtIOYttW2lEYv1DCfdLplZNIfN7prW_WFtVj6FVZbO1JpYi8-SEoH07zGBYj87V3eB7NMj32srRSBrmpewG0oBCGTVqtGTDaXqOY-91Xqs9NbSAH6_YYd83WTiUMiF18Woj7c1ne5YAsfY29C0BmvNVZkUC8e57joWmKeE"/><div class="flex flex-col"><div class="flex items-center gap-space-xs"><span class="font-headline-sm text-headline-sm font-bold tracking-tight text-on-surface">VARUNA NETRA</span><span class="px-space-xs py-0.5 rounded bg-primary-fixed text-on-primary-fixed font-label-md text-label-md uppercase tracking-wider font-semibold">Maritime Intelligence Console</span></div></div></div><div class="hidden xl:flex items-center gap-space-sm bg-surface-container-low px-space-md py-1 rounded-full shrink-0"><div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span><span class="font-code-telemetry-sm text-code-telemetry-sm text-on-surface font-semibold">SAR S1-A: ACTIVE</span></div><span class="text-outline-variant font-code-telemetry-sm text-code-telemetry-sm">|</span><div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-secondary"></span><span class="font-code-telemetry-sm text-code-telemetry-sm text-on-surface-variant font-semibold">AIS: SYNCHRONIZED</span></div><span class="text-outline-variant font-code-telemetry-sm text-code-telemetry-sm">|</span><div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-error"></span><span class="font-code-telemetry-sm text-code-telemetry-sm text-error font-semibold">3 UNRESOLVED ALERTS</span></div></div><div class="flex-1 max-w-md hidden md:block"><div class="relative flex items-center"><span class="material-symbols-outlined absolute left-3 text-on-surface-variant text-[18px]">search</span><input class="w-full pl-9 pr-space-md py-1.5 bg-surface-container-low rounded-lg font-body-sm text-body-sm text-on-surface placeholder:text-outline focus:outline-none focus:bg-surface-container-lowest shadow-[0_1px_4px_rgba(0,0,0,0.02)] transition-all" placeholder="Search IMO, vessel name, coordinates, spill zone..." type="text"/></div></div><div class="flex items-center gap-space-md shrink-0"><button class="relative p-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" type="button"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-1 right-1 w-2 h-2 bg-error rounded-full"></span></button><button class="p-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors hidden sm:block" type="button"><span class="material-symbols-outlined text-[20px]">tune</span></button><div class="h-6 w-px bg-surface-container-high hidden sm:block"></div><div class="flex items-center gap-space-sm pl-space-xs"><div class="hidden text-right lg:flex flex-col"><span class="font-label-lg text-label-lg text-on-surface font-semibold leading-tight">Lead Maritime Analyst</span><span class="font-code-telemetry-sm text-code-telemetry-sm text-on-surface-variant leading-tight">analyst@sentinelmar.demo</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></div></header><aside class="fixed left-0 top-16 bottom-0 w-64 bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex flex-col justify-between pt-space-md pb-space-lg"><div class="flex flex-col gap-space-sm"><div class="px-space-md pb-space-xs"><span class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant font-semibold">Surveillance Operations</span></div><nav class="flex flex-col px-space-sm gap-1" data-active-classes="bg-primary-container text-on-primary-container font-semibold"><a class="flex items-center gap-space-md px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface font-label-lg text-label-lg transition-all" data-path="spill-detection-surveillance" href="#"><span class="material-symbols-outlined text-[20px]">radar</span><span>Spill Detection &amp; Surveillance</span></a><a class="flex items-center gap-space-md px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface font-label-lg text-label-lg transition-all" data-path="live-vessel-ais-radar" href="#"><span class="material-symbols-outlined text-[20px]">directions_boat</span><span>Live Vessel AIS Radar</span></a><a class="flex items-center gap-space-md px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface font-label-lg text-label-lg transition-all" data-path="incidents-evidence-review" href="#"><span class="material-symbols-outlined text-[20px]">policy</span><span>Incidents &amp; Evidence Review</span></a><a class="flex items-center gap-space-md px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface font-label-lg text-label-lg transition-all" data-path="satellite-tasking-coverage" href="#"><span class="material-symbols-outlined text-[20px]">satellite_alt</span><span>Satellite Tasking &amp; Coverage</span></a></nav><div class="px-space-md pt-space-md pb-space-xs"><span class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant font-semibold">Governance &amp; Telemetry</span></div><nav class="flex flex-col px-space-sm gap-1" data-active-classes="bg-primary-container text-on-primary-container font-semibold"><a class="flex items-center gap-space-md px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface font-label-lg text-label-lg transition-all" data-path="system-settings-audit-log" href="#"><span class="material-symbols-outlined text-[20px]">verified_user</span><span>System Settings &amp; Audit Log</span></a></nav></div><div class="px-space-md"><div class="p-space-md rounded-xl bg-surface-container-low shadow-[0_1px_4px_rgba(0,0,0,0.02)] flex flex-col gap-space-xs"><div class="flex items-center justify-between"><span class="font-label-md text-label-md text-on-surface font-semibold">SAR INGESTION BUFFER</span><span class="font-code-telemetry-sm text-code-telemetry-sm text-secondary font-semibold">94.2%</span></div><div class="w-full bg-surface-variant h-1.5 rounded-full overflow-hidden"><div class="bg-secondary h-full rounded-full w-[94%]"></div></div><div class="flex justify-between font-code-telemetry-sm text-code-telemetry-sm text-on-surface-variant pt-1"><span>Latency: 1.4s</span><span>Polar: Dual-Pol</span></div></div></div></aside><div class="pl-64"><main class="relative w-full pt-16 bg-background min-h-screen"><div class="flex flex-col w-full p-space-md lg:p-space-lg gap-space-lg">
+<!-- Operational Context Header Bar -->
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md bg-surface-container-lowest p-space-md rounded-xl shadow-sm">
+<div class="flex items-center gap-space-md">
+<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[24px]">satellite_alt</span>
+</div>
+<div>
+<div class="flex items-center gap-space-xs">
+<span class="font-headline-md text-headline-md text-on-surface">Spill Detection &amp; Surveillance Operations</span>
+<span class="px-space-xs py-0.5 rounded bg-secondary-fixed text-on-secondary-fixed font-code-telemetry-sm text-code-telemetry-sm font-semibold tracking-wide">LIVE DUAL-POLAR</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+          Arabian Sea Exclusive Economic Zone • Sector 04 • Ingestion cycle synchronous with Copernicus S1-A
+        </p>
+</div>
+</div>
+<div class="flex flex-wrap items-center gap-space-sm">
+<div class="flex items-center gap-space-xs px-space-md py-1.5 rounded-lg bg-surface-container font-code-telemetry text-code-telemetry text-on-surface-variant">
+<span class="w-2 h-2 rounded-full bg-secondary animate-ping"></span>
+<span>UTC 11:42:08</span>
+</div>
+<button class="flex items-center gap-space-xs px-space-md py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-variant text-on-surface font-label-lg text-label-lg transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">sync</span>
+<span>Re-correlate AIS</span>
+</button>
+<button class="flex items-center gap-space-xs px-space-md py-1.5 rounded-lg bg-primary text-on-primary hover:bg-primary-container font-label-lg text-label-lg transition-all shadow-sm" type="button">
+<span class="material-symbols-outlined text-[16px]">add_alert</span>
+<span>Dispatch Incident Advisory</span>
+</button>
+</div>
+</div>
+<!-- Top KPI Metrics Banner -->
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-space-md">
+<!-- Card 1: Active Slicks -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-24 h-24 bg-error-container/30 rounded-bl-full pointer-events-none transition-transform group-hover:scale-110"></div>
+<div class="flex items-start justify-between relative z-10">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant font-semibold">Active Slick Detections</span>
+<span class="font-display-lg text-display-lg font-bold text-on-surface mt-1">4 Zones</span>
+</div>
+<div class="p-2 rounded-lg bg-error-container text-on-error-container">
+<span class="material-symbols-outlined text-[20px]">warning</span>
+</div>
+</div>
+<div class="mt-space-md pt-space-xs flex flex-col gap-1 relative z-10">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-error animate-pulse"></span>
+<span class="font-code-telemetry text-code-telemetry text-error font-semibold">2 Critical</span>
+<span class="text-outline-variant font-code-telemetry text-code-telemetry">•</span>
+<span class="font-code-telemetry text-code-telemetry text-on-surface-variant">2 Moderate</span>
+</div>
+<div class="flex items-center justify-between text-on-surface-variant font-body-sm text-body-sm mt-1">
+<span class="flex items-center gap-1 text-error font-medium">
+<span class="material-symbols-outlined text-[14px]">arrow_upward</span> +1 past 3h
+          </span>
+<button class="font-label-md text-label-md text-primary font-semibold hover:underline">Inspect slick grid</button>
+</div>
+</div>
+</div>
+<!-- Card 2: Correlated Vessels -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-24 h-24 bg-secondary-container/20 rounded-bl-full pointer-events-none transition-transform group-hover:scale-110"></div>
+<div class="flex items-start justify-between relative z-10">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant font-semibold">Vessels In Range</span>
+<span class="font-display-lg text-display-lg font-bold text-on-surface mt-1">142 Targets</span>
+</div>
+<div class="p-2 rounded-lg bg-secondary-fixed text-on-secondary-fixed">
+<span class="material-symbols-outlined text-[20px]">directions_boat</span>
+</div>
+</div>
+<div class="mt-space-md pt-space-xs flex flex-col gap-1 relative z-10">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="font-code-telemetry text-code-telemetry text-secondary font-semibold">12 Immediate Proximity</span>
+<span class="text-outline-variant font-code-telemetry text-code-telemetry">•</span>
+<span class="font-code-telemetry text-code-telemetry text-error">3 AIS Gaps</span>
+</div>
+<div class="flex items-center justify-between text-on-surface-variant font-body-sm text-body-sm mt-1">
+<span class="font-code-telemetry-sm text-code-telemetry-sm text-on-surface-variant">AIS Ingestion: 99.8% Sync</span>
+<span class="font-label-md text-label-md text-secondary font-semibold">Nominal Feed</span>
+</div>
+</div>
+</div>
+<!-- Card 3: SAR Satellite Pass -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-24 h-24 bg-primary-fixed/30 rounded-bl-full pointer-events-none transition-transform group-hover:scale-110"></div>
+<div class="flex items-start justify-between relative z-10">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant font-semibold">SAR Radar Swath</span>
+<span class="font-display-lg text-display-lg font-bold text-on-surface mt-1">84% Swath</span>
+</div>
+<div class="p-2 rounded-lg bg-primary-fixed text-on-primary-fixed">
+<span class="material-symbols-outlined text-[20px]">radar</span>
+</div>
+</div>
+<div class="mt-space-md pt-space-xs flex flex-col gap-1 relative z-10">
+<div class="w-full bg-surface-variant h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full w-[84%]"></div>
+</div>
+<div class="flex items-center justify-between font-code-telemetry-sm text-code-telemetry-sm text-on-surface-variant mt-1.5">
+<span>S1-A Orbit 4289</span>
+<span class="text-primary font-semibold">Next pass: 14:22 UTC</span>
+</div>
+</div>
+</div>
+<!-- Card 4: Confidence Score Index -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-24 h-24 bg-secondary-fixed/30 rounded-bl-full pointer-events-none transition-transform group-hover:scale-110"></div>
+<div class="flex items-start justify-between relative z-10">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant font-semibold">Confidence Metric</span>
+<span class="font-display-lg text-display-lg font-bold text-on-surface mt-1">94.6%</span>
+</div>
+<div class="p-2 rounded-lg bg-surface-container-high text-on-surface">
+<span class="material-symbols-outlined text-[20px]">verified</span>
+</div>
+</div>
+<div class="mt-space-md pt-space-xs flex flex-col gap-1 relative z-10">
+<div class="flex items-center gap-1.5">
+<span class="font-code-telemetry text-code-telemetry text-secondary font-semibold">Dual-Pol VV/VH Confirmed</span>
+</div>
+<div class="flex items-center justify-between font-body-sm text-body-sm text-on-surface-variant mt-1">
+<span class="truncate">Optical verification: Sentinel-2B</span>
+<span class="font-code-telemetry-sm text-code-telemetry-sm text-secondary font-bold">HIGH</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Main Operational Workbench (Asymmetric Split Screen) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start">
+<!-- LEFT/CENTER: Interactive GIS & SAR Radar Map Viewport (7 Cols on large desktop) -->
+<div class="lg:col-span-7 xl:col-span-7 flex flex-col bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+<!-- Viewport Header & Layer Controls -->
+<div class="p-space-md flex flex-wrap items-center justify-between gap-space-sm bg-surface-container-low">
+<div class="flex items-center gap-space-sm">
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-headline-sm text-on-surface">Gulf of Khambhat Tactical Feed</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-code-telemetry-sm text-code-telemetry-sm font-semibold">21°14'N 71°48'E</span>
+</div>
+</div>
+<div class="flex items-center gap-1 bg-surface-container-lowest p-1 rounded-lg shadow-sm">
+<button class="px-2.5 py-1 rounded bg-primary-container text-on-primary-container font-label-md text-label-md font-semibold transition-all" type="button">SAR Dual-Pol</button>
+<button class="px-2.5 py-1 rounded text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-colors" type="button">AIS Overlay</button>
+<button class="px-2.5 py-1 rounded text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-colors" type="button">Drift Vectors</button>
+<button class="px-2.5 py-1 rounded text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-colors" type="button">Thermal IR</button>
+</div>
+</div>
+<!-- Map Display Container -->
+<div class="relative w-full h-[520px] bg-surface-container-highest overflow-hidden select-none">
+<!-- Synthetic Visual Map Vector / Bathymetric Base Layer -->
+<svg class="absolute inset-0 w-full h-full text-surface-dim" preserveaspectratio="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<pattern height="40" id="tactical-grid" patternunits="userSpaceOnUse" width="40">
+<path d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" stroke-opacity="0.4" stroke-width="0.75"></path>
+<circle cx="40" cy="40" fill="currentColor" fill-opacity="0.5" r="1.5"></circle>
+</pattern>
+<radialgradient cx="50%" cy="50%" id="slickGrad" r="50%">
+<stop offset="0%" stop-color="#ba1a1a" stop-opacity="0.75"></stop>
+<stop offset="60%" stop-color="#ba1a1a" stop-opacity="0.35"></stop>
+<stop offset="100%" stop-color="#ba1a1a" stop-opacity="0.05"></stop>
+</radialgradient>
+<radialgradient cx="50%" cy="50%" id="slickMinorGrad" r="50%">
+<stop offset="0%" stop-color="#006a61" stop-opacity="0.6"></stop>
+<stop offset="100%" stop-color="#006a61" stop-opacity="0.05"></stop>
+</radialgradient>
+</defs>
+<!-- Water Fill -->
+<rect fill="#f2f4f6" height="100%" width="100%"></rect>
+<rect fill="url(#tactical-grid)" height="100%" width="100%"></rect>
+<!-- Stylized Coastline of Gulf of Khambhat / Gujarat Peninsulas -->
+<path d="M -20 -20 Q 80 140 130 220 T 170 360 Q 210 440 240 540 L -20 540 Z" fill="#e0e3e5" opacity="0.8"></path>
+<path d="M 520 -20 Q 560 120 590 200 T 640 330 Q 710 420 800 520 L 800 -20 Z" fill="#e0e3e5" opacity="0.8"></path>
+<!-- Bathymetric / Depth Contours -->
+<path d="M 140 220 Q 210 260 260 380 T 320 540" fill="none" stroke="#bfc7d2" stroke-dasharray="4 4" stroke-width="1.2"></path>
+<path d="M 480 180 Q 420 280 400 420 T 420 540" fill="none" stroke="#bfc7d2" stroke-dasharray="4 4" stroke-width="1.2"></path>
+<!-- EEZ Boundary Line -->
+<path d="M 280 40 L 460 520" fill="none" opacity="0.5" stroke="#006194" stroke-dasharray="8 6" stroke-width="1.5"></path>
+<text fill="#006194" font-family="JetBrains Mono" font-size="9" opacity="0.7" transform="rotate(70 380 320)" x="380" y="320">EEZ BOUNDARY 200NM</text>
+<!-- Slick Polygon 1 (Critical Slick VN-2025-084) -->
+<g transform="translate(260, 210)">
+<ellipse cx="60" cy="40" fill="url(#slickGrad)" rx="80" ry="32" transform="rotate(-24 60 40)"></ellipse>
+<path d="M -10 30 Q 30 10 90 25 T 140 50 Q 80 80 20 60 Z" fill="none" stroke="#ba1a1a" stroke-dasharray="3 3" stroke-width="1.5"></path>
+<!-- Drift Direction Arrow -->
+<line marker-end="url(#arrow)" stroke="#ba1a1a" stroke-width="2" x1="80" x2="135" y1="40" y2="70"></line>
+<circle cx="135" cy="70" fill="#ba1a1a" r="3"></circle>
+<text fill="#ba1a1a" font-family="JetBrains Mono" font-size="10" font-weight="600" x="70" y="95">DRIFT: 1.4 kts @ 142°</text>
+</g>
+<!-- Slick Polygon 2 (Warning Slick VN-2025-082) -->
+<g transform="translate(420, 110)">
+<ellipse cx="40" cy="25" fill="url(#slickMinorGrad)" rx="45" ry="18" transform="rotate(15 40 25)"></ellipse>
+<path d="M 0 20 Q 30 10 70 20 T 85 35 Q 50 45 10 35 Z" fill="none" stroke="#006a61" stroke-dasharray="2 2" stroke-width="1.2"></path>
+<text fill="#006a61" font-family="JetBrains Mono" font-size="9" font-weight="600" x="20" y="55">SLICK VN-082 (1.1 km²)</text>
+</g>
+<!-- Vessel Track Historical Dashed Tail -->
+<path d="M 210 120 L 250 170 L 300 220 L 350 260" fill="none" opacity="0.6" stroke="#006194" stroke-dasharray="3 3" stroke-width="1.5"></path>
+</svg>
+<!-- Dynamic Vessel Marker 1 (Correlated Suspect: MT Ocean Pioneer) -->
+<div class="absolute left-[330px] top-[240px] -translate-x-1/2 -translate-y-1/2 group cursor-pointer">
+<div class="relative flex items-center justify-center">
+<!-- Radar ping ring -->
+<span class="absolute w-8 h-8 rounded-full bg-error/20 animate-ping"></span>
+<!-- Directional vessel icon -->
+<div class="w-7 h-7 rounded-full bg-error text-on-error flex items-center justify-center shadow-md rotate-[138deg]">
+<span class="material-symbols-outlined text-[18px]">navigation</span>
+</div>
+</div>
+<!-- Label Card Attached -->
+<div class="absolute left-7 top-0 bg-surface-container-lowest px-2.5 py-1.5 rounded shadow-md whitespace-nowrap z-20 pointer-events-none">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-error"></span>
+<span class="font-headline-sm text-[12px] font-bold text-on-surface">MT Ocean Pioneer</span>
+<span class="font-code-telemetry-sm text-code-telemetry-sm px-1 py-0.5 rounded bg-error-container text-on-error-container font-bold">SUSPECT</span>
+</div>
+<div class="font-code-telemetry-sm text-code-telemetry-sm text-on-surface-variant mt-0.5">
+              IMO 9384112 • 13.4 kts • Hdg 138°
+            </div>
+</div>
+</div>
+<!-- Dynamic Vessel Marker 2 (Compliant Carrier) -->
+<div class="absolute left-[480px] top-[340px] -translate-x-1/2 -translate-y-1/2 group cursor-pointer">
+<div class="relative flex items-center justify-center">
+<div class="w-6 h-6 rounded-full bg-secondary text-on-secondary flex items-center justify-center shadow-sm rotate-[45deg]">
+<span class="material-symbols-outlined text-[15px]">navigation</span>
+</div>
+</div>
+<div class="absolute left-6 top-0 bg-surface-container-lowest px-2 py-1 rounded shadow-sm whitespace-nowrap z-10 pointer-events-none">
+<span class="font-label-md text-label-md font-semibold text-on-surface">MV Pacific Dawn</span>
+<span class="font-code-telemetry-sm text-code-telemetry-sm text-on-surface-variant block">IMO 9741229 • Nominal</span>
+</div>
+</div>
+<!-- Dynamic Vessel Marker 3 (Fisheries Patrolling) -->
+<div class="absolute left-[190px] top-[390px] -translate-x-1/2 -translate-y-1/2 group cursor-pointer">
+<div class="w-5 h-5 rounded-full bg-tertiary text-on-tertiary flex items-center justify-center shadow-sm rotate-[290deg]">
+<span class="material-symbols-outlined text-[13px]">navigation</span>
+</div>
+<div class="absolute left-5 top-0 bg-surface-container-lowest px-2 py-0.5 rounded shadow-sm whitespace-nowrap z-10">
+<span class="font-code-telemetry-sm text-code-telemetry-sm text-on-surface font-semibold">ICGS Samarth</span>
+</div>
+</div>
+<!-- Floating HUD Overlays on Map Canvas -->
+<!-- Top-Left SAR Swath Indicator -->
+<div class="absolute top-3 left-3 bg-surface-container-lowest/95 backdrop-blur-sm px-space-md py-2 rounded-lg shadow-sm">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+<span class="font-code-telemetry text-code-telemetry font-bold text-on-surface">SENTINEL-1A SAR INGEST</span>
+</div>
+<div class="font-code-telemetry-sm text-code-telemetry-sm text-on-surface-variant mt-0.5">
+            Polarization: VV + VH • Spatial Res: 10m • Pass: Ascending
+          </div>
+</div>
+<!-- Top-Right Compass / Azimuth Dial -->
+<div class="absolute top-3 right-3 bg-surface-container-lowest/95 backdrop-blur-sm p-2 rounded-lg shadow-sm flex items-center gap-2">
+<div class="relative w-9 h-9 rounded-full bg-surface-container-low flex items-center justify-center">
+<div class="w-0.5 h-6 bg-surface-dim absolute"></div>
+<div class="w-6 h-0.5 bg-surface-dim absolute"></div>
+<div class="w-0.5 h-4 bg-error rounded-full absolute top-1"></div>
+<span class="font-code-telemetry-sm text-[8px] font-bold text-error absolute top-0.5">N</span>
+</div>
+<div class="flex flex-col text-right">
+<span class="font-code-telemetry-sm text-code-telemetry-sm text-on-surface font-bold">WIND 18 kts</span>
+<span class="font-code-telemetry-sm text-[10px] text-on-surface-variant">215° SW • Sea St 3</span>
+</div>
+</div>
+<!-- Bottom Floating Interactive Scrub Shelf -->
+<div class="absolute bottom-3 left-3 right-3 bg-surface-container-lowest/95 backdrop-blur-sm px-space-md py-2.5 rounded-lg shadow-sm flex flex-col md:flex-row items-center justify-between gap-space-md">
+<div class="flex items-center gap-space-md w-full md:w-auto">
+<div class="flex items-center gap-1">
+<button class="p-1 rounded hover:bg-surface-container text-on-surface">
+<span class="material-symbols-outlined text-[20px]">play_arrow</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container text-on-surface">
+<span class="material-symbols-outlined text-[20px]">fast_rewind</span>
+</button>
+</div>
+<div class="flex flex-col flex-1 md:w-64">
+<div class="flex justify-between font-code-telemetry-sm text-code-telemetry-sm text-on-surface-variant mb-1">
+<span>02:00 UTC (T-10h)</span>
+<span class="text-on-surface font-bold">11:42 UTC (LIVE)</span>
+</div>
+<div class="w-full bg-surface-variant h-1.5 rounded-full overflow-hidden relative cursor-pointer">
+<div class="bg-primary h-full w-full rounded-full"></div>
+<div class="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-primary rounded-full ring-2 ring-surface-container-lowest"></div>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-space-md shrink-0">
+<div class="flex items-center gap-1.5 font-code-telemetry text-code-telemetry text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-primary">straighten</span>
+<span>1:250,000</span>
+</div>
+<div class="h-4 w-px bg-surface-variant"></div>
+<div class="flex items-center gap-1">
+<span class="font-label-md text-label-md text-on-surface-variant">Legend:</span>
+<span class="px-1.5 py-0.5 rounded bg-error-container font-code-telemetry-sm text-[10px] text-on-error-container font-semibold">Hydrocarbon</span>
+<span class="px-1.5 py-0.5 rounded bg-secondary-container font-code-telemetry-sm text-[10px] text-on-secondary-container font-semibold">Verified AIS</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Map Footer Strip -->
+<div class="p-space-sm px-space-md bg-surface-container flex flex-wrap items-center justify-between text-on-surface-variant font-code-telemetry-sm text-code-telemetry-sm">
+<div class="flex items-center gap-space-md">
+<span>COPERNICUS S1-A PASS: 2025-05-18T09:12:44Z</span>
+<span>•</span>
+<span>SAR NOISE EQUIV SIGMA ZERO: -24.8 dB</span>
+</div>
+<div class="flex items-center gap-space-sm font-label-md text-label-md">
+<button class="text-primary hover:underline">Full-screen Bridge HUD</button>
+<span>•</span>
+<button class="text-primary hover:underline">Download GeoTIFF</button>
+</div>
+</div>
+</div>
+<!-- RIGHT: Incident Prioritization & Telemetry Feed (5 Cols on large desktop) -->
+<div class="lg:col-span-5 xl:col-span-5 flex flex-col gap-space-md">
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex items-center justify-between">
+<div>
+<span class="font-headline-sm text-headline-sm text-on-surface">Critical Anomaly Waterfall</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Automated ML spatial correlation with AIS transponder paths</p>
+</div>
+<span class="px-2.5 py-1 rounded-full bg-error-container text-on-error-container font-code-telemetry-sm text-code-telemetry-sm font-bold">2 ACTION REQUIRED</span>
+</div>
+<!-- Incident Card 1: Critical Correlation -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-error-container text-on-error-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]">oil_barrel</span>
+</div>
+<div>
+<div class="flex items-center gap-space-xs">
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">Slick VN-2025-084</span>
+<span class="px-2 py-0.5 rounded-full bg-error-container text-on-error-container font-code-telemetry-sm text-code-telemetry-sm font-bold animate-pulse">CRITICAL</span>
+</div>
+<span class="font-code-telemetry-sm text-code-telemetry-sm text-on-surface-variant">Detected: 02:41 UTC • Lat 21.23°N, Lon 71.81°E</span>
+</div>
+</div>
+<span class="font-code-telemetry text-code-telemetry text-error font-bold">98.2% ML Conf</span>
+</div>
+<!-- Telemetry Data Grid -->
+<div class="grid grid-cols-2 gap-space-sm bg-surface-container-low p-space-sm rounded-lg mt-space-md">
+<div>
+<span class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant">Estimated Area</span>
+<div class="font-code-telemetry text-code-telemetry font-bold text-on-surface mt-0.5">4.24 km² (Est. 38,000 L)</div>
+</div>
+<div>
+<span class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant">Thickness / Type</span>
+<div class="font-code-telemetry text-code-telemetry font-bold text-error mt-0.5">Heavy Crude / Emulsion</div>
+</div>
+<div class="col-span-2 pt-1 border-t border-surface-container-high flex flex-col">
+<span class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant">Primary Correlated Vessel</span>
+<div class="flex items-center justify-between mt-1">
+<div class="flex items-center gap-2">
+<span class="font-body-md text-body-md font-semibold text-on-surface">MT Ocean Pioneer</span>
+<span class="font-code-telemetry-sm text-code-telemetry-sm text-on-surface-variant">IMO 9384112 [PA]</span>
+</div>
+<span class="font-code-telemetry-sm text-code-telemetry-sm text-error font-semibold">AIS Off: 02:15 - 03:00</span>
+</div>
+</div>
+</div>
+<!-- Action Matrix -->
+<div class="flex items-center gap-space-sm mt-space-md pt-space-xs">
+<button class="flex-1 py-2 px-3 rounded-lg bg-primary text-on-primary hover:bg-primary-container font-label-lg text-label-lg font-semibold flex items-center justify-center gap-1.5 transition-all shadow-sm" type="button">
+<span class="material-symbols-outlined text-[16px]">policy</span>
+<span>Review Evidence Dossier</span>
+</button>
+<button class="p-2 rounded-lg bg-surface-container-high hover:bg-surface-variant text-on-surface transition-colors" title="Locate on Map" type="button">
+<span class="material-symbols-outlined text-[18px]">near_me</span>
+</button>
+<button class="p-2 rounded-lg bg-surface-container-high hover:bg-surface-variant text-on-surface transition-colors" title="Forward to Maritime Authority" type="button">
+<span class="material-symbols-outlined text-[18px]">share</span>
+</button>
+</div>
+</div>
+<!-- Incident Card 2: Moderate Anomaly -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]">water_drop</span>
+</div>
+<div>
+<div class="flex items-center gap-space-xs">
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">Slick VN-2025-082</span>
+<span class="px-2 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-code-telemetry-sm text-code-telemetry-sm font-bold">WARNING</span>
+</div>
+<span class="font-code-telemetry-sm text-code-telemetry-sm text-on-surface-variant">Detected: 06:18 UTC • Lat 20.91°N, Lon 72.10°E</span>
+</div>
+</div>
+<span class="font-code-telemetry text-code-telemetry text-secondary font-bold">89.4% ML Conf</span>
+</div>
+<div class="grid grid-cols-2 gap-space-sm bg-surface-container-low p-space-sm rounded-lg mt-space-md">
+<div>
+<span class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant">Estimated Area</span>
+<div class="font-code-telemetry text-code-telemetry font-bold text-on-surface mt-0.5">1.12 km² (Sheen)</div>
+</div>
+<div>
+<span class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant">Correlation Status</span>
+<div class="font-code-telemetry text-code-telemetry font-bold text-on-surface mt-0.5">2 Vessels Proximate</div>
+</div>
+</div>
+<div class="flex items-center gap-space-sm mt-space-md pt-space-xs">
+<button class="flex-1 py-1.5 px-3 rounded-lg bg-surface-container-high hover:bg-surface-variant text-on-surface font-label-lg text-label-lg font-semibold flex items-center justify-center gap-1.5 transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+<span>Inspect AIS Intersection</span>
+</button>
+</div>
+</div>
+<!-- Quick Action Legal / Enforcement Tray -->
+<div class="bg-surface-container-low p-space-md rounded-xl flex flex-col gap-space-sm">
+<span class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant font-semibold">Immediate Compliance &amp; Enforcement Actions</span>
+<div class="grid grid-cols-3 gap-space-sm">
+<button class="p-2.5 rounded-lg bg-surface-container-lowest hover:bg-surface-container-highest flex flex-col items-center justify-center text-center gap-1 text-on-surface transition-all shadow-sm" type="button">
+<span class="material-symbols-outlined text-[20px] text-primary">local_police</span>
+<span class="font-label-md text-[10px] font-semibold">Alert Coast Guard</span>
+</button>
+<button class="p-2.5 rounded-lg bg-surface-container-lowest hover:bg-surface-container-highest flex flex-col items-center justify-center text-center gap-1 text-on-surface transition-all shadow-sm" type="button">
+<span class="material-symbols-outlined text-[20px] text-secondary">gavel</span>
+<span class="font-label-md text-[10px] font-semibold">UNCLOS Dossier</span>
+</button>
+<button class="p-2.5 rounded-lg bg-surface-container-lowest hover:bg-surface-container-highest flex flex-col items-center justify-center text-center gap-1 text-on-surface transition-all shadow-sm" type="button">
+<span class="material-symbols-outlined text-[20px] text-tertiary">download</span>
+<span class="font-label-md text-[10px] font-semibold">Export SAR NetCDF</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Enterprise Data Table: Maritime Surveillance & Incident Log -->
+<div class="flex flex-col bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden mt-space-sm">
+<!-- Table Toolbar Header -->
+<div class="p-space-md flex flex-col lg:flex-row lg:items-center justify-between gap-space-md bg-surface-container-low">
+<div class="flex items-center gap-space-md">
+<span class="font-headline-md text-headline-md text-on-surface">Active Marine Surveillance &amp; Incident Log</span>
+<span class="px-2.5 py-0.5 rounded bg-surface-container-highest font-code-telemetry-sm text-code-telemetry-sm text-on-surface-variant font-bold">28 TOTAL ENTRIES</span>
+</div>
+<div class="flex flex-wrap items-center gap-space-sm">
+<!-- Severity Filters -->
+<div class="flex items-center bg-surface-container-lowest p-1 rounded-lg shadow-sm">
+<button class="px-2.5 py-1 rounded bg-primary-container text-on-primary-container font-label-md text-label-md font-semibold">ALL</button>
+<button class="px-2.5 py-1 rounded text-error hover:bg-error-container/20 font-label-md text-label-md font-semibold">CRITICAL (2)</button>
+<button class="px-2.5 py-1 rounded text-secondary hover:bg-secondary-container/20 font-label-md text-label-md font-semibold">WARNING (2)</button>
+<button class="px-2.5 py-1 rounded text-on-surface-variant hover:bg-surface-container font-label-md text-label-md">RESOLVED</button>
+</div>
+<!-- Search Input -->
+<div class="relative">
+<span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-on-surface-variant text-[16px]">search</span>
+<input class="pl-8 pr-3 py-1 bg-surface-container-lowest rounded-lg font-body-sm text-body-sm text-on-surface placeholder:text-outline focus:outline-none shadow-sm h-8" placeholder="Filter ID, IMO or Zone..." type="text"/>
+</div>
+<button class="flex items-center gap-1 px-3 py-1 rounded-lg bg-surface-container-lowest hover:bg-surface-container font-label-md text-label-md text-on-surface shadow-sm h-8" type="button">
+<span class="material-symbols-outlined text-[16px]">file_download</span>
+<span>Export CSV</span>
+</button>
+</div>
+</div>
+<!-- Data Table Canvas -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container text-on-surface-variant font-label-md text-label-md uppercase tracking-wider h-9">
+<th class="px-space-md py-2 font-semibold">Incident ID</th>
+<th class="px-space-md py-2 font-semibold">Detection Time (UTC)</th>
+<th class="px-space-md py-2 font-semibold">Coordinates</th>
+<th class="px-space-md py-2 font-semibold">Slick Area &amp; Volume</th>
+<th class="px-space-md py-2 font-semibold">Correlated Vessel &amp; Flag</th>
+<th class="px-space-md py-2 font-semibold text-center">ML Confidence</th>
+<th class="px-space-md py-2 font-semibold">Sensor Source</th>
+<th class="px-space-md py-2 font-semibold">Status</th>
+<th class="px-space-md py-2 font-semibold text-right">Audit Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-variant font-body-sm text-body-sm text-on-surface">
+<!-- Row 1: VN-2025-084 -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-space-md py-2.5 font-code-telemetry text-code-telemetry font-bold text-primary">
+              VN-2025-084
+            </td>
+<td class="px-space-md py-2.5 font-code-telemetry text-code-telemetry">
+              2025-05-18 02:41:19
+            </td>
+<td class="px-space-md py-2.5 font-code-telemetry text-code-telemetry text-on-surface-variant">
+              21°14'12"N, 71°48'36"E
+            </td>
+<td class="px-space-md py-2.5">
+<span class="font-code-telemetry text-code-telemetry font-semibold">4.24 km²</span>
+<span class="text-on-surface-variant font-body-sm text-body-sm"> (~38 m³)</span>
+</td>
+<td class="px-space-md py-2.5">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-error">directions_boat</span>
+<span class="font-semibold text-error">MT Ocean Pioneer</span>
+<span class="font-code-telemetry-sm text-code-telemetry-sm text-on-surface-variant">[PA]</span>
+</div>
+</td>
+<td class="px-space-md py-2.5 text-center">
+<span class="px-2 py-0.5 rounded bg-error-container text-on-error-container font-code-telemetry-sm text-code-telemetry-sm font-bold">98.2%</span>
+</td>
+<td class="px-space-md py-2.5 font-code-telemetry text-code-telemetry text-on-surface-variant">
+              Sentinel-1A (VV)
+            </td>
+<td class="px-space-md py-2.5">
+<span class="px-2.5 py-1 rounded-full bg-error-container text-on-error-container font-code-telemetry-sm text-code-telemetry-sm font-bold inline-flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span> CRITICAL
+              </span>
+</td>
+<td class="px-space-md py-2.5 text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1 rounded hover:bg-surface-container text-primary font-label-md text-label-md font-semibold" title="Inspect">Inspect</button>
+<button class="p-1 rounded hover:bg-surface-container text-on-surface-variant" title="Download SAR Profile">
+<span class="material-symbols-outlined text-[16px]">download</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2: VN-2025-082 -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-space-md py-2.5 font-code-telemetry text-code-telemetry font-bold text-primary">
+              VN-2025-082
+            </td>
+<td class="px-space-md py-2.5 font-code-telemetry text-code-telemetry">
+              2025-05-18 06:18:02
+            </td>
+<td class="px-space-md py-2.5 font-code-telemetry text-code-telemetry text-on-surface-variant">
+              20°55'01"N, 72°06'19"E
+            </td>
+<td class="px-space-md py-2.5">
+<span class="font-code-telemetry text-code-telemetry font-semibold">1.12 km²</span>
+<span class="text-on-surface-variant font-body-sm text-body-sm"> (~7.5 m³)</span>
+</td>
+<td class="px-space-md py-2.5">
+<div class="flex items-center gap-1.5 text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-secondary">help_outline</span>
+<span>2 Intersecting Corridors</span>
+</div>
+</td>
+<td class="px-space-md py-2.5 text-center">
+<span class="px-2 py-0.5 rounded bg-secondary-fixed text-on-secondary-fixed font-code-telemetry-sm text-code-telemetry-sm font-bold">89.4%</span>
+</td>
+<td class="px-space-md py-2.5 font-code-telemetry text-code-telemetry text-on-surface-variant">
+              Sentinel-1A (VH)
+            </td>
+<td class="px-space-md py-2.5">
+<span class="px-2.5 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed font-code-telemetry-sm text-code-telemetry-sm font-bold inline-flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> WARNING
+              </span>
+</td>
+<td class="px-space-md py-2.5 text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1 rounded hover:bg-surface-container text-primary font-label-md text-label-md font-semibold" title="Inspect">Inspect</button>
+<button class="p-1 rounded hover:bg-surface-container text-on-surface-variant" title="Correlate">
+<span class="material-symbols-outlined text-[16px]">device_hub</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3: VN-2025-081 -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-space-md py-2.5 font-code-telemetry text-code-telemetry font-bold text-primary">
+              VN-2025-081
+            </td>
+<td class="px-space-md py-2.5 font-code-telemetry text-code-telemetry">
+              2025-05-17 21:04:55
+            </td>
+<td class="px-space-md py-2.5 font-code-telemetry text-code-telemetry text-on-surface-variant">
+              19°48'44"N, 71°12'09"E
+            </td>
+<td class="px-space-md py-2.5">
+<span class="font-code-telemetry text-code-telemetry font-semibold">0.45 km²</span>
+<span class="text-on-surface-variant font-body-sm text-body-sm"> (Thin Sheen)</span>
+</td>
+<td class="px-space-md py-2.5">
+<div class="flex items-center gap-1.5 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]">anchor</span>
+<span>Anchorage Zone C</span>
+</div>
+</td>
+<td class="px-space-md py-2.5 text-center">
+<span class="px-2 py-0.5 rounded bg-surface-container-highest text-on-surface-variant font-code-telemetry-sm text-code-telemetry-sm font-semibold">76.8%</span>
+</td>
+<td class="px-space-md py-2.5 font-code-telemetry text-code-telemetry text-on-surface-variant">
+              COSMO-SkyMed
+            </td>
+<td class="px-space-md py-2.5">
+<span class="px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface-variant font-code-telemetry-sm text-code-telemetry-sm font-semibold inline-flex items-center gap-1">
+                MONITORED
+              </span>
+</td>
+<td class="px-space-md py-2.5 text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1 rounded hover:bg-surface-container text-primary font-label-md text-label-md font-semibold" title="Inspect">Inspect</button>
+</div>
+</td>
+</tr>
+<!-- Row 4: VN-2025-079 -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-space-md py-2.5 font-code-telemetry text-code-telemetry font-bold text-primary">
+              VN-2025-079
+            </td>
+<td class="px-space-md py-2.5 font-code-telemetry text-code-telemetry">
+              2025-05-17 14:10:11
+            </td>
+<td class="px-space-md py-2.5 font-code-telemetry text-code-telemetry text-on-surface-variant">
+              22°01'33"N, 69°44'20"E
+            </td>
+<td class="px-space-md py-2.5">
+<span class="font-code-telemetry text-code-telemetry font-semibold">6.80 km²</span>
+<span class="text-on-surface-variant font-body-sm text-body-sm"> (Dispersed)</span>
+</td>
+<td class="px-space-md py-2.5">
+<div class="flex items-center gap-1.5">
+<span class="font-semibold text-on-surface">MV Global Trader</span>
+<span class="font-code-telemetry-sm text-code-telemetry-sm text-on-surface-variant">[LR]</span>
+</div>
+</td>
+<td class="px-space-md py-2.5 text-center">
+<span class="px-2 py-0.5 rounded bg-surface-container-highest text-on-surface-variant font-code-telemetry-sm text-code-telemetry-sm font-semibold">95.0%</span>
+</td>
+<td class="px-space-md py-2.5 font-code-telemetry text-code-telemetry text-on-surface-variant">
+              Sentinel-1B
+            </td>
+<td class="px-space-md py-2.5">
+<span class="px-2.5 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed font-code-telemetry-sm text-code-telemetry-sm font-semibold inline-flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> RESOLVED
+              </span>
+</td>
+<td class="px-space-md py-2.5 text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1 rounded hover:bg-surface-container text-on-surface-variant font-label-md text-label-md" title="Archived">Archived</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Pagination Footer -->
+<div class="p-space-md bg-surface-container-low flex items-center justify-between font-body-sm text-body-sm text-on-surface-variant">
+<span>Showing 1-4 of 28 verified incidents</span>
+<div class="flex items-center gap-1">
+<button class="px-2.5 py-1 rounded bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md disabled:opacity-50" disabled="">Previous</button>
+<button class="px-2.5 py-1 rounded bg-primary text-on-primary font-label-md text-label-md font-semibold">1</button>
+<button class="px-2.5 py-1 rounded hover:bg-surface-container text-on-surface font-label-md text-label-md">2</button>
+<button class="px-2.5 py-1 rounded hover:bg-surface-container text-on-surface font-label-md text-label-md">3</button>
+<button class="px-2.5 py-1 rounded bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md">Next</button>
+</div>
+</div>
+</div>
+</div></main></div></body></html>

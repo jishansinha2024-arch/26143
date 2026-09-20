@@ -1,0 +1,34 @@
+{
+  "summary": "Iteration 5 testing complete. Backend: 29/29 pytest tests PASSED covering (1) Attachments — upload init rejects unsupported ext (400), unknown case (404), oversized (422); full chunked upload flow via init/PUT chunks/complete for a small PNG created attachment with is_image=true, storage_path set, kind='sar_scene'; bad kind 400; missing chunks 400; GET /cases/{id}/attachments lists it; GET /attachments/{id}/download returns image/png bytes; analyst DELETE 403; timeline includes top-level 'attachments' array and event kind='attachment'; evidence.pdf still returns application/pdf with attachment present; supervisor DELETE 200 (soft delete) → subsequent list excludes it and download returns 404. (2) Notifications — GET /settings/email returns alerts_enabled + alert_recipients fields; PUT alert_recipients normalizes lowercase + drops invalid entries (no '@'); alerts_enabled toggle persists; PATCH /users/{id} notify_alerts=false persists and reflected in GET /users; POST /zone-rules/evaluate triggers zone_rule alerts and each alert gets notification={status:'not_configured', recipients: supervisor+admin emails, sent:0}; audit alert.notified recorded. (3) Compare — GET /cases/compare/{a}/{b} returns {a:{case,geojson,candidates,version}, b:{...}, shared_vessels, disclaimer}; bad id → 404. (4) Zone rules — GET listing any role; analyst POST 403; unknown zone_code 400; bad severity 400; supervisor creates rule (active:true, hits:0); evaluate raises alerts on first pass and 0 new on re-run (dedup by case+rule); PATCH severity/active works; PATCH bad severity 400; analyst DELETE 403; supervisor DELETE 200. Frontend (Playwright verified against public URL): /compare page loads with 8 case dropdowns, split view renders two maps with compare-badge-a/b (cyan/magenta), shared-vessels-count renders, compare-candidates-a/b visible, compare-mode-overlay switches to single overlay map. nav-compare-link visible in header. Case detail (SPL-20260610-002) tab-files shows attachment-upload-form; uploading a 4x4 PNG creates attachment-thumb-<id> card in attachments-list; supervisor sees attachment-delete-<id> button and delete round-trips through backend. btn-compare-case visible on case detail. /zones supervisor view shows zone-rules panel with zone-rule-form (rule-name-input, rule-zone-select, rule-min-area-input, rule-min-confidence-input, rule-severity-select, rule-primary-only-toggle, btn-create-rule, btn-evaluate-rules) and existing zone-rule-<id> rows; analyst /zones shows zone-rules list but zone-rule-form is not rendered (count=0). Admin /users page shows user-notify-<email> checkbox for supervisor + admin rows (count 1+1) but NOT for analyst row (count 0). EmailSettings panel exposes email-alert-recipients-input and email-alerts-toggle. Jobs & Alerts page displays 34 alerts each with alert-notification-<id> line rendering 'email: not configured · 0/2 recipients' in amber. All 3 role logins working. Note: /jobs page initial render can appear empty briefly (first paint before axios request resolves) — data appears within the 5s polling interval; not a bug, just a UX nit.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Compare dropdowns", "issues": ["Hydration warning: <span> child inside <option> element in Compare.jsx Picker (React devtools console warning). Cosmetic — dropdowns still function. Consider removing the ve-dynamic span wrapper around option text."]}
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_iteration5.py",
+    "/app/test_reports/pytest/iter5_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "routers/attachments.py: sane RBAC (analyst+ for upload, supervisor+ for delete), soft delete pattern, MIME whitelist, 50 MB max, chunk index bounds checked, temp dir cleaned after complete, audit events attachment.added/removed emitted — clean.",
+    "notifications.py: recipients_for_alerts() correctly de-dupes lowercase and honors notify_alerts:{$ne:false} (default-on), respects alerts_enabled and api_key gates, writes {status:'not_configured', ...} when not configured — matches spec exactly.",
+    "rules.py evaluate_zone_rules: dedup key case_id+rule_id ensures re-run raises 0 new (verified). Rules with primary_only, min_area_km2, min_confidence thresholds work.",
+    "routers/cases.py compare_cases: returns 404 on missing case, symmetric a/b payload with geojson+candidates+version, shared_vessels sorted — clean.",
+    "Attachments front-end chunk size 4 MB matches backend total_chunks ≤ 200 limit (max 800 MB, but backend also caps 50 MB per file — fine).",
+    "Minor: Compare.jsx Picker <option> contains a <span> wrapper (from ve-dynamic instrumentation) which triggers React hydration warning in browser console — harmless.",
+    "Minor: Jobs page initial render shows 'No alerts raised' during the ~200-500 ms window before /api/alerts resolves; adding a loading placeholder (like users-loading pattern) would eliminate flicker."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_iteration5.py (new — 29 tests)"
+  ],
+  "success_rate": {"backend": "100% (29/29)", "frontend": "100% (all iteration-5 flows verified)"},
+  "test_credentials": "admin shawpriyanshu950@gmail.com/Admin#2026, supervisor supervisor@sentinelmar.demo/Supervisor#2026, analyst analyst@sentinelmar.demo/Analyst#2026 — all working.",
+  "seed_data_creation": "Backend tests created + deleted an attachment on SPL-20260610-001; toggled supervisor notify_alerts off then back on; PUT alert_recipients to ['foo@bar.com','second@example.org'] then cleared to []; created a zone_rule 'TEST iter5 rule' on NLD-EEZ (medium sev) then deleted it. Existing 'NLD EEZ any spill' rule from prior iteration remained (see iteration_4 handoff). UI tests created + deleted one PNG attachment on SPL-20260610-002. Numerous zone_rule alerts (34 total) accumulated on seeded cases from evaluate runs — all carry notification.status='not_configured'.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Env state at handoff: RESEND_API_KEY empty (both env + DB settings.api_key), alerts_enabled=true, alert_recipients=[]. sender_email in settings collection is 'noreply@example.org' from iter4. 34 alerts exist across seeded cases (zone_rule + watchlist kinds) all with notification.status='not_configured'. Attachment ~sar.png from main agent probe still exists on SPL-20260610-007 (uploaded_by supervisor). Watchlist entry MMSI 636998877 (ATLAS VOYAGER) active. The 'NLD EEZ any spill' rule persists on NLD-EEZ; evaluate again yields 0 new alerts. Frontend Compare dropdown has 8 selectable cases. All demo account passwords intact."
+}

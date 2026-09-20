@@ -1,24 +1,18 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
-import { ArrowUpCircle, ShieldCheck, LogIn, User, Shield, Clock, Loader2 } from "lucide-react";
+import { ArrowUpCircle, ShieldCheck, LogIn } from "lucide-react";
 import { api, apiError, ROLE_LABEL } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
 
 const ROLE_DESC = {
-  guest: "Public read-only access to demo cases, scene archives, jurisdiction zones, and sensor health telemetry.",
-  viewer: "Authenticated read-only access. You can explore active cases and request elevated Analyst or Supervisor roles.",
-  analyst: "Operational permissions to ingest Sentinel radar scenes, upload AIS data, correlate vessels, review candidates, and export dossiers.",
-  supervisor: "Analyst permissions plus authority to acknowledge tactical alerts, override cases, and review audit ledgers.",
-  admin: "Full system administration: user access controls, role request approvals, security rules, and reference case pinning.",
+  guest: "Public read-only access to the demo, reference case, archive, zones and data sources.",
+  viewer: "Authenticated read-only access. You can request Analyst or Supervisor access below.",
+  analyst: "Ingest, correlate, review and export investigations.",
+  supervisor: "Analyst permissions plus alert acknowledgement and case overrides.",
+  admin: "Full administration: user & role management, reference-case pinning, system settings.",
 };
-
-const STATUS_COLOR = {
-  pending: "#B8862A",
-  approved: "#2E8B6A",
-  rejected: "#C25A49",
-  cancelled: "#5F7684",
-};
+const STATUS_COLOR = { pending: "#b26a00", approved: "#006a61", rejected: "#ba1a1a", cancelled: "#707881" };
 
 export default function Account() {
   const { user } = useAuth();
@@ -31,234 +25,77 @@ export default function Account() {
   const canRequest = user && user.role === "viewer";
 
   const load = useCallback(() => {
-    if (isGuest || !user) {
-      setReq(null);
-      return;
-    }
-    api
-      .get("/role-requests/me")
-      .then((r) => setReq(r.data.request || null))
-      .catch(() => setReq(null));
+    if (isGuest || !user) { setReq(null); return; }
+    api.get("/role-requests/me").then((r) => setReq(r.data.request || null)).catch(() => setReq(null));
   }, [isGuest, user]);
-
-  useEffect(() => {
-    load();
-  }, [load]);
+  useEffect(() => { load(); }, [load]);
 
   const submit = async () => {
     setBusy(true);
-    try {
-      await api.post("/role-requests", {
-        requested_role: role,
-        organization: org || null,
-        reason: reason || null,
-      });
-      toast.success("Access request submitted for administrator approval");
-      load();
-    } catch (e) {
-      toast.error(apiError(e));
-    } finally {
-      setBusy(false);
-    }
+    try { await api.post("/role-requests", { requested_role: role, organization: org || null, reason: reason || null }); toast.success("Access request submitted for administrator approval"); load(); }
+    catch (e) { toast.error(apiError(e)); } finally { setBusy(false); }
   };
-
-  const cancel = async () => {
-    try {
-      await api.delete("/role-requests/me");
-      toast.success("Request cancelled");
-      load();
-    } catch (e) {
-      toast.error(apiError(e));
-    }
-  };
+  const cancel = async () => { try { await api.delete("/role-requests/me"); toast.success("Request cancelled"); load(); } catch (e) { toast.error(apiError(e)); } };
 
   return (
-    <div className="h-full overflow-y-auto p-4 sm:p-6 lg:p-8 bg-[#F7F6F2] text-slate-900" data-testid="account-page">
-      <div className="max-w-4xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="border-b border-slate-200 pb-5">
-          <p className="label-mono text-sky-700 mb-1">Session &amp; Credentials</p>
-          <h1 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
-            User Account &amp; Access Controls
-          </h1>
-        </div>
-
-        {/* Profile Card */}
-        <div className="panel p-6 border-slate-200 bg-white shadow-xs" data-testid="account-summary">
+    <div className="h-full overflow-y-auto p-6" data-testid="account-page">
+      <div className="mb-6">
+        <p className="label-mono mb-1">Session · account</p>
+        <h1 className="font-display text-3xl font-extrabold tracking-tight sm:text-4xl">My account</h1>
+      </div>
+      <div className="grid gap-4 max-w-3xl">
+        <div className="panel p-5 fade-up" data-testid="account-summary">
           {isGuest ? (
             <div>
-              <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-wider text-slate-500">
-                <User size={13} className="text-sky-600" /> Active Session Type
-              </div>
-              <p className="mt-1.5 font-display text-2xl font-bold text-slate-900">
-                Guest · Read Only
-              </p>
-              <p className="mt-2 text-xs text-slate-600 leading-relaxed max-w-xl">
-                {ROLE_DESC.guest}
-              </p>
-              <Link
-                to="/signup"
-                data-testid="account-signup-link"
-                className="mt-5 inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2.5 text-sm font-semibold text-paper hover:bg-tide transition-all"
-              >
-                <LogIn size={14} /> Create a Free Viewer Account
-              </Link>
+              <p className="font-mono text-[11px] uppercase tracking-wider text-slate-500">Signed in as</p>
+              <p className="mt-1 font-display text-xl font-bold" style={{ color: "#707881" }}>Guest · read only</p>
+              <p className="mt-2 text-sm text-slate-400">{ROLE_DESC.guest}</p>
+              <Link to="/signup" data-testid="account-signup-link" className="mt-4 inline-flex items-center gap-2 rounded bg-cyan-400 px-4 py-2 font-mono text-[11px] font-semibold uppercase tracking-wider text-slate-950 hover:bg-cyan-300"><LogIn size={13} /> Create a free Viewer account</Link>
             </div>
           ) : (
             <div>
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 pb-5 border-b border-slate-200">
-                <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5">
-                  <p className="label-mono text-[9.5px] text-slate-500">Full Name</p>
-                  <p className="mt-1 text-sm font-semibold text-slate-900 truncate" data-testid="account-name">
-                    {user?.name}
-                  </p>
-                </div>
-
-                <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5">
-                  <p className="label-mono text-[9.5px] text-slate-500">Email Address</p>
-                  <p className="mt-1 font-mono text-xs text-slate-700 truncate" data-testid="account-email">
-                    {user?.email}
-                  </p>
-                </div>
-
-                <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5">
-                  <p className="label-mono text-[9.5px] text-slate-500">Current Role</p>
-                  <p
-                    className="mt-1 font-mono text-xs font-bold uppercase text-sky-700"
-                    data-testid="account-role"
-                  >
-                    {ROLE_LABEL[user?.role] || user?.role}
-                  </p>
-                </div>
-
-                <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5">
-                  <p className="label-mono text-[9.5px] text-slate-500">Access Request Status</p>
-                  <p className="mt-1 font-mono text-[11px] font-medium" data-testid="account-requested-role">
-                    {req === undefined ? (
-                      <span className="text-slate-400">checking…</span>
-                    ) : req && req.status === "pending" ? (
-                      <span style={{ color: STATUS_COLOR.pending }} className="font-bold">
-                        {req.requested_role.toUpperCase()} (PENDING)
-                      </span>
-                    ) : req && req.status === "approved" ? (
-                      <span style={{ color: STATUS_COLOR.approved }} className="font-bold">
-                        {req.requested_role.toUpperCase()} (APPROVED)
-                      </span>
-                    ) : req && req.status === "rejected" ? (
-                      <span style={{ color: STATUS_COLOR.rejected }} className="font-bold">
-                        {req.requested_role.toUpperCase()} (REJECTED)
-                      </span>
-                    ) : (
-                      <span className="text-slate-500">None active</span>
-                    )}
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div><p className="label-mono">Name</p><p className="mt-1 text-sm text-slate-200" data-testid="account-name">{user?.name}</p></div>
+                <div><p className="label-mono">Email</p><p className="mt-1 font-mono text-sm text-slate-300" data-testid="account-email">{user?.email}</p></div>
+                <div><p className="label-mono">Current role</p><p className="mt-1 font-mono text-sm font-semibold uppercase" style={{ color: "#006194" }} data-testid="account-role">{ROLE_LABEL[user?.role] || user?.role}</p></div>
+                <div><p className="label-mono">Requested role</p>
+                  <p className="mt-1 font-mono text-sm" data-testid="account-requested-role">
+                    {req === undefined ? <span className="text-slate-500">checking…</span>
+                      : req && req.status === "pending" ? <span style={{ color: STATUS_COLOR.pending }}>{req.requested_role.toUpperCase()} · PENDING ADMIN APPROVAL</span>
+                      : req && req.status === "approved" ? <span style={{ color: STATUS_COLOR.approved }}>{req.requested_role.toUpperCase()} · APPROVED</span>
+                      : req && req.status === "rejected" ? <span style={{ color: STATUS_COLOR.rejected }}>{req.requested_role.toUpperCase()} · REJECTED</span>
+                      : <span className="text-slate-500">No elevated-access request</span>}
                   </p>
                 </div>
               </div>
-
-              <div className="mt-4 flex items-start gap-2.5 text-xs text-slate-600 leading-relaxed">
-                <Shield size={15} className="text-sky-600 shrink-0 mt-0.5" />
-                <span>{ROLE_DESC[user?.role]}</span>
-              </div>
+              <p className="mt-3 text-xs text-slate-400">{ROLE_DESC[user?.role]}</p>
             </div>
           )}
         </div>
 
-        {/* Elevated Role Request Form */}
         {canRequest && (!req || req.status !== "pending") && (
-          <div className="panel p-6 border-slate-200 bg-white shadow-xs" data-testid="role-request-form">
-            <div className="mb-2 flex items-center gap-2">
-              <ArrowUpCircle size={18} className="text-sky-600" />
-              <h2 className="font-display text-lg font-bold text-slate-900">
-                Request Elevated Credentials
-              </h2>
+          <div className="panel p-5 fade-up" data-testid="role-request-form">
+            <div className="mb-3 flex items-center gap-2"><ArrowUpCircle size={16} color="#006194" /><h2 className="font-display text-lg font-semibold">Request elevated access</h2></div>
+            <p className="mb-3 text-xs text-slate-400">Analyst and Supervisor access require administrator approval. Administrator access cannot be requested.</p>
+            <div className="grid gap-2.5 sm:grid-cols-2">
+              <label className="block"><span className="label-mono mb-1 block">Requested role</span>
+                <select data-testid="role-request-select" value={role} onChange={(e) => setRole(e.target.value)} className="w-full rounded border bg-slate-900/60 px-2.5 py-1.5 font-mono text-xs text-slate-100 outline-none focus:border-cyan-400/60" style={{ borderColor: "var(--border-highlight)" }}>
+                  <option value="analyst">analyst — ingest, correlate, review</option>
+                  <option value="supervisor">supervisor — + alerts, overrides</option>
+                </select></label>
+              <label className="block"><span className="label-mono mb-1 block">Organization (optional)</span>
+                <input data-testid="role-request-org" value={org} onChange={(e) => setOrg(e.target.value)} className="w-full rounded border bg-slate-900/60 px-2.5 py-1.5 font-mono text-xs text-slate-100 outline-none focus:border-cyan-400/60" style={{ borderColor: "var(--border-highlight)" }} /></label>
             </div>
-            <p className="mb-5 text-xs text-slate-500">
-              Analyst and Supervisor roles provide operational write access and require designated administrator approval. Administrator access cannot be requested.
-            </p>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <label className="block">
-                <span className="label-mono mb-1.5 block text-slate-700">Target Role</span>
-                <select
-                  data-testid="role-request-select"
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                  className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 font-mono text-xs text-slate-900 outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/15"
-                >
-                  <option value="analyst">Analyst — Ingest, correlate, review &amp; export</option>
-                  <option value="supervisor">Supervisor — + Acknowledge alerts, override cases</option>
-                </select>
-              </label>
-
-              <label className="block">
-                <span className="label-mono mb-1.5 block text-slate-700">Agency / Department (Optional)</span>
-                <input
-                  data-testid="role-request-org"
-                  value={org}
-                  onChange={(e) => setOrg(e.target.value)}
-                  placeholder="e.g. Maritime Coast Guard HQ"
-                  className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs text-slate-900 outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/15"
-                />
-              </label>
-            </div>
-
-            <label className="mt-3.5 block">
-              <span className="label-mono mb-1.5 block text-slate-700">Justification / Operational Purpose</span>
-              <textarea
-                data-testid="role-request-reason"
-                value={reason}
-                onChange={(e) => setReason(e.target.value)}
-                rows={2}
-                placeholder="Explain the investigative or regulatory purpose for requesting elevated credentials..."
-                className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs text-slate-900 outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/15"
-              />
-            </label>
-
-            <button
-              data-testid="role-request-submit"
-              disabled={busy}
-              onClick={submit}
-              className="mt-4 inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2.5 text-sm font-semibold text-paper hover:bg-tide disabled:opacity-50 transition-all"
-            >
-              {busy ? (
-                <>
-                  <Loader2 size={14} className="animate-spin text-tide" /> Submitting Request…
-                </>
-              ) : (
-                <>
-                  <ShieldCheck size={14} /> Submit Access Request
-                </>
-              )}
-            </button>
+            <label className="mt-2.5 block"><span className="label-mono mb-1 block">Reason (optional)</span>
+              <textarea data-testid="role-request-reason" value={reason} onChange={(e) => setReason(e.target.value)} rows={2} className="w-full rounded border bg-slate-900/60 px-2.5 py-1.5 text-xs text-slate-100 outline-none focus:border-cyan-400/60" style={{ borderColor: "var(--border-highlight)" }} /></label>
+            <button data-testid="role-request-submit" disabled={busy} onClick={submit} className="mt-3 inline-flex items-center gap-2 rounded bg-cyan-400 px-4 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-slate-950 hover:bg-cyan-300 disabled:opacity-50"><ShieldCheck size={13} /> {busy ? "Submitting…" : "Submit request"}</button>
           </div>
         )}
 
-        {/* Pending Request Status */}
         {canRequest && req && req.status === "pending" && (
-          <div
-            className="rounded-2xl border border-amber-300 bg-amber-50/80 p-6 shadow-xs"
-            data-testid="role-request-pending"
-          >
-            <div className="flex items-center gap-2.5">
-              <Clock size={18} className="text-amber-600 shrink-0" />
-              <p className="text-sm font-semibold text-slate-900">
-                Your request for elevated{" "}
-                <span className="font-mono font-bold uppercase text-amber-700">
-                  {req.requested_role}
-                </span>{" "}
-                access is currently pending administrator verification.
-              </p>
-            </div>
-            <p className="mt-1 text-xs text-slate-600 ml-7">
-              You will receive an updated role notification once an administrator reviews your submission.
-            </p>
-            <button
-              data-testid="role-request-cancel"
-              onClick={cancel}
-              className="mt-4 ml-7 rounded-xl border border-slate-300 bg-white px-3.5 py-1.5 font-mono text-[11px] uppercase tracking-wider text-slate-700 hover:bg-slate-50 transition-colors shadow-xs"
-            >
-              Cancel Request
-            </button>
+          <div className="panel p-5 fade-up" data-testid="role-request-pending">
+            <p className="text-sm text-slate-300">Your request for <span className="font-mono uppercase" style={{ color: "#b26a00" }}>{req.requested_role}</span> access is pending administrator approval.</p>
+            <button data-testid="role-request-cancel" onClick={cancel} className="mt-3 rounded border px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider text-slate-300 hover:bg-slate-800/60" style={{ borderColor: "var(--border-default)" }}>Cancel request</button>
           </div>
         )}
       </div>

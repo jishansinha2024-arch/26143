@@ -1,0 +1,36 @@
+{
+  "summary": "Iteration 19 AISStream live rewrite verification. Backend: 13/13 pytest tests/test_ais_live.py + 15/15 new tests/test_ais_live_integration.py PASS. All endpoints behave as specced: GET /api/ais/status → mode=live, configured=false, connected=false, subscription_confirmed=false, reason='API key not configured', vessels_active=0, coverage_mode=default, 4 Indian bboxes (lat 5-25 lon 65-96), aisstream_bounding_boxes[0]=[[8.0,66.0],[24.5,76.5]] (lat-first). Alias /api/ais/live/status works. POST /api/ais/coverage/region/east_coast (supervisor) → mode=manual, bboxes=[[10,78.5,22.5,90]], coverage_name='Bay of Bengal / East Coast'. POST /api/ais/coverage {18,71,20,73} → 200 bbox [[18,71,20,73]]. Invalid S>N and lon 200 → 400. Analyst → 403. Region default → mode=default. Unknown region → 404. GET /api/ais/vessels → count 0. GET /api/ais/tracks/123456789 → count 0. POST /api/ais/test-connection admin → configured=false websocket=false error='API key not configured'; analyst → 403. GET /api/ais/debug/aoi (supervisor) → investigation_aoi + aisstream_bounding_boxes + latest_sentinel_scene starting with S1. Spill-follow via POST /api/spill-observations (external, polygon near 19N/72E) → coverage_mode='spill' with expanded bbox ≈[17.1,70.05,19.9,73.94]; reset to default OK. Backend log contains 'AISStream API key configured: False' and NO ais_live tracebacks. Frontend: /health as ANALYST → health-ais title 'AIS OFFLINE', state 'API key not configured', rate '0', coverage 'DEFAULT · Indian coastal regions', monitor-region-select NOT visible. As ADMIN → region-east_coast click updates coverage to 'MANUAL · Bay of Bengal / East Coast' and region-default restores to DEFAULT (verified visually and via toast). CRITICAL FRONTEND REGRESSION: /ingest page crashes with 'TypeError: vessels.map is not a function' before LiveAis panel can render.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "Ingest page (Ingest.jsx line 62)", "issue": "Uncaught TypeError: vessels.map is not a function — /ingest whole page crashes. GET /api/ais/vessels now returns object {count, stale_after_min, vessels:[]} (defined in routers/ais_live.py which is included BEFORE routers/ingest.py in server.py, so the new ais_live route shadows the legacy one that used to return an array). Ingest.jsx line 35 does `setVessels(v.data)` and line 62 does `vessels.map(...)`. Fix either: (a) frontend line 35 → `setVessels(v.data.vessels || v.data)`, or (b) reorder server.py includes so ingest.router (which has @router.get('/ais/vessels') returning array) precedes ais_live_router.router. This BLOCKS the review request's Ingest LiveAis-panel verification (live-ais-panel, live-ais-badge, live-ais-coverage, live-ais-region-*, btn-test-ais all unreachable because the page crashes).", "selector": "[data-testid=\"live-ais-panel\"]", "priority": "CRITICAL"}
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_ais_live.py",
+    "/app/backend/tests/test_ais_live_integration.py",
+    "/app/test_reports/pytest/iter19_results.xml"
+  ],
+  "action_items": [
+    "CRITICAL: Fix /ingest crash — either change Ingest.jsx to consume the new {count, vessels[]} response shape from /api/ais/vessels, or make routers/ais_live.py mount its vessels route under a distinct path (e.g. /ais/live/vessels) so the legacy /ais/vessels array response from routers/ingest.py is preserved. Recommend updating Ingest.jsx (single-source truth is the new ais_live endpoint)."
+  ],
+  "critical_code_review_comments": [
+    "Route shadowing: server.py registers ais_live_router before ingest_router; both declare @router.get('/ais/vessels'). FastAPI keeps the first-registered route, so ingest.router.get('/ais/vessels') is dead code. This is what caused the Ingest.jsx regression. Either delete the ingest.py duplicate or namespace the ais_live one.",
+    "ais_live.status() reason ladder is correct but the 'Authentication failed' branch uses `'error' in str(state['error']).lower() and 'key' in ...` — very brittle; consider checking for the specific AISStream auth error string.",
+    "ais_live._session flushes every 8s or 500 msgs but reads the reconnect_event only between recv() cycles — a coverage change while idle still waits up to 10s (recv timeout) before reconnect. Acceptable, but note the coverage_for_spill delay users may see.",
+    "coverage_for_spill silently returns None when mode=='manual' — good, but there's no audit log entry when auto-following a spill; consider audit('ais_coverage_auto_spill', case_id) for traceability.",
+    "No test for concurrent set_coverage calls / race with _run() reconnect — probably fine given _reconnect_event.set() is idempotent."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_ais_live_integration.py (new)"
+  ],
+  "success_rate": {"backend": "100% (28/28 combined pytest)", "frontend": "60% (/health OK for analyst+admin; /ingest crashes before LiveAis panel renders)"},
+  "test_credentials": "admin shawpriyanshu950@gmail.com/Admin#2026; supervisor supervisor@sentinelmar.demo/Supervisor#2026; analyst analyst@sentinelmar.demo/Analyst#2026",
+  "seed_data_creation": "Created one transient spill observation via POST /api/spill-observations (external polygon near 19N/72E) to prove spill-follow hook; coverage reset to default before finish.",
+  "retest_needed": true,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Iteration 19 backend is 100% green. Only outstanding issue is the /ingest page crash caused by /api/ais/vessels response-shape change shadowing the legacy array route in routers/ingest.py. Re-run: cd /app/backend && python -m pytest tests/test_ais_live.py tests/test_ais_live_integration.py -q -p no:xdist -o addopts=''. After fix, re-run frontend Playwright on /ingest to confirm live-ais-panel + live-ais-badge + live-ais-region-* + btn-test-ais all render and btn-test-ais admin click yields warning toast (message_received=false).",
+  "rca_of_the_issue": "Two @router.get('/ais/vessels') declarations exist: routers/ais_live.py (returns object) and routers/ingest.py (returns array). server.py calls include_router(ais_live_router) at line 100 and include_router(ingest.router) at line 111. FastAPI dispatches to the first-matching route, so ais_live's object wins. Ingest.jsx line 35 stores the raw response body as `vessels` then calls `.map` on it at line 62 → TypeError → whole Ingest page unmounts to Uncaught runtime error overlay, hiding LiveAis panel."
+}

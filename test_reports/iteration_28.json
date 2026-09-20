@@ -1,0 +1,19 @@
+{
+  "summary": "Iteration 28 — /demo (SIH Demo) retest PASSES after SihDemo.jsx fix (Indian-waters bbox lon 66–95, lat 5–24 scanned first, up to 200 cases, first with non-empty candidates picked). Verified as analyst analyst@sentinelmar.demo. Load time /demo → demo-reference-label rendered in 1986 ms (well under 30 s). demo-reference-label = 'REFERENCE CASE — STORED DATA · SPL-20260910-106 · REAL · SAR DETECTOR. Nothing on this walkthrough is simulated; values are read from the database and provider catalogues.' — the exact case required by the spec. Step 6 (demo-step-5, Candidate ranking): demo-no-candidates NOT rendered; candidate-vessel-row-419001814 present; score-breakdown-toggle-419001814 clicked → score-breakdown-419001814 expanded → why-summary-419001814 = 'CANDIDATE VESSEL · investigation priority #1 · Correlation score 37/100 = Σ weight × factor ÷ Σ weights (spatial 0.3 · temporal 0.2 · continuity 0.1 · heading 0.1 · drift 0.15 · reliability 0.15)' — contains 'Correlation score 37/100' as required. Step 3 (demo-step-2) demo-scene-id = 'S1D_IW_GRDH_1SDV_20260910T003126_20260910T003151_004508_008604' — real Sentinel-1 GRD id matching case scene_status.provider_scene_id. Steps 1–9 via demo-next work (final step title 'Investigation case' reached). demo-open-case navigates to /cases/252e536c-… (case page loaded, SPL-20260910-106 header visible, candidates tab populated). 0 console errors on /demo. NOTE: wait_for_load_state('networkidle') timed out after nav (map/tile requests keep the network busy) — navigation itself succeeded (URL and case content confirmed via screenshot); this is a Playwright artifact, not an app bug.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "SihDemo.jsx fix is correct: two-tier scan (Indian bbox first, then rest) + probe /candidates and break on first hit is more robust than the previous hard bbox pre-filter. slice(0,200) is a reasonable safety cap given /cases returns limit=1000.",
+    "Minor perf/API-noise: probing up to 200 /cases/{id}/candidates endpoints sequentially on every /demo load is O(n) round-trips; consider a backend endpoint like /api/cases/first-with-candidates or a lightweight has_candidates flag on the case list to eliminate the sequential probe."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "n/a (frontend-only)", "frontend": "100% (all acceptance criteria met)"},
+  "test_credentials": "analyst@sentinelmar.demo / Analyst#2026 — OK, login redirects to '/'.",
+  "seed_data_creation": "None. No DB writes.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "/demo now correctly picks case SPL-20260910-106 (252e536c…) and step 6 renders the real CandidatesTable with MMSI 419001814. Full flow verified: reference label, step-3 scene id, step-6 candidates + score breakdown + why-summary, steps 1-9 navigation, step-9 demo-open-case → /cases/{id}. No console errors. Iteration 27's SihDemo geo-filter bug is resolved.",
+  "rca_of_the_issue": "Prior iteration filtered candidate probing to Arabian Sea only (lon 66–78), excluding the Chennai case (~80°E) that had the only real 5-candidate correlation. Current fix widens the priority band to full Indian waters (lon 66–95, lat 5–24), scans up to 200 cases, and falls through to any case globally if the Indian tier yields none — so the first case with a non-empty /candidates response is chosen. Verified end-to-end."
+}

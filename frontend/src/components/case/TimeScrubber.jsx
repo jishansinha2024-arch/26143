@@ -41,20 +41,20 @@ export const TimeScrubber = ({ geojson, acquisitionTime, windowAfterHours = 3, c
     <div className="rounded p-3" style={{ background: "rgba(255,255,255,0.88)", border: "1px solid var(--border-highlight)", backdropFilter: "blur(12px)" }} data-testid="time-scrubber">
       <div className="flex items-center gap-2">
         <button data-testid="scrubber-play" onClick={() => { if (cursor == null || cursor >= range.max) setCursor(range.min); setPlaying((p) => !p); }}
-          className="grid h-7 w-7 place-items-center rounded bg-ink text-paper hover:bg-tide">{playing ? <Pause size={13} /> : <Play size={13} />}</button>
-        <button data-testid="scrubber-reset" onClick={() => { setPlaying(false); setCursor(null); }} title="Show full tracks" className="grid h-7 w-7 place-items-center rounded border text-slate-600 hover:text-white" style={{ borderColor: "var(--border-highlight)" }}><RotateCcw size={12} /></button>
+          className="grid h-7 w-7 place-items-center rounded bg-cyan-400 text-slate-950 hover:bg-cyan-300">{playing ? <Pause size={13} /> : <Play size={13} />}</button>
+        <button data-testid="scrubber-reset" onClick={() => { setPlaying(false); setCursor(null); }} title="Show full tracks" className="grid h-7 w-7 place-items-center rounded border text-slate-300 hover:text-on-surface" style={{ borderColor: "var(--border-highlight)" }}><RotateCcw size={12} /></button>
         <div className="relative flex-1">
           <input data-testid="scrubber-slider" type="range" min={range.min} max={range.max} step={60000} value={value}
             onChange={(e) => { setPlaying(false); setCursor(+e.target.value); }} className="scrubber w-full" />
-          <span className="pointer-events-none absolute -top-1 h-5 w-px" style={{ left: `${acqPct}%`, background: "#D4604D" }} title="satellite pass" />
+          <span className="pointer-events-none absolute -top-1 h-5 w-px" style={{ left: `${acqPct}%`, background: "#ba1a1a" }} title="satellite pass" />
         </div>
-        <select data-testid="scrubber-speed" value={speed} onChange={(e) => setSpeed(+e.target.value)} className="rounded border bg-transparent px-1 py-0.5 font-mono text-[10px] text-slate-600 outline-none" style={{ borderColor: "var(--border-highlight)" }}>
-          {[[300, "5 min/s"], [600, "10 min/s"], [1800, "30 min/s"], [3600, "1 h/s"]].map(([v, l]) => <option key={v} value={v} style={{ background: "#162032" }}>{l}</option>)}
+        <select data-testid="scrubber-speed" value={speed} onChange={(e) => setSpeed(+e.target.value)} className="rounded border bg-transparent px-1 py-0.5 font-mono text-[10px] text-slate-300 outline-none" style={{ borderColor: "var(--border-highlight)" }}>
+          {[[300, "5 min/s"], [600, "10 min/s"], [1800, "30 min/s"], [3600, "1 h/s"]].map(([v, l]) => <option key={v} value={v} style={{ background: "#ffffff" }}>{l}</option>)}
         </select>
       </div>
       <div className="mt-1.5 flex items-center justify-between font-mono text-[10px] text-slate-400">
-        <span className="flex items-center gap-1"><Clock size={10} /> <span data-testid="scrubber-time" className="text-slate-800">{cursor == null ? "full window" : fmtTime(new Date(cursor).toISOString())}</span></span>
-        <span data-testid="scrubber-relative" style={{ color: rel == null ? "#7D919C" : rel < 0 ? "#C48A22" : "#D4604D" }}>{rel == null ? `${fmtTime(new Date(range.min).toISOString())} → ${fmtTime(new Date(range.max).toISOString())}` : rel < 0 ? `T${rel.toFixed(1)}h before satellite pass` : `T+${rel.toFixed(1)}h after pass`}</span>
+        <span className="flex items-center gap-1"><Clock size={10} /> <span data-testid="scrubber-time" className="text-slate-100">{cursor == null ? "full window" : fmtTime(new Date(cursor).toISOString())}</span></span>
+        <span data-testid="scrubber-relative" style={{ color: rel == null ? "#707881" : rel < 0 ? "#b26a00" : "#ba1a1a" }}>{rel == null ? `${fmtTime(new Date(range.min).toISOString())} → ${fmtTime(new Date(range.max).toISOString())}` : rel < 0 ? `T${rel.toFixed(1)}h before satellite pass` : `T+${rel.toFixed(1)}h after pass`}</span>
       </div>
     </div>
   );

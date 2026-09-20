@@ -1,0 +1,40 @@
+{
+  "summary": "Iteration 18 LIVE-mode verification (backend + frontend). Backend: 9/10 pytest passed (see /app/backend/tests/test_iteration18_livemode.py + iter18_results.xml). All new LIVE-mode endpoints work: GET /api/ais/status returns connected=false / reason='API key not configured' / mode='live' / source='AISStream' / note about satellite still operational; GET /api/system/health returns database.online=true, sentinel_stac.online=true (Microsoft Planetary Computer STAC reachable, 410ms), ml_inference.ready=true opencv=5.0.0, data_mode.mode='LIVE', data_mode.demo_data_present=false, last_scene.provider_scene_id 'S1D_IW_GRDH_1SDV_20260907T000403...', watches.active=10 (>=9), last_24h.scenes_registered=32; GET /api/system/data-mode -> LIVE, demo_data_present=false; GET /api/cases (120 cases) -> ZERO SPL-20260610-* legacy demo case numbers; GET /api/cases/{id}/provenance -> satellite.badge 'REAL SENTINEL-1', scene_id starts with S1, ais.badge 'NONE', data_mode 'LIVE'; POST /api/system/purge-demo admin -> 200 idempotent all counts 0; analyst -> 403; POST /api/scene-watches/seed-india supervisor -> added=0 (already seeded, total_active=10); POST /api/scene-watches/ingest-now?days=1 supervisor -> 202 queued=10 (>=9); analyst -> 403; sudo supervisorctl restart backend + wait 5s -> /api/health 200, backend.err.log contains exact line 'LIVE mode — demo seeding disabled'. Frontend: analyst login -> /health page shows data-mode-badge='LIVE mode', ais-unavailable-banner visible, health-ais-connected='false', health-demo-present='false', health-last-scene starts with 'S1', btn-ingest-now hidden, btn-purge-demo hidden. Admin login -> btn-ingest-now visible, btn-purge-demo correctly hidden (demo already purged). Opened case SPL-20260910-092 -> Candidates tab shows provenance-panel with provenance-sat-badge 'REAL SENTINEL-1', provenance-det-badge 'EXPERIMENTAL', provenance-ais-badge 'NONE', provenance-ais-none message present, Leaflet map with spill polygon rendered. Regression nav /, /jobs, /zones, /archive, /compare all load; only /compare emits ONE benign React hydration warning about invalid <span> nested in <option>.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "/api/ais/status", "issue": "coverage_bbox returns stale demo bbox [[[10.0,-5.0],[20.0,5.0]]] (Gulf-of-Guinea style test data left over in db.settings.ais_live), NOT the Indian EEZ [[5.5,66],[24.5,95.5]] specified in review request and hard-coded as ais_live.DEFAULT_BBOXES. Root cause: settings doc {key:'ais_live', bboxes:[[[10,-5],[20,5]]], updated_by:'shawpriyanshu950@gmail.com'} persisted from an earlier iteration is overriding DEFAULT_BBOXES in get_config(). Note purge-demo does NOT clean this settings row. Fix: either (a) purge_demo_data() should also unset db.settings.ais_live.bboxes so DEFAULT_BBOXES kicks in, or (b) seed-india should upsert settings.ais_live.bboxes to the Indian EEZ default. Also visible in the /health page 'coverage bbox' row."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "/compare", "issues": ["React hydration warning: 'In HTML, <span> cannot be a child of <option>' — invalid DOM nesting in Compare page select options. Non-breaking but pollutes console."]}
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_iteration18_livemode.py",
+    "/app/test_reports/pytest/iter18_results.xml"
+  ],
+  "action_items": [
+    "Fix coverage_bbox drift: strip stale db.settings.ais_live.bboxes on purge-demo (or on seed-india-watches) so /api/ais/status returns the Indian EEZ default [[5.5,66],[24.5,95.5]] as documented.",
+    "Clean up invalid <span> inside <option> in Compare page select rendering to silence React hydration warning."
+  ],
+  "critical_code_review_comments": [
+    "livemode.provenance() reads AIS sources from correlation_results.candidates[0].evidence.fix_ids — this only works when a correlation has run. All 120 LIVE cases in the DB were auto-created by the dark-spot detector on scene ingest and none have a correlation_result yet, so analysis.algorithm / version / candidates are all null on every provenance response. Consider (a) triggering a lightweight correlation stub on scene ingest so analysis fields populate, or (b) documenting that analysis.* is optional when no AIS is available. Review request expected 'analysis.algorithm present' — currently null system-wide.",
+    "DEMO_MODE=true is still set in backend/.env even though the app is now in LIVE mode (purged); the code correctly gates re-seeding on the db.settings.data_mode.demo_purged flag so no re-seed occurs on restart, but the .env value is misleading. Consider flipping DEMO_MODE=false in backend/.env for clarity.",
+    "system_health(): sentinel_stac egress works (410ms) in this env. Good.",
+    "purge_demo_data() correctly whitelists real Sentinel-1 scenes by storage_ref prefix, but does not touch db.settings.ais_live (see minor bug above). Add ais_live settings cleanup to make it fully LIVE-consistent."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_iteration18_livemode.py (new)"
+  ],
+  "success_rate": {"backend": "90% (9/10 pytest, 1 minor stale-settings)", "frontend": "100% (all health-page + provenance-panel + regression assertions pass)"},
+  "test_credentials": "admin shawpriyanshu950@gmail.com/Admin#2026; analyst analyst@sentinelmar.demo/Analyst#2026; supervisor supervisor@sentinelmar.demo/Supervisor#2026",
+  "seed_data_creation": "None — used LIVE ingested cases (120 SPL-20260910-*).",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "LIVE mode fully verified. Backend regression cmd: cd /app/backend && REACT_APP_BACKEND_URL=$(grep REACT_APP_BACKEND_URL /app/frontend/.env | cut -d= -f2) python -m pytest tests/test_iteration18_livemode.py -v -p no:xdist -o addopts=''. Only expected failure until main agent fixes it: test_ais_status (coverage_bbox stale). Case UUIDs come from listing /api/cases; SPL-20260910-092 = cfa6d55a-2353-4339-b89d-5c1790a161bc was used for provenance smoke.",
+  "rca_of_the_issue": "coverage_bbox bug — livemode.ais_status_public() returns cfg['bboxes'] from ais_live.get_config(), which reads db.settings['ais_live'].bboxes if present, else DEFAULT_BBOXES. A leftover settings doc from an earlier demo iteration ({bboxes:[[[10,-5],[20,5]]]}) shadows the Indian EEZ default. purge_demo_data() cleans scenes/cases/AIS but leaves this settings row intact, so post-purge the /health page and /api/ais/status still advertise Gulf-of-Guinea coverage. Fix: in purge_demo_data() add `await db.settings.delete_one({'key':'ais_live'})` OR in seed_india_watches() upsert the Indian EEZ bboxes into settings.ais_live."
+}

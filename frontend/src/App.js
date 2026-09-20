@@ -27,7 +27,6 @@ import AuthCallback from "@/pages/AuthCallback";
 import Signup from "@/pages/Signup";
 import Account from "@/pages/Account";
 import Validation from "@/pages/Validation";
-import About from "@/pages/About";
 import AdminSecurity from "@/pages/AdminSecurity";
 import Billing from "@/pages/Billing";
 
@@ -53,7 +52,6 @@ const AppRoutes = () => {
             <Route path="/verify" element={<Verify />} />
             <Route element={<Protected><Layout /></Protected>}>
               <Route path="/" element={<Dashboard />} />
-              <Route path="/about" element={<About />} />
               <Route path="/cases/:id" element={<CaseDetail />} />
               <Route path="/vessels/:mmsi" element={<VesselProfile />} />
               <Route path="/zones" element={<Zones />} />
@@ -88,7 +86,7 @@ function App() {
           </LiveFeedProvider>
         </BrowserRouter>
       </AuthProvider>
-      <Toaster theme="light" position="bottom-right" toastOptions={{ style: { background: "#FFFFFF", border: "1px solid rgba(22,38,46,0.12)", color: "#16262E", fontFamily: "Inter, system-ui, sans-serif" } }} />
+      <Toaster theme="light" position="bottom-right" toastOptions={{ style: { background: "#ffffff", border: "1px solid #bfc7d2", color: "#191c1e" } }} />
     </div>
   );
 }

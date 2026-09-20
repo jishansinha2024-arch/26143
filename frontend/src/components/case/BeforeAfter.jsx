@@ -26,11 +26,11 @@ const Pane = ({ s, label, spill, bbox, id, register }) => {
         <TileLayer url={OSM_URL} className="dark-tiles" {...TILE_PERF} />
         <Sync id={id} register={register} />
         {s && url && url !== "failed" && b && <ImageOverlay url={url} bounds={[[b[1], b[0]], [b[3], b[2]]]} opacity={0.9} />}
-        <GeoJSON data={spill} style={{ color: "#D4604D", weight: 2, dashArray: "4,4", fillOpacity: 0.1 }} />
+        <GeoJSON data={spill} style={{ color: "#ba1a1a", weight: 2, dashArray: "4,4", fillOpacity: 0.1 }} />
       </MapContainer>
       <div className="absolute left-2 top-2 z-[1000] rounded px-2.5 py-1.5 text-[11px]" style={{ background: "rgba(255,255,255,0.85)", border: "1px solid var(--border-highlight)", backdropFilter: "blur(12px)" }}>
-        <span className="label-mono" style={{ color: id === "before" ? "#1F7F93" : "#C48A22" }}>{label}</span>
-        {s ? <div className="font-mono text-[10px] text-slate-700">{s.platform?.toUpperCase()} · {fmtTime(s.datetime)}{url === "failed" ? " · preview unavailable" : !url ? " · loading…" : ""}</div> : <div className="text-slate-400">no scene found in window</div>}
+        <span className="label-mono" style={{ color: id === "before" ? "#007bb9" : "#b26a00" }}>{label}</span>
+        {s ? <div className="font-mono text-[10px] text-slate-200">{s.platform?.toUpperCase()} · {fmtTime(s.datetime)}{url === "failed" ? " · preview unavailable" : !url ? " · loading…" : ""}</div> : <div className="text-slate-400">no scene found in window</div>}
       </div>
     </div>
   );
@@ -57,10 +57,10 @@ export const BeforeAfter = ({ caseId }) => {
     <div className="flex h-full flex-col" data-testid="before-after-view">
       <div className="flex items-center gap-2 border-b px-3 py-2 text-xs" style={{ borderColor: "var(--border-default)" }}>
         <span className="label-mono">Before / after · nearest scene at this location</span>
-        <select data-testid="before-after-collection" value={collection} onChange={(e) => setCollection(e.target.value)} className="rounded border bg-mist px-2 py-1 font-mono text-[10px] text-slate-700 outline-none" style={{ borderColor: "var(--border-highlight)" }}>
+        <select data-testid="before-after-collection" value={collection} onChange={(e) => setCollection(e.target.value)} className="rounded border bg-slate-900/60 px-2 py-1 font-mono text-[10px] text-slate-200 outline-none" style={{ borderColor: "var(--border-highlight)" }}>
           <option value="sentinel-1-grd">Sentinel-1 SAR</option><option value="sentinel-2-l2a">Sentinel-2 optical</option>
         </select>
-        <select data-testid="before-after-days" value={days} onChange={(e) => setDays(+e.target.value)} className="rounded border bg-mist px-2 py-1 font-mono text-[10px] text-slate-700 outline-none" style={{ borderColor: "var(--border-highlight)" }}>
+        <select data-testid="before-after-days" value={days} onChange={(e) => setDays(+e.target.value)} className="rounded border bg-slate-900/60 px-2 py-1 font-mono text-[10px] text-slate-200 outline-none" style={{ borderColor: "var(--border-highlight)" }}>
           {[10, 30, 60, 120].map((v) => <option key={v} value={v}>±{v} days</option>)}
         </select>
         <span className="ml-auto font-mono text-[10px] text-slate-500">maps are synchronised · drag either side</span>

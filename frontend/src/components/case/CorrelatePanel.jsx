@@ -3,7 +3,7 @@ import { Play, Settings2, CloudSun } from "lucide-react";
 import { toast } from "sonner";
 import { api, apiError, pollJob } from "@/lib/api";
 
-const num = "w-full rounded border bg-mist px-2 py-1 font-mono text-xs text-slate-800 outline-none focus:border-tide/60";
+const num = "w-full rounded border bg-slate-900/60 px-2 py-1 font-mono text-xs text-slate-100 outline-none focus:border-cyan-400/60";
 
 export const CorrelatePanel = ({ caseId, defaults, spill, onDone }) => {
   const [open, setOpen] = useState(false);
@@ -47,21 +47,21 @@ export const CorrelatePanel = ({ caseId, defaults, spill, onDone }) => {
   return (
     <div className="border-b" style={{ borderColor: "var(--border-default)" }} data-testid="correlate-panel">
       <div className="flex flex-wrap items-center gap-2 px-4 py-2.5">
-        <button data-testid="btn-correlate-run" disabled={busy} onClick={run} className="inline-flex items-center gap-1.5 rounded bg-ink px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-paper hover:bg-tide disabled:opacity-50">
+        <button data-testid="btn-correlate-run" disabled={busy} onClick={run} className="inline-flex items-center gap-1.5 rounded bg-cyan-400 px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-slate-950 hover:bg-cyan-300 disabled:opacity-50">
           <Play size={12} /> {busy ? "Running…" : "Run correlation"}
         </button>
-        <button data-testid="btn-correlate-params-toggle" onClick={() => setOpen(!open)} className="inline-flex items-center gap-1.5 rounded border px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider text-slate-600 hover:text-white" style={{ borderColor: "var(--border-highlight)" }}>
+        <button data-testid="btn-correlate-params-toggle" onClick={() => setOpen(!open)} className="inline-flex items-center gap-1.5 rounded border px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider text-slate-300 hover:text-on-surface" style={{ borderColor: "var(--border-highlight)" }}>
           <Settings2 size={12} /> Parameters
         </button>
-        <button data-testid="btn-fetch-weather" disabled={fetching} onClick={fetchWeather} className="inline-flex items-center gap-1.5 rounded border px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider hover:text-white disabled:opacity-50" style={{ borderColor: "rgba(124,92,191,0.5)", color: "#A98BDB" }}>
+        <button data-testid="btn-fetch-weather" disabled={fetching} onClick={fetchWeather} className="inline-flex items-center gap-1.5 rounded border px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider hover:text-on-surface disabled:opacity-50" style={{ borderColor: "rgba(111,79,168,0.5)", color: "#8a63d2" }}>
           <CloudSun size={12} /> {fetching ? "Fetching…" : "Live weather"}
         </button>
-        {log && <span className="font-mono text-[11px] text-tide" data-testid="correlate-job-status">{log}</span>}
+        {log && <span className="font-mono text-[11px] text-cyan-300" data-testid="correlate-job-status">{log}</span>}
       </div>
       <div className="px-4 pb-2.5 font-mono text-[10px] text-slate-400" data-testid="environment-summary">
         {spill?.wind || spill?.current ? (
           <>wind {spill.wind ? `${spill.wind.speed_ms} m/s from ${spill.wind.direction_deg}°` : "—"} · current {spill.current ? `${spill.current.speed_ms} m/s → ${spill.current.direction_deg}°` : "—"}
-            {env && <span style={{ color: "#A98BDB" }}> · {env.source} ({env.wind_model}) @ {env.wind?.valid_time || env.current?.valid_time}</span>}
+            {env && <span style={{ color: "#8a63d2" }}> · {env.source} ({env.wind_model}) @ {env.wind?.valid_time || env.current?.valid_time}</span>}
             {!env && <span> · supplied with observation</span>}</>
         ) : <span className="text-purple-300">no wind/current on this observation — drift degraded; fetch live weather or enter manually</span>}
       </div>
@@ -83,7 +83,7 @@ export const CorrelatePanel = ({ caseId, defaults, spill, onDone }) => {
 
 const EnvRow = ({ label, v, set, tid }) => (
   <div className="col-span-2 flex items-end gap-2">
-    <label className="flex items-center gap-1.5 pb-1.5 text-[11px] text-slate-600"><input type="checkbox" data-testid={`param-${tid}-override`} checked={v.on} onChange={(e) => set({ ...v, on: e.target.checked })} /> {label}</label>
+    <label className="flex items-center gap-1.5 pb-1.5 text-[11px] text-slate-300"><input type="checkbox" data-testid={`param-${tid}-override`} checked={v.on} onChange={(e) => set({ ...v, on: e.target.checked })} /> {label}</label>
     <input data-testid={`param-${tid}-speed`} className={`${num} w-16`} style={{ borderColor: "var(--border-highlight)" }} disabled={!v.on} value={v.speed_ms} onChange={(e) => set({ ...v, speed_ms: e.target.value })} />
     <input data-testid={`param-${tid}-dir`} className={`${num} w-16`} style={{ borderColor: "var(--border-highlight)" }} disabled={!v.on} value={v.direction_deg} onChange={(e) => set({ ...v, direction_deg: e.target.value })} />
   </div>

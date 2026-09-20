@@ -1,15 +1,48 @@
 @echo off
-echo Starting Varuna Netra Project...
+setlocal
+cd /d "%~dp0"
+echo ==============================================
+echo  Varuna Netra - local launcher (Windows)
+echo ==============================================
 
-echo [1/3] Starting MongoDB...
-start "Varuna Netra - MongoDB" /B "D:\XYZ1\mongodb_extracted\mongodb-win32-x86_64-windows-7.0.14\bin\mongod.exe" --dbpath "D:\XYZ1\mongodb_data" --bind_ip 127.0.0.1 --port 27017
+rem ---- 0) env files (created once from the examples) ----
+if not exist backend\.env  copy /y backend\.env.example  backend\.env  >nul
+if not exist frontend\.env copy /y frontend\.env.example frontend\.env >nul
 
-timeout /t 2 /nobreak >nul
+rem ---- 1) MongoDB (skip if already running on 27017) ----
+netstat -ano | findstr ":27017" >nul
+if errorlevel 1 (
+  where mongod >nul 2>nul
+  if errorlevel 1 (
+    echo [!] MongoDB is not running and 'mongod' is not on PATH.
+    echo     Install MongoDB Community, or put an Atlas connection string in backend\.env ^(MONGO_URL^).
+  ) else (
+    echo [1/3] Starting MongoDB...
+    if not exist mongodb_data mkdir mongodb_data
+    start "Varuna Netra - MongoDB" /B mongod --dbpath "%~dp0mongodb_data" --bind_ip 127.0.0.1 --port 27017
+    timeout /t 3 /nobreak >nul
+  )
+) else (
+  echo [1/3] MongoDB already running on 27017.
+)
 
-echo [2/3] Starting Backend (FastAPI on http://127.0.0.1:8000)...
-start "Varuna Netra - Backend" /D "D:\XYZ1\26143\backend" "D:\XYZ1\26143\backend\.venv\Scripts\uvicorn.exe" server:app --host 127.0.0.1 --port 8000
+rem ---- 2) Backend ----
+echo [2/3] Starting backend on http://127.0.0.1:8000 ...
+cd backend
+if not exist .venv (
+  echo      creating virtualenv and installing requirements ^(first run, a few minutes^)...
+  python -m venv .venv
+  call .venv\Scripts\python.exe -m pip install --upgrade pip >nul
+  call .venv\Scripts\pip.exe install -r requirements.txt
+)
+start "Varuna Netra - Backend" cmd /k ".venv\Scripts\uvicorn.exe server:app --host 127.0.0.1 --port 8000"
+cd ..
 
-echo [3/3] Starting Frontend (React on http://localhost:3000)...
-cd /d "D:\XYZ1\26143\frontend"
-set PATH=C:\Users\agraw\AppData\Roaming\npm;C:\Users\agraw\AppData\Local\Microsoft\WinGet\Packages\OpenJS.NodeJS.LTS_Microsoft.Winget.Source_8wekyb3d8bbwe\node-v24.19.0-win-x64;%PATH%
-yarn start
+rem ---- 3) Frontend ----
+echo [3/3] Starting frontend on http://localhost:3000 ...
+cd frontend
+if not exist node_modules (
+  echo      installing packages ^(first run^)...
+  call yarn install
+)
+call yarn start

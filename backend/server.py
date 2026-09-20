@@ -75,7 +75,7 @@ async def lifespan(app: FastAPI):
     task = asyncio.create_task(_startup_tasks())
     yield
     task.cancel()
-    ais_live.stop()
+    await ais_live.stop_and_wait()  # close the AISStream socket cleanly so the next container isn't refused (HTTP 429)
     jobs_stop = getattr(jobs, "stop", None)
     if jobs_stop:
         jobs_stop()

@@ -22,25 +22,25 @@ export function ArchiveLessons() {
   return (
     <div
       data-testid="archive-lessons"
-      className="panel mb-5 overflow-hidden border border-cyan-500/20 bg-mist backdrop-blur"
+      className="panel mb-5 overflow-hidden border border-cyan-500/20 bg-slate-900/80 backdrop-blur"
     >
       <div
-        className="flex items-center justify-between p-3.5 cursor-pointer select-none hover:bg-paper/40 transition-colors"
+        className="flex items-center justify-between p-3.5 cursor-pointer select-none hover:bg-slate-800/40 transition-colors"
         onClick={() => setExpanded(!expanded)}
         data-testid="archive-lessons-toggle"
       >
         <div className="flex items-center gap-2.5">
-          <ShieldAlert size={16} className="text-tide shrink-0" />
-          <span className="font-display text-sm font-semibold tracking-wide text-slate-800">
+          <ShieldAlert size={16} className="text-cyan-400 shrink-0" />
+          <span className="font-display text-sm font-semibold tracking-wide text-slate-100">
             Historical Incident Lessons & Standard Operational Tactics
           </span>
-          <span className="rounded-full bg-tide/10 px-2 py-0.5 font-mono text-[10px] text-tide border border-tide/20">
+          <span className="rounded-full bg-cyan-400/10 px-2 py-0.5 font-mono text-[10px] text-cyan-300 border border-cyan-400/20">
             {data.incidents} Incidents Synthesized
           </span>
         </div>
         <button
           type="button"
-          className="flex items-center gap-1 font-mono text-[11px] text-slate-400 hover:text-tide"
+          className="flex items-center gap-1 font-mono text-[11px] text-slate-400 hover:text-cyan-300"
         >
           {expanded ? "Collapse Playbook" : "View Operational Lessons"}
           {expanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
@@ -64,8 +64,8 @@ export function ArchiveLessons() {
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-mono transition-colors ${
                     activeTab === tab.id
-                      ? "bg-cyan-500/20 text-tide border border-tide/30"
-                      : "text-slate-400 hover:text-slate-700 hover:bg-paper/50"
+                      ? "bg-cyan-500/20 text-cyan-300 border border-cyan-400/30"
+                      : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"
                   }`}
                 >
                   <Icon size={13} />
@@ -79,14 +79,14 @@ export function ArchiveLessons() {
           {activeTab === "tactics" && (
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4" data-testid="archive-tactics">
               {data.solutions?.response_tactics?.map((t, idx) => (
-                <div key={idx} className="rounded-lg border border-slate-800 bg-mist p-3 flex flex-col">
-                  <div className="font-mono text-[11px] font-semibold text-tide pb-1.5 mb-2 border-b border-slate-800/80">
+                <div key={idx} className="rounded-lg border border-slate-800 bg-slate-950/60 p-3 flex flex-col">
+                  <div className="font-mono text-[11px] font-semibold text-cyan-400 pb-1.5 mb-2 border-b border-slate-800/80">
                     {t.phase}
                   </div>
-                  <ul className="space-y-1.5 text-slate-600 text-xs">
+                  <ul className="space-y-1.5 text-slate-300 text-xs">
                     {t.actions.map((act, i) => (
                       <li key={i} className="flex items-start gap-1.5">
-                        <span className="text-tide font-bold shrink-0 mt-0.5">•</span>
+                        <span className="text-cyan-500 font-bold shrink-0 mt-0.5">•</span>
                         <span>{act}</span>
                       </li>
                     ))}
@@ -103,10 +103,10 @@ export function ArchiveLessons() {
               </div>
               <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-3">
                 {data.problems?.ecosystems_affected?.map((eco, idx) => (
-                  <div key={idx} className="rounded border border-slate-800 bg-mist p-2.5">
+                  <div key={idx} className="rounded border border-slate-800 bg-slate-950/40 p-2.5">
                     <div className="flex justify-between items-center mb-1">
-                      <span className="font-medium text-slate-700 text-xs">{eco.ecosystem}</span>
-                      <span className="font-mono text-[10px] text-tide bg-cyan-950/50 px-1.5 py-0.5 rounded border border-cyan-800/40">
+                      <span className="font-medium text-slate-200 text-xs">{eco.ecosystem}</span>
+                      <span className="font-mono text-[10px] text-cyan-400 bg-cyan-50 px-1.5 py-0.5 rounded border border-cyan-400/40">
                         {eco.incidents} incidents
                       </span>
                     </div>
@@ -126,10 +126,10 @@ export function ArchiveLessons() {
               </div>
               <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-3">
                 {data.solutions?.remediation_used?.map((rem, idx) => (
-                  <div key={idx} className="rounded border border-slate-800 bg-mist p-2.5">
+                  <div key={idx} className="rounded border border-slate-800 bg-slate-950/40 p-2.5">
                     <div className="flex justify-between items-center mb-1">
-                      <span className="font-medium text-slate-700 text-xs">{rem.method}</span>
-                      <span className="font-mono text-[10px] text-emerald-700 bg-emerald-950/50 px-1.5 py-0.5 rounded border border-emerald-800/40">
+                      <span className="font-medium text-slate-200 text-xs">{rem.method}</span>
+                      <span className="font-mono text-[10px] text-emerald-400 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-400/40">
                         {rem.incidents} uses
                       </span>
                     </div>
@@ -145,12 +145,12 @@ export function ArchiveLessons() {
           {activeTab === "key_lessons" && (
             <div className="grid gap-2.5 sm:grid-cols-2">
               {data.solutions?.lessons?.map((item, idx) => (
-                <div key={idx} className="rounded border border-slate-800 bg-mist p-2.5">
+                <div key={idx} className="rounded border border-slate-800 bg-slate-950/50 p-2.5">
                   <div className="flex justify-between items-center mb-1">
-                    <span className="font-semibold text-tide text-xs">{item.incident}</span>
+                    <span className="font-semibold text-cyan-300 text-xs">{item.incident}</span>
                     <span className="font-mono text-[10px] text-slate-500">{item.date?.slice(0, 10)}</span>
                   </div>
-                  <p className="text-xs text-slate-600 italic">{item.lesson}</p>
+                  <p className="text-xs text-slate-300 italic">{item.lesson}</p>
                 </div>
               ))}
             </div>

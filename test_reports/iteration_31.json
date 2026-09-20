@@ -1,0 +1,43 @@
+{
+  "summary": "Iteration 31 verified the NEW public-access surface (guest / signup / role-request / admin approval) end-to-end. Backend pytest: 25/25 PASS in /app/backend/tests/test_iteration31_public_access.py — POST /api/auth/guest returns role=guest+is_guest=true+active=true; guest can GET /api/dashboard/summary and /api/cases, but /api/cases/analyze-eligible → 403, /api/users → 403, /api/audit → 403, and POST /api/role-requests → 401/403. POST /api/auth/signup: 10-digit-only ('1234567890') → 400/422, 10-letter-only ('abcdefghij') → 400/422, 'short1' → 400/422; a valid payload with client-supplied role='admin' still returns 201 with user.role='viewer' (server FORCES viewer); /api/auth/me confirms viewer; duplicate email → 400. Viewer RBAC: /auth/me role=viewer, /dashboard/summary+/cases read 200, /cases/analyze-eligible 403, /users 403. Role requests: viewer cannot request role='admin' (400/422) or role='viewer' (400/422); POST /role-requests {analyst} → 201 pending, duplicate → 400, GET /role-requests/me shows pending; admin GET /role-requests?status=pending contains the id; non-admin approve 403; admin POST /approve → 200, viewer /auth/me now returns role='analyst' (DB-fresh). Reject flow keeps viewer at 'viewer'. Admin still admin. Disabled user: after admin PATCH active=false, login 403 and re-signup with same email 403. Frontend UI verified via Playwright on the preview URL (https://vessel-correlate-1.preview.emergentagent.com): /login has explore-guest-button + login-form + create-account-link + google-signin-button (google=READY), body contains 'read-only' & 'Create account' & 'Sign In'. Clicking Explore Varuna Netra creates a server guest session, redirects to '/', top bar shows data-testid='guest-badge' = 'Guest · read only' and data-testid='user-role' = 'guest'; sidebar has NO 'Users & Roles' link and no pin/purge buttons; navigating to /users as guest correctly redirects back to '/'. Guest can open /demo, /archive, /zones, /health without error banners. /signup: signup-form renders; weak-password submit ('short1') shows data-testid='signup-error' = 'String should have at least 10 characters' and stays on /signup; mismatched confirm shows 'Passwords do not match'; a valid submit (QaPass1234) succeeds and top-bar user-role updates to 'viewer'. /account: role-request-form present with data-testid='role-request-select' offering ONLY {analyst, supervisor} (no admin) and the helper text explicitly reads 'Administrator access cannot be requested.'; submitting analyst request renders data-testid='role-request-pending' panel and 'PENDING' text, and a follow-up POST returns 400 'You already have a pending access request'. Admin login (shawpriyanshu950@gmail.com / Admin#2026) then /users shows data-testid='role-requests' table with the pending request row (data-testid='role-request-row-<id>'), Approve button (data-testid='approve-request-<id>') and Reject button (data-testid='reject-request-<id>'); clicking approve (with window.confirm auto-accept) flips the request to status='approved' and the resolved_by=admin email is recorded. Admin /api/auth/me still returns role='admin'. Logging out returns to /login; unauth /users redirects to /login. Cleanup: deleted every qa_* user, purged role_requests, cleared rate_limits.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "Users.jsx role-requests table header", "issue": "Duplicate React key warning — the header labels array `['Requested','User','Email','Current','Requested','Organization','Reason','Status','Actions']` uses two 'Requested' strings as keys, producing the console error 'Encountered two children with the same key'. Non-blocking, but should be fixed (e.g. keys 'requested_at' and 'requested_role' or use index).", "selector": "[data-testid=\"role-requests\"] thead tr th", "priority": "LOW"}
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "testid_deviations_from_spec": [
+    "Spec used 'signup-name','signup-email','signup-password','signup-confirm-password','signup-submit' — actual DOM uses '-input'/'-button' suffixes: 'signup-name-input','signup-email-input','signup-org-input','signup-password-input','signup-confirm-input','signup-submit-button','signup-error','signup-google-button','signup-explore-button','have-account-link'. Container 'signup-form' matches.",
+    "Spec used 'login-email','login-password','login-submit' — actual: 'login-email-input','login-password-input','login-submit-button','login-error','forgot-password-link','create-account-link','google-signin-block','google-signin-button','demo-login-<role>'. Container 'login-form' matches.",
+    "role-request-form/role-request-select/role-request-submit AND role-requests/approve-request-<id>/reject-request-<id> all match spec exactly."
+  ],
+  "test_report_links": [
+    "/app/backend/tests/test_iteration31_public_access.py",
+    "/app/test_reports/pytest/iter31_results.xml"
+  ],
+  "action_items": [
+    "(low) Users.jsx line 99: use unique React keys for the role-requests table header (duplicate 'Requested' currently triggers a console warning).",
+    "(nit) Consider aliasing/adding the spec-form testids ('signup-submit','login-submit',...) or update the review-request spec to reflect the current '-input'/'-button' naming so future automation scripts can rely on either name."
+  ],
+  "critical_code_review_comments": [
+    "Positive: signup endpoint hard-forces role='viewer' server-side; the client's role field is completely ignored — verified with role='admin' payload → 201 viewer.",
+    "Positive: role-request approval reads role fresh from DB on every request (no JWT-role staleness) — approving a viewer's request makes their next /auth/me return 'analyst' without re-login.",
+    "Positive: role-request POST validates {analyst, supervisor} via Pydantic — 'admin' and 'viewer' are 400/422; admin is neither self-requestable nor an option in the /account select.",
+    "Positive: guest is a server-issued JWT session with role='guest' and ROLE_RANK=-1 → every write endpoint returns 403; guest also blocked from /audit and /users, matches the documented model.",
+    "Positive: disabled-account login and re-signup both return 403 (Account deactivated) — no path to reactivate a disabled user via public signup.",
+    "Nit: Users.jsx duplicate header key ('Requested' × 2) — minor React hygiene bug producing repeated console errors on the admin page.",
+    "Nit: /account role-request select uses a native <select>; consider adding aria-label or wrapping the helper text as an id-linked description for a11y."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_iteration31_public_access.py"
+  ],
+  "success_rate": {"backend": "100% (25/25)", "frontend": "100% (all acceptance criteria met)"},
+  "test_credentials": "admin shawpriyanshu950@gmail.com / Admin#2026 (from /app/memory/test_credentials.md). Throwaway QA viewers were created via /api/auth/signup with pattern qa_<purpose>_<ts>_<rand>@example.com / QaPass1234 and all deleted at the end.",
+  "seed_data_creation": "None persistent. All qa_* users deleted, all role_requests purged, rate_limits for signup/guest/role_request cleared. Admin/supervisor/analyst seed accounts untouched.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Iteration 31 validated the new public-access model (guest + signup+viewer + role-request + admin-approval + disabled). Regression suite: /app/backend/tests/test_iteration31_public_access.py (run with `pytest -n 0` to stay under the 10/hr signup rate limit; parallel xdist workers WILL blow the limit). Cleanup helper commands are in the test's created_user_ids fixture. Frontend testids on Signup/Login use '-input' and '-button' suffixes — NOT the spec's shorter names — so future scripts must use e.g. '[data-testid=\"signup-submit-button\"]' and '[data-testid=\"login-email-input\"]'. Only cosmetic bug found: duplicate React key in Users.jsx line 99 header array. The Users.jsx role-requests table is populated ASYNCHRONOUSLY (Promise.all([users, reset-requests, role-requests])) so any browser test must poll for '[data-testid^=\"role-request-row-\"]' or 'text=No access requests' AFTER wait_for_selector('[data-testid=\"role-requests\"]') instead of asserting immediately.",
+  "rca_of_the_issue": "n/a — no functional bugs. Only cosmetic: Users.jsx line 99 header labels contain 'Requested' twice, used as React child keys (`{h}`), causing 'Encountered two children with the same key' console warning. Fix: use index-based keys or rename ('Requested' → 'Requested at' / 'Requested role')."
+}
