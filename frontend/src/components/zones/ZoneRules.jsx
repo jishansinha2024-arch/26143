@@ -71,7 +71,7 @@ export const ZoneRules = ({ zones }) => {
           <input data-testid="rule-note-input" placeholder="note shown in the alert (optional)" className={`${inputCls} col-span-2`} style={bd} value={f.note} onChange={(e) => setF({ ...f, note: e.target.value })} />
           <div className="col-span-2 flex items-center gap-2">
             <button data-testid="btn-create-rule" disabled={busy || f.name.trim().length < 2 || !f.zone_code} onClick={create} className="inline-flex items-center gap-1.5 rounded px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-slate-950 disabled:opacity-50" style={{ background: "#D9762E" }}><Plus size={12} /> Create rule</button>
-            <button data-testid="btn-evaluate-rules" disabled={busy} onClick={evaluate} className="inline-flex items-center gap-1.5 rounded border px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider text-slate-600 hover:text-white disabled:opacity-50" style={bd}><Play size={12} /> Evaluate existing cases</button>
+            <button data-testid="btn-evaluate-rules" disabled={busy} onClick={evaluate} className="inline-flex items-center gap-1.5 rounded border px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider text-slate-600 hover:text-ink disabled:opacity-50" style={bd}><Play size={12} /> Evaluate existing cases</button>
           </div>
         </div>
       )}

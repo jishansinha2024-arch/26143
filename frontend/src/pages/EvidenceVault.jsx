@@ -41,7 +41,7 @@ export default function EvidenceVault() {
   return (
     <div className="flex h-full flex-col overflow-hidden" data-testid="evidence-vault">
       <div className="flex flex-wrap items-center gap-3 border-b px-6 py-3" style={{ borderColor: "var(--border-default)" }}>
-        <Link to="/archive" data-testid="vault-back" className="inline-flex items-center gap-1 font-mono text-[11px] uppercase tracking-wider text-slate-400 hover:text-white"><ArrowLeft size={12} /> Archive</Link>
+        <Link to="/archive" data-testid="vault-back" className="inline-flex items-center gap-1 font-mono text-[11px] uppercase tracking-wider text-slate-400 hover:text-ink"><ArrowLeft size={12} /> Archive</Link>
         <div><p className="label-mono">Evidence vault · case file</p><h1 className="font-display text-2xl font-extrabold tracking-tight">{e.name}</h1></div>
         <span className="ml-auto font-mono text-[11px] text-slate-400">{fmtTime(e.date).slice(0, 10)} · {e.country} · {e.volume_tonnes?.toLocaleString()} t {e.oil_type}</span>
       </div>
@@ -60,7 +60,7 @@ export default function EvidenceVault() {
             <input data-testid="vault-day-slider" type="range" min={1} max={v.frames.length} value={day} onChange={(e2) => { setPlaying(false); setDay(+e2.target.value); }} className="flex-1 accent-rose-400" />
             <span className="font-mono text-[11px] text-slate-600" data-testid="vault-day-label">Day {day}/{v.frames.length} · {fmtTime(frame.date).slice(0, 10)} · ≈{frame.area_km2} km²</span>
             <span className="flex items-center gap-1 font-mono text-[10px] text-slate-400"><Satellite size={10} /> optical
-              {["none", "before", "after"].map((k) => <button key={k} data-testid={`vault-optical-${k}`} onClick={() => setOptical(k)} className={`rounded px-1.5 py-0.5 uppercase ${optical === k ? "bg-ink text-paper" : "text-slate-400 hover:text-white"}`}>{k}</button>)}
+              {["none", "before", "after"].map((k) => <button key={k} data-testid={`vault-optical-${k}`} onClick={() => setOptical(k)} className={`rounded px-1.5 py-0.5 uppercase ${optical === k ? "bg-ink text-paper" : "text-slate-400 hover:text-ink"}`}>{k}</button>)}
             </span>
           </div>
           <p className="px-4 py-1.5 text-[10px] text-amber-700/80" data-testid="vault-reconstructed-note">{v.note}</p>

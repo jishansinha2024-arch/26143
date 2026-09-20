@@ -59,7 +59,7 @@ export const LiveAis = ({ onChanged }) => {
       {hasRole(user, "supervisor") && (
         <div className="mt-3 flex flex-wrap items-center gap-1.5">
           <span className="label-mono mr-1">Monitor region</span>
-          {Object.entries(REGION_LABELS).map(([k, l]) => <button key={k} data-testid={`live-ais-region-${k}`} disabled={busy} onClick={() => setRegion(k)} className="rounded border px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-slate-600 hover:text-white disabled:opacity-50" style={bd}>{l}</button>)}
+          {Object.entries(REGION_LABELS).map(([k, l]) => <button key={k} data-testid={`live-ais-region-${k}`} disabled={busy} onClick={() => setRegion(k)} className="rounded border px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-slate-600 hover:text-ink disabled:opacity-50" style={bd}>{l}</button>)}
           <select data-testid="live-ais-region-global" disabled={busy} defaultValue="" onChange={(e) => { if (e.target.value) setRegion(e.target.value); e.target.value = ""; }} className="rounded border bg-mist px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-slate-600" style={bd}>
             <option value="">🌐 World region…</option>{Object.entries(GLOBAL_REGIONS).map(([k, l]) => <option key={k} value={k}>{l}</option>)}
           </select>

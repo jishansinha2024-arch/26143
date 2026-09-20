@@ -135,7 +135,7 @@ export default function Zones() {
             </div>
             <div className="mt-3 flex items-center gap-2">
               <button data-testid="btn-create-zone" disabled={busy} onClick={create} className="inline-flex items-center gap-1.5 rounded bg-ink px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-paper hover:bg-tide disabled:opacity-50"><Plus size={12} /> Create zone</button>
-              <button data-testid="btn-resolve-all" onClick={resolveAll} className="inline-flex items-center gap-1.5 rounded border px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider text-slate-600 hover:text-white" style={bd}><RefreshCw size={12} /> Re-resolve all cases</button>
+              <button data-testid="btn-resolve-all" onClick={resolveAll} className="inline-flex items-center gap-1.5 rounded border px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider text-slate-600 hover:text-ink" style={bd}><RefreshCw size={12} /> Re-resolve all cases</button>
             </div>
           </div>
         )}

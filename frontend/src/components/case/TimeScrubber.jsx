@@ -42,14 +42,14 @@ export const TimeScrubber = ({ geojson, acquisitionTime, windowAfterHours = 3, c
       <div className="flex items-center gap-2">
         <button data-testid="scrubber-play" onClick={() => { if (cursor == null || cursor >= range.max) setCursor(range.min); setPlaying((p) => !p); }}
           className="grid h-7 w-7 place-items-center rounded bg-ink text-paper hover:bg-tide">{playing ? <Pause size={13} /> : <Play size={13} />}</button>
-        <button data-testid="scrubber-reset" onClick={() => { setPlaying(false); setCursor(null); }} title="Show full tracks" className="grid h-7 w-7 place-items-center rounded border text-slate-600 hover:text-white" style={{ borderColor: "var(--border-highlight)" }}><RotateCcw size={12} /></button>
+        <button data-testid="scrubber-reset" onClick={() => { setPlaying(false); setCursor(null); }} title="Show full tracks" className="grid h-7 w-7 place-items-center rounded border text-slate-600 hover:text-ink" style={{ borderColor: "var(--border-highlight)" }}><RotateCcw size={12} /></button>
         <div className="relative flex-1">
           <input data-testid="scrubber-slider" type="range" min={range.min} max={range.max} step={60000} value={value}
             onChange={(e) => { setPlaying(false); setCursor(+e.target.value); }} className="scrubber w-full" />
           <span className="pointer-events-none absolute -top-1 h-5 w-px" style={{ left: `${acqPct}%`, background: "#D4604D" }} title="satellite pass" />
         </div>
         <select data-testid="scrubber-speed" value={speed} onChange={(e) => setSpeed(+e.target.value)} className="rounded border bg-transparent px-1 py-0.5 font-mono text-[10px] text-slate-600 outline-none" style={{ borderColor: "var(--border-highlight)" }}>
-          {[[300, "5 min/s"], [600, "10 min/s"], [1800, "30 min/s"], [3600, "1 h/s"]].map(([v, l]) => <option key={v} value={v} style={{ background: "#162032" }}>{l}</option>)}
+          {[[300, "5 min/s"], [600, "10 min/s"], [1800, "30 min/s"], [3600, "1 h/s"]].map(([v, l]) => <option key={v} value={v} style={{ background: "#FFFFFF", color: "#16262E" }}>{l}</option>)}
         </select>
       </div>
       <div className="mt-1.5 flex items-center justify-between font-mono text-[10px] text-slate-400">

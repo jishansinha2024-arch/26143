@@ -3,7 +3,7 @@ import { Clock3, Satellite } from "lucide-react";
 import { api, apiError, fmtTime } from "@/lib/api";
 
 const Pass = ({ p, active, onClick }) => (
-  <button data-testid={`scene-pass-${p.stac_id}`} onClick={onClick} className={`shrink-0 rounded border px-2 py-1 text-left font-mono text-[10px] ${active ? "border-cyan-400 text-tide" : "border-slate-700 text-slate-400 hover:text-slate-800"}`}>
+  <button data-testid={`scene-pass-${p.stac_id}`} onClick={onClick} className={`shrink-0 rounded border px-2 py-1 text-left font-mono text-[10px] ${active ? "border-cyan-400 text-tide" : "border-ink/10 text-slate-400 hover:text-slate-800"}`}>
     <div>{fmtTime(p.datetime)}</div>
     <div className={p.offset_hours === 0 ? "text-amber-700" : ""}>{p.offset_hours > 0 ? "+" : ""}{p.offset_hours} h{p.is_case_scene ? " · case scene" : ""}</div>
   </button>

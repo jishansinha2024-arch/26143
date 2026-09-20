@@ -50,10 +50,10 @@ export const CorrelatePanel = ({ caseId, defaults, spill, onDone }) => {
         <button data-testid="btn-correlate-run" disabled={busy} onClick={run} className="inline-flex items-center gap-1.5 rounded bg-ink px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-paper hover:bg-tide disabled:opacity-50">
           <Play size={12} /> {busy ? "Running…" : "Run correlation"}
         </button>
-        <button data-testid="btn-correlate-params-toggle" onClick={() => setOpen(!open)} className="inline-flex items-center gap-1.5 rounded border px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider text-slate-600 hover:text-white" style={{ borderColor: "var(--border-highlight)" }}>
+        <button data-testid="btn-correlate-params-toggle" onClick={() => setOpen(!open)} className="inline-flex items-center gap-1.5 rounded border px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider text-slate-600 hover:text-ink" style={{ borderColor: "var(--border-highlight)" }}>
           <Settings2 size={12} /> Parameters
         </button>
-        <button data-testid="btn-fetch-weather" disabled={fetching} onClick={fetchWeather} className="inline-flex items-center gap-1.5 rounded border px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider hover:text-white disabled:opacity-50" style={{ borderColor: "rgba(124,92,191,0.5)", color: "#A98BDB" }}>
+        <button data-testid="btn-fetch-weather" disabled={fetching} onClick={fetchWeather} className="inline-flex items-center gap-1.5 rounded border px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider hover:text-ink disabled:opacity-50" style={{ borderColor: "rgba(124,92,191,0.5)", color: "#A98BDB" }}>
           <CloudSun size={12} /> {fetching ? "Fetching…" : "Live weather"}
         </button>
         {log && <span className="font-mono text-[11px] text-tide" data-testid="correlate-job-status">{log}</span>}

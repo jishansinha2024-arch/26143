@@ -48,7 +48,7 @@ export const ReviewForm = ({ caseId, candidates, reasonCodes, resultVersion, onS
         <div className="flex flex-wrap gap-1.5">
           {Object.entries(reasonCodes || {}).map(([code, desc]) => (
             <button key={code} title={desc} data-testid={`reason-code-${code}`} onClick={() => toggle(code)}
-              className={`rounded px-2 py-1 font-mono text-[10px] transition-colors ${codes.includes(code) ? "bg-tide/15 text-tide border border-tide/50" : "border border-slate-700 text-slate-400 hover:text-slate-800"}`}>{code.split("_")[0]}</button>
+              className={`rounded px-2 py-1 font-mono text-[10px] transition-colors ${codes.includes(code) ? "bg-tide/15 text-tide border border-tide/50" : "border border-ink/10 text-slate-400 hover:text-slate-800"}`}>{code.split("_")[0]}</button>
           ))}
         </div>
         {codes.length > 0 && <p className="mt-1.5 text-[11px] text-slate-400">{codes.map((c) => reasonCodes[c]).join(" · ")}</p>}

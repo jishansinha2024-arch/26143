@@ -32,7 +32,7 @@ import { AssetSearch, assetBounds } from "@/components/map/AssetSearch";
 import { useLive } from "@/context/LiveFeed";
 
 const TABS = [["candidates", "Candidates"], ["comparison", "Why not #2?"], ["assistant", "AI assistant"], ["summary", "Investigation summary"], ["review", "Analyst review"], ["response", "Response"], ["precedents", "Related precedent"], ["vulnerability", "Vulnerability"], ["timeline", "Timeline"], ["files", "Files"], ["beforeafter", "Before / After"], ["scenes", "Scene timeline"], ["evidence", "Evidence & audit"], ["log", "Processing log"]];
-const overlayBtn = { background: "rgba(255,255,255,0.92)", border: "1px solid rgba(30,46,74,0.85)", backdropFilter: "blur(12px)", color: "#F7F6F2" };
+const overlayBtn = { background: "rgba(255,255,255,0.92)", border: "1px solid rgba(22,38,46,0.15)", backdropFilter: "blur(12px)", color: "#16262E" };
 
 export default function CaseDetail() {
   const { id } = useParams();

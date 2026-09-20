@@ -101,7 +101,7 @@ export default function About() {
   const [activeStep, setActiveStep] = useState(0);
 
   return (
-    <div className="h-full overflow-y-auto p-4 sm:p-6 lg:p-8 bg-[#F7F6F2] text-slate-900" data-testid="about-page">
+    <div className="h-full overflow-y-auto p-4 sm:p-6 lg:p-8 bg-transparent text-slate-900" data-testid="about-page">
       <div className="max-w-6xl mx-auto space-y-8">
         {/* Hero Section */}
         <div className="panel p-6 sm:p-8 relative overflow-hidden bg-white border-slate-200 shadow-sm">

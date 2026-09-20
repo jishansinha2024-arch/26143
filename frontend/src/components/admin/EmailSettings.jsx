@@ -45,7 +45,7 @@ export const EmailSettings = ({ onChanged }) => {
       </div>
       <div className="mt-3 flex flex-wrap items-center gap-2">
         <button data-testid="btn-save-email-settings" disabled={busy} onClick={save} className="rounded bg-ink px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-paper hover:bg-tide disabled:opacity-50">Save</button>
-        <button data-testid="btn-test-email" disabled={busy || !s.api_key} onClick={test} className="inline-flex items-center gap-1.5 rounded border px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider text-slate-600 hover:text-white disabled:opacity-50" style={bd}><Send size={12} /> Send test to me</button>
+        <button data-testid="btn-test-email" disabled={busy || !s.api_key} onClick={test} className="inline-flex items-center gap-1.5 rounded border px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider text-slate-600 hover:text-ink disabled:opacity-50" style={bd}><Send size={12} /> Send test to me</button>
         <label className="ml-auto flex items-center gap-1.5 font-mono text-[11px] text-slate-600"><input type="checkbox" data-testid="email-enabled-toggle" checked={s.enabled} onChange={toggle} /> delivery enabled</label>
         <label className="flex items-center gap-1.5 font-mono text-[11px] text-slate-600"><input type="checkbox" data-testid="email-alerts-toggle" checked={s.alerts_enabled} onChange={toggleAlerts} /> alert emails</label>
       </div>
