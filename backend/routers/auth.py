@@ -24,6 +24,24 @@ def _client_ip(request: Request) -> str:
     return (request.headers.get("x-forwarded-for") or (request.client.host if request.client else "unknown")).split(",")[0].strip()
 
 
+def _set_auth_cookie(response: Response, token: str, max_age: int) -> None:
+    """Set the auth cookie for both same-origin Render and separately hosted frontends.
+
+    Same-origin deployments can use Lax. If the API is called from another origin,
+    SameSite=None is required for credentialed XHR/fetch; Secure is required with it.
+    The frontend also receives the token and has a sessionStorage bearer fallback.
+    """
+    response.set_cookie(
+        "access_token",
+        token,
+        httponly=True,
+        secure=True,
+        samesite="none",
+        max_age=max_age,
+        path="/",
+    )
+
+
 @router.post("/auth/login")
 async def login(body: LoginRequest, request: Request, response: Response):
     email = body.email.lower().strip()
@@ -38,7 +56,7 @@ async def login(body: LoginRequest, request: Request, response: Response):
         raise HTTPException(403, "Account deactivated")
     await clear_failures(ident)
     token = create_access_token(user)
-    response.set_cookie("access_token", token, httponly=True, secure=True, samesite="lax", max_age=ACCESS_HOURS * 3600, path="/")
+    _set_auth_cookie(response, token, ACCESS_HOURS * 3600)
     await db.users.update_one({"id": user["id"]}, {"$set": {"last_login": datetime.now(timezone.utc)}})
     await audit("user", user["id"], "auth.login", {"email": email}, email)
     return {"access_token": token, "token_type": "bearer", "user": clean(public_user(user))}
@@ -46,7 +64,7 @@ async def login(body: LoginRequest, request: Request, response: Response):
 
 @router.post("/auth/logout")
 async def logout(response: Response, user=Depends(get_current_user)):
-    response.delete_cookie("access_token", path="/", httponly=True, secure=True, samesite="lax")
+    response.delete_cookie("access_token", path="/", httponly=True, secure=True, samesite="none")
     await audit("user", user["id"], "auth.logout", {}, user["email"])
     return {"ok": True}
 
@@ -94,7 +112,7 @@ async def google_session(body: GoogleSession, request: Request, response: Respon
         await audit("user", user["id"], "auth.google_provisioned", {"email": email, "role": "viewer"}, email)
     await clear_failures(ident)
     token = create_access_token(user)
-    response.set_cookie("access_token", token, httponly=True, secure=True, samesite="lax", max_age=ACCESS_HOURS * 3600, path="/")
+    _set_auth_cookie(response, token, ACCESS_HOURS * 3600)
     await db.users.update_one({"id": user["id"]}, {"$set": {"last_login": datetime.now(timezone.utc), "last_login_method": "google"}})
     await audit("user", user["id"], "auth.login", {"email": email, "method": "google"}, email)
     return {"access_token": token, "token_type": "bearer", "user": clean(public_user(user))}
@@ -105,7 +123,7 @@ async def guest_session(request: Request, response: Response):
     """Public, server-issued READ-ONLY session (role=guest). No account, no DB user; every write is denied server-side."""
     await rate_limit(f"guest:{_client_ip(request)}", 60, 3600)
     token = create_guest_token()
-    response.set_cookie("access_token", token, httponly=True, secure=True, samesite="lax", max_age=GUEST_ACCESS_HOURS * 3600, path="/")
+    _set_auth_cookie(response, token, GUEST_ACCESS_HOURS * 3600)
     return {"access_token": token, "token_type": "bearer", "user": {"id": "guest", "email": None, "name": "Guest", "role": "guest", "active": True, "is_guest": True}}
 
 
@@ -136,7 +154,7 @@ async def signup(body: SignupRequest, request: Request, response: Response):
         await db.users.insert_one(dict(user))
         await audit("user", user["id"], "auth.signup", {"email": email, "role": "viewer"}, email)
     token = create_access_token(user)
-    response.set_cookie("access_token", token, httponly=True, secure=True, samesite="lax", max_age=ACCESS_HOURS * 3600, path="/")
+    _set_auth_cookie(response, token, ACCESS_HOURS * 3600)
     return {"access_token": token, "token_type": "bearer", "user": clean(public_user(user))}
 
 
