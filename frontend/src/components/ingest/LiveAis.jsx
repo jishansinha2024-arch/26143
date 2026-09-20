@@ -27,15 +27,45 @@ export const LiveAis = ({ onChanged }) => {
     try { const { data } = await api.post("/ais/test-connection"); (data.message_received ? toast.success : toast.warning)(`key ${data.configured} · websocket ${data.websocket} · subscription ${data.subscription} · message ${data.message_received}${data.error ? ` · ${data.error}` : ""}`); }
     catch (e) { toast.error(apiError(e)); } finally { setBusy(false); }
   };
+  const reconnect = async () => {
+    setBusy(true);
+    try {
+      await api.post("/ais/reconnect");
+      toast.success("Reconnecting to AISStream…");
+      setTimeout(load, 2000);
+    } catch (e) {
+      toast.error(apiError(e));
+    } finally {
+      setBusy(false);
+    }
+  };
   if (!s) return null;
   const tone = s.state === "LIVE" ? "#2E8B6A" : ["CONNECTED", "CONNECTING", "RECONNECTING", "STANDBY", "STALE"].includes(s.state) ? "#C48A22" : "#D4604D";
-  const label = s.state === "LIVE" ? `LIVE AIS · ${s.messages_per_min} msg/min` : s.state === "CONNECTED" ? "CONNECTED — NO REGIONAL COVERAGE" : s.state === "NOT_CONFIGURED" ? "NOT CONFIGURED — API key not configured" : s.state === "STANDBY" ? "STANDBY" : s.state === "KEY_CONFLICT" ? "CONNECTION LIMIT — ANOTHER CLIENT IS CONNECTED" : s.state === "CONNECTING" || s.state === "RECONNECTING" ? s.state.toLowerCase() : `AIS OFFLINE — ${s.reason}`;
+  const label = s.state === "LIVE" ? `LIVE AIS · ${s.messages_per_min} msg/min` : s.state === "CONNECTED" ? "CONNECTED — NO REGIONAL COVERAGE" : s.state === "NOT_CONFIGURED" ? "NOT CONFIGURED — API key not configured" : s.state === "STANDBY" ? "STANDBY" : s.state === "KEY_CONFLICT" ? "CONNECTION LIMIT — ANOTHER CLIENT IS CONNECTED" : s.state === "CONNECTING" || s.state === "RECONNECTING" ? s.state.toLowerCase() : "AIS OFFLINE";
   const showPrompt = cov?.prompt && !dismissed;
   return (
     <div className="panel p-5 fade-up" data-testid="live-ais-panel">
       <div className="mb-2 flex items-center gap-2"><Radio size={16} color="#2A93A8" /><h2 className="font-display text-lg font-semibold">Live AIS feed (AISStream)</h2>
         <span data-testid="live-ais-badge" className="ml-auto inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider" style={{ color: tone, border: `1px solid ${tone}66` }}>{s.state === "LIVE" ? <Wifi size={10} /> : <WifiOff size={10} />} {label}</span></div>
-      {(s.state === "STANDBY" || s.state === "KEY_CONFLICT") && <p className="mb-2 rounded border border-amber-400/40 bg-amber-400/5 px-3 py-2 text-xs text-amber-700" data-testid="live-ais-reason">{s.reason}</p>}
+      {(s.state === "STANDBY" || s.state === "KEY_CONFLICT") && (
+        <div className="mb-3 rounded border border-amber-400/40 bg-amber-400/10 p-3 text-xs text-amber-900" data-testid="live-ais-reason">
+          <div className="flex items-center gap-2 font-semibold">
+            <Radio size={14} className="text-amber-700" />
+            <span>{s.state === "KEY_CONFLICT" ? "Connection Conflict: Single-Client Limit" : "AIS Feed Standby"}</span>
+          </div>
+          <p className="mt-1 text-slate-700">{s.reason}</p>
+          {s.state === "KEY_CONFLICT" && (
+            <div className="mt-2 border-t border-amber-400/30 pt-2 text-[11px] text-slate-600">
+              <span className="font-semibold text-amber-800">Resolution Steps:</span>
+              <ul className="mt-1 list-disc space-y-0.5 pl-4 text-slate-600">
+                <li>AISStream allows only 1 active WebSocket connection per account.</li>
+                <li>Ensure secondary environments (local dev or staging) have <code>AIS_INGEST_ENABLED=false</code>.</li>
+                <li>If redeploying on Render, wait ~60 seconds for the old container to shut down, then click <b>Reconnect now</b> below.</li>
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
       {showPrompt && (
         <div className="mb-3 rounded border border-tide/50 bg-tide/5 p-3" data-testid="ais-coverage-prompt">
           <p className="font-mono text-[11px] font-bold uppercase tracking-wider text-tide">No recent AIS coverage in this AOI</p>
@@ -63,7 +93,8 @@ export const LiveAis = ({ onChanged }) => {
           <select data-testid="live-ais-region-global" disabled={busy} defaultValue="" onChange={(e) => { if (e.target.value) setRegion(e.target.value); e.target.value = ""; }} className="rounded border bg-mist px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-slate-600" style={bd}>
             <option value="">🌐 World region…</option>{Object.entries(GLOBAL_REGIONS).map(([k, l]) => <option key={k} value={k}>{l}</option>)}
           </select>
-          {hasRole(user, "admin") && <button data-testid="btn-test-ais" disabled={busy || s.state === "KEY_CONFLICT"} onClick={test} title={s.state === "KEY_CONFLICT" ? "AISStream has an account-level concurrent connection limit; resolve the other connection first." : "Check the existing AIS worker connection without opening another socket."} className="ml-auto rounded bg-ink px-3 py-1 font-mono text-[10px] font-semibold uppercase tracking-wider text-paper disabled:opacity-50">Test connection</button>}
+          <button data-testid="btn-reconnect-ais" disabled={busy} onClick={reconnect} className="ml-auto rounded border px-3 py-1 font-mono text-[10px] uppercase tracking-wider text-slate-600 hover:text-white disabled:opacity-50" style={bd}>Reconnect now</button>
+          {hasRole(user, "admin") && <button data-testid="btn-test-ais" disabled={busy || s.state === "KEY_CONFLICT"} onClick={test} title={s.state === "KEY_CONFLICT" ? "AISStream has an account-level concurrent connection limit; resolve the other connection first." : "Check the existing AIS worker connection without opening another socket."} className="rounded bg-ink px-3 py-1 font-mono text-[10px] font-semibold uppercase tracking-wider text-paper disabled:opacity-50">Test connection</button>}
         </div>
       )}
     </div>
