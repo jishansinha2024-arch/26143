@@ -34,13 +34,13 @@ export const LiveAis = ({ onChanged }) => {
   };
   if (!s) return null;
   const tone = s.state === "LIVE" ? "#2E8B6A" : ["CONNECTED", "CONNECTING", "RECONNECTING", "STANDBY", "STALE"].includes(s.state) ? "#C48A22" : "#D4604D";
-  const label = s.state === "LIVE" ? `LIVE AIS · ${s.messages_per_min} msg/min` : s.state === "CONNECTED" ? "CONNECTED — NO REGIONAL COVERAGE" : s.state === "NOT_CONFIGURED" ? "NOT CONFIGURED — API key not configured" : s.state === "STANDBY" ? "STANDBY" : s.state === "KEY_CONFLICT" ? "KEY CONFLICT" : s.state === "CONNECTING" || s.state === "RECONNECTING" ? s.state.toLowerCase() : `AIS OFFLINE — ${s.reason}`;
+  const label = s.state === "LIVE" ? `LIVE AIS · ${s.messages_per_min} msg/min` : s.state === "CONNECTED" ? "CONNECTED — NO REGIONAL COVERAGE" : s.state === "NOT_CONFIGURED" ? "NOT CONFIGURED — API key not configured" : s.state === "STANDBY" ? "STANDBY" : s.state === "KEY_CONFLICT" ? "KEY CONFLICT" : s.last_http_status ? `AISSTREAM REFUSED · HTTP ${s.last_http_status}` : s.state === "CONNECTING" || s.state === "RECONNECTING" ? s.state.toLowerCase() : `AIS OFFLINE — ${s.reason}`;
   const showPrompt = cov?.prompt && !dismissed;
   return (
     <div className="panel p-5 fade-up" data-testid="live-ais-panel">
       <div className="mb-2 flex items-center gap-2"><Radio size={16} color="#2A93A8" /><h2 className="font-display text-lg font-semibold">Live AIS feed (AISStream)</h2>
         <span data-testid="live-ais-badge" className="ml-auto inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider" style={{ color: tone, border: `1px solid ${tone}66` }}>{s.state === "LIVE" ? <Wifi size={10} /> : <WifiOff size={10} />} {label}</span></div>
-      {(s.state === "STANDBY" || s.state === "KEY_CONFLICT") && <p className="mb-2 rounded border border-amber-400/40 bg-amber-400/5 px-3 py-2 text-xs text-amber-700" data-testid="live-ais-reason">{s.reason}{(s.last_close_code || s.last_close_reason) && <span className="mt-1 block font-mono text-[10px] text-slate-600">Last close from AISStream: code {s.last_close_code ?? "—"}{s.last_close_reason ? ` · "${s.last_close_reason}"` : ""}{s.last_exception ? ` · ${s.last_exception}` : ""}</span>}</p>}
+      {(["STANDBY", "KEY_CONFLICT", "RECONNECTING", "OFFLINE", "CONNECTING"].includes(s.state) && s.reason) && <p className="mb-2 rounded border border-amber-400/40 bg-amber-400/5 px-3 py-2 text-xs text-amber-700" data-testid="live-ais-reason">{s.reason}{(s.last_close_code || s.last_close_reason) && <span className="mt-1 block font-mono text-[10px] text-slate-600">Last close from AISStream: code {s.last_close_code ?? "—"}{s.last_close_reason ? ` · "${s.last_close_reason}"` : ""}{s.last_exception ? ` · ${s.last_exception}` : ""}</span>}</p>}
       {showPrompt && (
         <div className="mb-3 rounded border border-tide/50 bg-tide/5 p-3" data-testid="ais-coverage-prompt">
           <p className="font-mono text-[11px] font-bold uppercase tracking-wider text-tide">No recent AIS coverage in this AOI</p>
