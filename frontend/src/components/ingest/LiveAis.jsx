@@ -27,6 +27,11 @@ export const LiveAis = ({ onChanged }) => {
     try { const { data } = await api.post("/ais/test-connection"); (data.message_received ? toast.success : toast.warning)(`key ${data.configured} · websocket ${data.websocket} · subscription ${data.subscription} · message ${data.message_received}${data.error ? ` · ${data.error}` : ""}`); }
     catch (e) { toast.error(apiError(e)); } finally { setBusy(false); }
   };
+  const reconnect = async () => {
+    setBusy(true);
+    try { await api.post("/ais/reconnect"); toast.success("Reconnecting to AISStream…"); setTimeout(load, 3000); }
+    catch (e) { toast.error(apiError(e)); } finally { setBusy(false); }
+  };
   if (!s) return null;
   const tone = s.state === "LIVE" ? "#2E8B6A" : ["CONNECTED", "CONNECTING", "RECONNECTING", "STANDBY", "STALE"].includes(s.state) ? "#C48A22" : "#D4604D";
   const label = s.state === "LIVE" ? `LIVE AIS · ${s.messages_per_min} msg/min` : s.state === "CONNECTED" ? "CONNECTED — NO REGIONAL COVERAGE" : s.state === "NOT_CONFIGURED" ? "NOT CONFIGURED — API key not configured" : s.state === "STANDBY" ? "STANDBY" : s.state === "KEY_CONFLICT" ? "KEY CONFLICT" : s.state === "CONNECTING" || s.state === "RECONNECTING" ? s.state.toLowerCase() : `AIS OFFLINE — ${s.reason}`;
@@ -35,7 +40,7 @@ export const LiveAis = ({ onChanged }) => {
     <div className="panel p-5 fade-up" data-testid="live-ais-panel">
       <div className="mb-2 flex items-center gap-2"><Radio size={16} color="#2A93A8" /><h2 className="font-display text-lg font-semibold">Live AIS feed (AISStream)</h2>
         <span data-testid="live-ais-badge" className="ml-auto inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider" style={{ color: tone, border: `1px solid ${tone}66` }}>{s.state === "LIVE" ? <Wifi size={10} /> : <WifiOff size={10} />} {label}</span></div>
-      {(s.state === "STANDBY" || s.state === "KEY_CONFLICT") && <p className="mb-2 rounded border border-amber-400/40 bg-amber-400/5 px-3 py-2 text-xs text-amber-700" data-testid="live-ais-reason">{s.reason}</p>}
+      {(s.state === "STANDBY" || s.state === "KEY_CONFLICT") && <p className="mb-2 rounded border border-amber-400/40 bg-amber-400/5 px-3 py-2 text-xs text-amber-700" data-testid="live-ais-reason">{s.reason}{(s.last_close_code || s.last_close_reason) && <span className="mt-1 block font-mono text-[10px] text-slate-600">Last close from AISStream: code {s.last_close_code ?? "—"}{s.last_close_reason ? ` · "${s.last_close_reason}"` : ""}{s.last_exception ? ` · ${s.last_exception}` : ""}</span>}</p>}
       {showPrompt && (
         <div className="mb-3 rounded border border-tide/50 bg-tide/5 p-3" data-testid="ais-coverage-prompt">
           <p className="font-mono text-[11px] font-bold uppercase tracking-wider text-tide">No recent AIS coverage in this AOI</p>
@@ -63,7 +68,8 @@ export const LiveAis = ({ onChanged }) => {
           <select data-testid="live-ais-region-global" disabled={busy} defaultValue="" onChange={(e) => { if (e.target.value) setRegion(e.target.value); e.target.value = ""; }} className="rounded border bg-mist px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-slate-600" style={bd}>
             <option value="">🌐 World region…</option>{Object.entries(GLOBAL_REGIONS).map(([k, l]) => <option key={k} value={k}>{l}</option>)}
           </select>
-          {hasRole(user, "admin") && <button data-testid="btn-test-ais" disabled={busy} onClick={test} className="ml-auto rounded bg-ink px-3 py-1 font-mono text-[10px] font-semibold uppercase tracking-wider text-paper disabled:opacity-50">Test connection</button>}
+          <button data-testid="btn-reconnect-ais" disabled={busy} onClick={reconnect} className="ml-auto rounded border px-3 py-1 font-mono text-[10px] uppercase tracking-wider text-slate-600 hover:text-ink disabled:opacity-50" style={bd}>Reconnect now</button>
+          {hasRole(user, "admin") && <button data-testid="btn-test-ais" disabled={busy} onClick={test} className="rounded bg-ink px-3 py-1 font-mono text-[10px] font-semibold uppercase tracking-wider text-paper disabled:opacity-50">Test connection</button>}
         </div>
       )}
     </div>

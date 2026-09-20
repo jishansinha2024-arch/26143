@@ -111,6 +111,13 @@ async def track(mmsi: str, hours: int = Query(24, ge=1, le=168), user=Depends(ge
     return clean({"mmsi": mmsi, "count": len(rows), "positions": rows})
 
 
+@router.post("/ais/reconnect")
+async def reconnect(user=Depends(require_role("supervisor"))):
+    """Reset the failure streak and redial AISStream immediately (e.g. after fixing a key conflict)."""
+    await audit("ais", "feed", "ais.reconnect", {}, user["email"])
+    return ais_live.reconnect_now()
+
+
 @router.post("/ais/test-connection")
 async def test_connection(user=Depends(require_role("admin"))):
     return clean(await ais_live.test_connection())

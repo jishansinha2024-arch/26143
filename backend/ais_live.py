@@ -44,7 +44,7 @@ DEFAULT_REGIONS = [k for k, v in REGIONS.items() if not v.get("global")]
 
 state = {"connected": False, "subscription_confirmed": False, "socket_open": False, "subscription_sent_at": None, "subscription_kind": None, "last_connect_attempt": None, "last_close_code": None,
          "role": "starting", "messages_at_connect": 0, "messages": 0, "positions": 0, "inserted": 0, "last_message_at": None, "last_position_at": None,
-         "connected_at": None, "last_disconnect_at": None, "error": None, "reconnects": 0, "msg_times": [], "active": {}}
+         "connected_at": None, "last_disconnect_at": None, "error": None, "reconnects": 0, "msg_times": [], "active": {}, "last_close_reason": None, "last_exception": None, "kicks": 0}
 _task: Optional[asyncio.Task] = None
 _buffer: list = []
 _reconnect_event = asyncio.Event()
@@ -267,6 +267,23 @@ async def _snapshot() -> None:
         pass
 
 
+async def _sleep_or_reconnect(seconds: float) -> None:
+    """Back-off sleep that a manual 'Reconnect now' (or a coverage change) can cut short."""
+    try:
+        await asyncio.wait_for(_reconnect_event.wait(), timeout=seconds)
+    except asyncio.TimeoutError:
+        pass
+
+
+def reconnect_now() -> dict:
+    """Operator action: forget the failure streak / conflict verdict and dial AISStream again immediately."""
+    state["kicks"] = 0
+    if str(state.get("error") or "").startswith(("KEY_IN_USE_ELSEWHERE", "KEY_ROTATED")):
+        state["error"] = None
+    _reconnect_event.set()
+    return {"ok": True, "message": "Reconnecting to AISStream now"}
+
+
 async def _run() -> None:
     attempt = 0
     logger.info("AISStream API key configured: %s", key_configured())
@@ -303,7 +320,10 @@ async def _run() -> None:
             session_s = (datetime.now(timezone.utc) - state["last_connect_attempt"]).total_seconds() if state["last_connect_attempt"] else 0
             got_msgs = state["messages"] > state.get("messages_at_connect", 0)
             state["kicks"] = 0 if got_msgs or session_s > 20 else state.get("kicks", 0) + 1  # accepted then dropped in <20 s with zero frames = another client took the key
-            state.update({"error": str(e)[:300], "last_close_code": code, "reconnects": state["reconnects"] + 1, "last_disconnect_at": datetime.now(timezone.utc)})
+            rcvd = getattr(e, "rcvd", None)
+            reason_txt = (getattr(rcvd, "reason", "") or "").strip()
+            state.update({"error": str(e)[:300], "last_close_code": code, "last_close_reason": reason_txt or None, "last_exception": f"{type(e).__name__}: {str(e)[:200]}",
+                          "reconnects": state["reconnects"] + 1, "last_disconnect_at": datetime.now(timezone.utc)})
             if got_msgs:
                 attempt = 0  # healthy session before the drop → restart the backoff ladder
             if state["kicks"] >= 3:
@@ -316,13 +336,16 @@ async def _run() -> None:
                     delay = 5 + random.uniform(0, 3)
                     logger.warning("aisstream: key in use elsewhere — rotating to pool key #%d/%d", state["key_index"] + 1, len(keys))
                 else:
-                    state["error"] = "KEY_IN_USE_ELSEWHERE: AISStream closed the socket right after subscription 3× in a row without data — this API key is being used by another client (AISStream allows one connection per key; e.g. preview + production sharing a key). Use a separate key per deployment or set AIS_INGEST_ENABLED=false on the other one."
-                    delay = 120 + random.uniform(0, 30)  # stop fighting the other deployment
+                    state["error"] = (f"KEY_IN_USE_ELSEWHERE: AISStream closed the socket right after subscription 3× in a row without sending any data "
+                                      f"(last close: code={code}, reason={reason_txt or 'none'}; {type(e).__name__}). Most often this key is also in use by another client "
+                                      "(AISStream allows one connection per key — e.g. a second Render service, a local run, or a preview sharing the key). "
+                                      "Give each deployment its own key, or set AIS_INGEST_ENABLED=false on the other one.")
+                    delay = 45 + random.uniform(0, 15)  # back off, but retry soon so a fixed setup recovers by itself
             else:
                 delay = BACKOFF[min(attempt, len(BACKOFF) - 1)] + random.uniform(0, 1)
             attempt += 1
-            logger.warning("aisstream disconnected (%s, close=%s); reconnect in %.1fs", str(e)[:120], code, delay)
-            await asyncio.sleep(delay)
+            logger.warning("aisstream disconnected (%s: %s, close=%s, reason=%r); reconnect in %.1fs", type(e).__name__, str(e)[:120], code, reason_txt, delay)
+            await _sleep_or_reconnect(delay)
         finally:
             state.update({"connected": False, "subscription_confirmed": False, "socket_open": False, "subscription_sent_at": None, "messages_at_connect": state["messages"]})
             await _snapshot()
@@ -383,7 +406,7 @@ def _status_fields() -> dict:
             "messages_received": state["messages"], "positions_parsed": state["positions"], "regional_messages": state["positions"], "positions_stored": state["inserted"], "messages_per_min": messages_per_min(), "messages_per_minute": messages_per_min(),
             "vessels_active": len(state["active"]), "active_vessels": len(state["active"]),
             "last_connect_attempt": state["last_connect_attempt"], "last_connected_at": state["connected_at"], "last_message_at": state["last_message_at"], "last_position_at": state["last_position_at"],
-            "last_disconnect_at": state["last_disconnect_at"], "last_error": state["error"], "error": state["error"], "last_close_code": state["last_close_code"], "reconnects": state["reconnects"], "reconnect_count": state["reconnects"],
+            "last_disconnect_at": state["last_disconnect_at"], "last_close_reason": state.get("last_close_reason"), "last_exception": state.get("last_exception"), "failure_streak": state.get("kicks", 0), "last_error": state["error"], "error": state["error"], "last_close_code": state["last_close_code"], "reconnects": state["reconnects"], "reconnect_count": state["reconnects"],
             "worker_running": bool(_task and not _task.done()), "worker_role": state["role"], "worker_owner": OWNER,
             "reason": None if (state["socket_open"] and state["subscription_confirmed"]) else (
                 STANDBY_DISABLED_REASON if state["role"] == "disabled" else
@@ -416,6 +439,12 @@ async def test_connection(timeout_s: float = 12.0) -> dict:
     out = {"configured": key_configured(), "websocket": False, "subscription": False, "message_received": False, "latency_ms": None, "error": None}
     if not out["configured"]:
         out["error"] = "API key not configured"
+        return out
+    if state["role"] == "ingest" and _task and not _task.done():
+        # AISStream allows ONE connection per key: opening a second socket here would kick the live worker (and look like a key conflict).
+        # So report the worker's own connection instead.
+        out.update({"websocket": bool(state["socket_open"]), "subscription": bool(state["subscription_confirmed"]), "message_received": state["messages"] > 0,
+                    "error": state["error"], "note": "Live worker owns the single AISStream connection — result reflects the worker, no second socket opened."})
         return out
     t = time.time()
     try:
