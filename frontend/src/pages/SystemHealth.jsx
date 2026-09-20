@@ -91,7 +91,7 @@ export default function SystemHealth() {
             <div className="mt-2 flex flex-wrap gap-1" data-testid="monitor-region-select">
               <span className="label-mono mr-1 self-center">Monitor region</span>
               {[["west_coast", "West Coast"], ["east_coast", "East Coast"], ["south_india", "South India"], ["andaman_nicobar", "Andaman & Nicobar"], ["default", "All India"]].map(([k, l]) => (
-                <button key={k} data-testid={`region-${k}`} disabled={busy} onClick={() => setRegion(k)} className="rounded border px-2 py-0.5 text-[10px] uppercase text-slate-600 hover:text-ink disabled:opacity-50" style={{ borderColor: "var(--border-highlight)" }}>{l}</button>
+                <button key={k} data-testid={`region-${k}`} disabled={busy} onClick={() => setRegion(k)} className="rounded border px-2 py-0.5 text-[10px] uppercase text-slate-600 hover:text-white disabled:opacity-50" style={{ borderColor: "var(--border-highlight)" }}>{l}</button>
               ))}
             </div>
           )}

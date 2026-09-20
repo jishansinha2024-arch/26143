@@ -5,7 +5,7 @@ import { api, apiError, fmtTime, hasRole } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
 
 const KIND_COLOR = { scene: "#8B6BCB", spill: "#D4604D", ais: "#1F7F93", case: "#2A93A8", env: "#A98BDB", correlation: "#2A93A8", decision: "#2E8B6A", alert: "#D9762E", export: "#7D919C" };
-const btn = "inline-flex items-center gap-1.5 rounded border px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider text-slate-600 hover:text-ink disabled:opacity-50";
+const btn = "inline-flex items-center gap-1.5 rounded border px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider text-slate-600 hover:text-white disabled:opacity-50";
 
 export const CaseTimeline = ({ caseId, caseNumber }) => {
   const { user } = useAuth();

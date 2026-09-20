@@ -40,18 +40,8 @@ api.interceptors.response.use(
 );
 
 export const apiError = (e) => {
-  const status = e?.response?.status;
-  const d = e?.response?.data?.detail;
-  if (!e?.response) {
-    // No HTTP response at all: offline, DNS, CORS or the service is still waking up.
-    return e?.code === "ECONNABORTED"
-      ? "The server took too long to respond. It may be waking up — try again in a few seconds."
-      : "Cannot reach the server. Check your connection, or wait a few seconds if the service is waking up.";
-  }
-  if (!d) {
-    if (status >= 500) return `The server hit an error (HTTP ${status}). Please retry in a moment; if it persists, check the service logs.`;
-    return e.message || "Request failed";
-  }
+  const d = e.response?.data?.detail;
+  if (!d) return e.message || "Request failed";
   if (typeof d === "string") return d;
   if (Array.isArray(d)) return d.map((x) => x?.msg || JSON.stringify(x)).join(" ");
   return d.msg || String(d);

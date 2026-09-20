@@ -46,7 +46,7 @@ export const CsvUpload = ({ onDone }) => {
         onDragOver={(e) => { e.preventDefault(); setDrag(true); }} onDragLeave={() => setDrag(false)}
         onDrop={(e) => { e.preventDefault(); setDrag(false); pick(e.dataTransfer.files?.[0]); }}
         className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded border-2 border-dashed px-4 py-6 text-center transition-colors"
-        style={{ borderColor: drag ? "#2A93A8" : "var(--border-highlight)", background: drag ? "rgba(31,127,147,0.06)" : "rgba(255,255,255,0.65)" }}>
+        style={{ borderColor: drag ? "#2A93A8" : "var(--border-highlight)", background: drag ? "rgba(31,127,147,0.06)" : "rgba(17,24,39,0.5)" }}>
         <input ref={inputRef} data-testid="csv-file-input" type="file" accept=".csv,text/csv" className="hidden" onChange={(e) => pick(e.target.files?.[0])} />
         <FileSpreadsheet size={22} color="#2A93A8" />
         <p className="text-sm text-slate-700">{file ? file.name : "Drop an AIS CSV export here or click to browse"}</p>

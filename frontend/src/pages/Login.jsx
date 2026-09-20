@@ -37,7 +37,6 @@ export default function Login() {
   const [exploreBusy, setExploreBusy] = useState(false);
   const [caps, setCaps] = useState(null);
   const [error, setError] = useState("");
-  const [guestError, setGuestError] = useState("");
   // Arriving from a protected route (or a failed guest entry) opens the sign-in panel straight away.
   const [signInOpen, setSignInOpen] = useState(() => !!loc.state?.from);
 
@@ -61,13 +60,13 @@ export default function Login() {
   const explore = async () => {
     if (exploreBusy) return;
     setExploreBusy(true);
-    setGuestError("");
+    setError("");
     try {
       await guestLogin();
       nav("/", { replace: true });
     } catch (err) {
-      // Show the reason next to the guest button; don't pop the sign-in form open with an error it didn't earn.
-      setGuestError(apiError(err));
+      setError(apiError(err));
+      setSignInOpen(true);
       setExploreBusy(false);
     }
   };
@@ -169,20 +168,16 @@ export default function Login() {
             <button
               type="button"
               data-testid="open-signin-button"
-              onClick={() => {
-                setError("");
-                setGuestError("");
-                setSignInOpen(true);
-              }}
+              onClick={() => setSignInOpen(true)}
               className="rounded-full border border-ink/15 bg-mist/60 px-6 py-3.5 text-sm font-medium text-ink transition-colors duration-150 ease-surge hover:border-tide/50 hover:bg-mist"
             >
               Console sign in
             </button>
           </motion.div>
 
-          {guestError && !signInOpen && (
-            <p role="alert" data-testid="guest-error" className="mt-4 max-w-md rounded-lg border border-flare/30 bg-flare/10 px-3 py-2 text-[13px] text-flare">
-              {guestError}
+          {error && !signInOpen && (
+            <p role="alert" data-testid="login-error" className="mt-4 max-w-md rounded-lg border border-flare/30 bg-flare/10 px-3 py-2 text-[13px] text-flare">
+              {error}
             </p>
           )}
 
@@ -218,7 +213,7 @@ export default function Login() {
         rememberMe={rememberMe}
         setRememberMe={setRememberMe}
         busy={busy}
-        error={error || guestError}
+        error={error}
         onSubmit={submit}
         googleReady={googleReady}
         googleBusy={googleBusy}

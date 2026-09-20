@@ -376,7 +376,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="flex h-full overflow-hidden bg-transparent text-slate-900">
+    <div className="flex h-full overflow-hidden bg-[#F7F6F2] text-slate-900">
       <main className="min-w-0 flex-1 overflow-y-auto p-4 sm:p-6 lg:p-7">
         {/* Console Header */}
         <div className="mb-5 flex flex-wrap items-end justify-between gap-3">

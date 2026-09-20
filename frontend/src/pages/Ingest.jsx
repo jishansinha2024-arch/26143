@@ -212,7 +212,7 @@ const AisForm = ({ onDone }) => {
     <Card icon={Radio} title="AIS batch ingest" sub="Deduplicated by MMSI/time/position. Quality checks flag naive timestamps, implausible speed, invalid MMSI, missing identity." testId="ais-form">
       <div className="mb-3 flex gap-1">
         {[["csv", "CSV upload"], ["json", "JSON payload"]].map(([m, l]) => (
-          <button key={m} data-testid={`ais-mode-${m}`} onClick={() => setMode(m)} className={`rounded-full px-3 py-1 font-mono text-[10px] uppercase tracking-wider transition-colors ${mode === m ? "bg-tide/15 text-tide border border-tide/40" : "text-slate-400 border border-ink/10 hover:text-slate-800"}`}>{l}</button>
+          <button key={m} data-testid={`ais-mode-${m}`} onClick={() => setMode(m)} className={`rounded-full px-3 py-1 font-mono text-[10px] uppercase tracking-wider transition-colors ${mode === m ? "bg-tide/15 text-tide border border-tide/40" : "text-slate-400 border border-slate-700 hover:text-slate-800"}`}>{l}</button>
         ))}
       </div>
       {mode === "csv" ? <CsvUpload onDone={onDone} /> : (

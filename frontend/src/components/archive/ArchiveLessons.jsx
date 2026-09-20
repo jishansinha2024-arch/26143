@@ -48,9 +48,9 @@ export function ArchiveLessons() {
       </div>
 
       {expanded && (
-        <div className="border-t border-ink/10 p-4 pt-3">
+        <div className="border-t border-slate-800/80 p-4 pt-3">
           {/* Tabs */}
-          <div className="mb-4 flex gap-2 border-b border-ink/10 pb-2">
+          <div className="mb-4 flex gap-2 border-b border-slate-800 pb-2">
             {[
               { id: "tactics", label: "4-Phase Response Tactics", icon: Clock },
               { id: "ecosystems", label: "Ecosystem Impacts", icon: Waves },
@@ -79,8 +79,8 @@ export function ArchiveLessons() {
           {activeTab === "tactics" && (
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4" data-testid="archive-tactics">
               {data.solutions?.response_tactics?.map((t, idx) => (
-                <div key={idx} className="rounded-lg border border-ink/10 bg-mist p-3 flex flex-col">
-                  <div className="font-mono text-[11px] font-semibold text-tide pb-1.5 mb-2 border-b border-ink/10">
+                <div key={idx} className="rounded-lg border border-slate-800 bg-mist p-3 flex flex-col">
+                  <div className="font-mono text-[11px] font-semibold text-tide pb-1.5 mb-2 border-b border-slate-800/80">
                     {t.phase}
                   </div>
                   <ul className="space-y-1.5 text-slate-600 text-xs">
@@ -103,7 +103,7 @@ export function ArchiveLessons() {
               </div>
               <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-3">
                 {data.problems?.ecosystems_affected?.map((eco, idx) => (
-                  <div key={idx} className="rounded border border-ink/10 bg-mist p-2.5">
+                  <div key={idx} className="rounded border border-slate-800 bg-mist p-2.5">
                     <div className="flex justify-between items-center mb-1">
                       <span className="font-medium text-slate-700 text-xs">{eco.ecosystem}</span>
                       <span className="font-mono text-[10px] text-tide bg-cyan-950/50 px-1.5 py-0.5 rounded border border-cyan-800/40">
@@ -126,7 +126,7 @@ export function ArchiveLessons() {
               </div>
               <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-3">
                 {data.solutions?.remediation_used?.map((rem, idx) => (
-                  <div key={idx} className="rounded border border-ink/10 bg-mist p-2.5">
+                  <div key={idx} className="rounded border border-slate-800 bg-mist p-2.5">
                     <div className="flex justify-between items-center mb-1">
                       <span className="font-medium text-slate-700 text-xs">{rem.method}</span>
                       <span className="font-mono text-[10px] text-emerald-700 bg-emerald-950/50 px-1.5 py-0.5 rounded border border-emerald-800/40">
@@ -145,7 +145,7 @@ export function ArchiveLessons() {
           {activeTab === "key_lessons" && (
             <div className="grid gap-2.5 sm:grid-cols-2">
               {data.solutions?.lessons?.map((item, idx) => (
-                <div key={idx} className="rounded border border-ink/10 bg-mist p-2.5">
+                <div key={idx} className="rounded border border-slate-800 bg-mist p-2.5">
                   <div className="flex justify-between items-center mb-1">
                     <span className="font-semibold text-tide text-xs">{item.incident}</span>
                     <span className="font-mono text-[10px] text-slate-500">{item.date?.slice(0, 10)}</span>
@@ -156,7 +156,7 @@ export function ArchiveLessons() {
             </div>
           )}
 
-          <div className="mt-3.5 pt-2 border-t border-ink/10 font-mono text-[10px] text-slate-500">
+          <div className="mt-3.5 pt-2 border-t border-slate-800/60 font-mono text-[10px] text-slate-500">
             {data.note}
           </div>
         </div>

@@ -1,16 +1,18 @@
-# Varuna Netra UI
+# Varuna Netra UI merge
 
-The whole console uses the "daylight" language of the login/entry screen:
-
-- paper `#f3f1ec` background, white `mist` cards, ink `#16262e` text, single teal `tide` accent (`#1f7f93`),
-  `flare` / `signal` for critical / warning
-- Bricolage Grotesque (display), Inter (body), IBM Plex Mono (labels)
-- pill buttons (ink → teal on hover), 12–16px card radii, mono eyebrow labels
-- tokens live in `tailwind.config.js` (paper/mist/ink/fog/tide/flare/signal, plus re-tinted slate/sky/cyan scales)
-  and `src/index.css` (CSS variables, `.panel`, `.daylight`)
-- login globe is a dependency-free canvas (`src/components/entry/GlobeCanvas.jsx`)
+The frontend keeps the existing API/auth/routing behavior and adopts the supplied console visual language:
+- dark glassmorphism command shell
+- Plus Jakarta Sans / Inter / JetBrains Mono typography
+- aqua/iris/mint/amber/rose palette
+- animated radar-style navigation logo and ambient grid field
+- template-style top bar, sidebar, cards and responsive mobile drawer
+- Compare page redesigned to the supplied side-by-side adjudication layout
+- global compatibility styles restyle existing pages without removing their functionality
 
 Run:
-  cd frontend && yarn install && yarn start
+  cd frontend
+  npm install
+  npm start
+
 Production:
-  yarn build
+  npm run build

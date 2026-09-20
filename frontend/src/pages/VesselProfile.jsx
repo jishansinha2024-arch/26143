@@ -6,7 +6,7 @@ import { api, apiError, fmtTime, hasRole } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
 import { StatusBadge } from "@/components/StatusBadge";
 
-const Kpi = ({ label, value, color = "#16262E", testId }) => (
+const Kpi = ({ label, value, color = "#F7F6F2", testId }) => (
   <div className="panel p-3" data-testid={testId}><span className="label-mono">{label}</span><div className="mt-1 font-mono text-xl font-semibold" style={{ color }}>{value}</div></div>
 );
 const DECISION_COLOR = { confirm: "#2E8B6A", reject: "#D4604D", needs_more_data: "#C48A22", supervisor_override: "#C48A22" };
@@ -33,7 +33,7 @@ export default function VesselProfile() {
 
   return (
     <div className="h-full overflow-y-auto p-6" data-testid="vessel-profile">
-      <Link to="/" data-testid="vessel-back" className="inline-flex items-center gap-1 font-mono text-[11px] uppercase tracking-wider text-slate-400 hover:text-ink"><ArrowLeft size={12} /> Surveillance</Link>
+      <Link to="/" data-testid="vessel-back" className="inline-flex items-center gap-1 font-mono text-[11px] uppercase tracking-wider text-slate-400 hover:text-white"><ArrowLeft size={12} /> Surveillance</Link>
       <div className="mt-2 mb-5 flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="label-mono mb-1">Vessel profile · MMSI {p.mmsi}{p.imo ? ` · IMO ${p.imo}` : ""}{p.vessel_type ? ` · ${p.vessel_type}` : ""}</p>
@@ -43,7 +43,7 @@ export default function VesselProfile() {
         <div className="flex flex-col items-end gap-2">
           {watch && <span data-testid="vessel-watchlist-badge" className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider" style={{ color: "#D4604D", background: "rgba(194,90,73,0.12)", border: "1px solid rgba(194,90,73,0.5)" }} title={watch.reason}><Eye size={11} /> on watchlist · {watch.severity}</span>}
           {hasRole(user, "supervisor") && (watch
-            ? <button data-testid="btn-unflag-vessel" onClick={unflag} className="rounded border px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider text-slate-600 hover:text-ink" style={{ borderColor: "var(--border-highlight)" }}>Remove from watchlist</button>
+            ? <button data-testid="btn-unflag-vessel" onClick={unflag} className="rounded border px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider text-slate-600 hover:text-white" style={{ borderColor: "var(--border-highlight)" }}>Remove from watchlist</button>
             : <button data-testid="btn-flag-vessel" onClick={flag} className="inline-flex items-center gap-1.5 rounded px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-slate-950" style={{ background: "#D4604D" }}><Eye size={12} /> Flag vessel</button>)}
           <p className="max-w-md text-right text-[11px] text-slate-500" data-testid="vessel-disclaimer">{p.disclaimer}</p>
         </div>
@@ -104,9 +104,9 @@ export default function VesselProfile() {
             <dt className="text-slate-500">first seen</dt><dd>{fmtTime(a.first_seen)}</dd>
             <dt className="text-slate-500">last seen</dt><dd>{fmtTime(a.last_seen)}</dd>
             <dt className="text-slate-500">last position</dt><dd>{a.last_position.lat.toFixed(4)}, {a.last_position.lon.toFixed(4)} · {a.last_position.sog_kn ?? "—"} kn · {a.last_position.cog_deg ?? "—"}°</dd>
-            <dt className="text-slate-500">gaps &gt; 2h</dt><dd style={{ color: a.gaps_over_2h ? "#C48A22" : "#16262E" }}>{a.gaps_over_2h}</dd>
+            <dt className="text-slate-500">gaps &gt; 2h</dt><dd style={{ color: a.gaps_over_2h ? "#C48A22" : "#F7F6F2" }}>{a.gaps_over_2h}</dd>
             <dt className="text-slate-500">sources</dt><dd>{a.sources.join(", ") || "—"}</dd>
-            <dt className="text-slate-500">quality flags</dt><dd style={{ color: a.quality_flags.length ? "#C48A22" : "#16262E" }}>{a.quality_flags.join(", ") || "none"}</dd>
+            <dt className="text-slate-500">quality flags</dt><dd style={{ color: a.quality_flags.length ? "#C48A22" : "#F7F6F2" }}>{a.quality_flags.join(", ") || "none"}</dd>
           </dl>
         </div>
       </div>

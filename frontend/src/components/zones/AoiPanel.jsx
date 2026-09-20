@@ -65,7 +65,7 @@ export const AoiPanel = ({ onFlyTo, onAoiChange, drawing, setDrawing, drawnGeome
             <div key={z.id} className="flex items-center gap-2 rounded border px-2 py-1 text-[11px]" style={{ borderColor: "var(--border-default)" }} data-testid={`aoi-hit-${z.code}`}>
               <span className="font-mono text-tide">{z.code}</span><span className="truncate text-slate-600">{z.name}</span><ProvBadge p={z.provenance} />
               <span className="ml-auto flex shrink-0 gap-1">
-                <button data-testid={`aoi-hit-fly-${z.code}`} onClick={() => z.bbox && onFlyTo?.(z.bbox)} className="font-mono text-[10px] text-slate-400 hover:text-ink">view</button>
+                <button data-testid={`aoi-hit-fly-${z.code}`} onClick={() => z.bbox && onFlyTo?.(z.bbox)} className="font-mono text-[10px] text-slate-400 hover:text-white">view</button>
                 {analyst && <button data-testid={`aoi-hit-use-${z.code}`} disabled={busy} onClick={() => select({ kind: "zone", zone_id: z.id })} className="rounded bg-ink px-1.5 font-mono text-[10px] font-semibold uppercase text-paper disabled:opacity-50">use as AOI</button>}
               </span>
             </div>))}

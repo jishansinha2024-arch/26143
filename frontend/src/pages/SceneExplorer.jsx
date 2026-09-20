@@ -168,7 +168,7 @@ export default function SceneExplorer() {
                   <div className="mt-0.5 font-mono text-[10px] text-slate-400">{s.instrument_mode || s.product_type}{s.polarizations ? ` · ${s.polarizations.join("+")}` : ""}{s.orbit_state ? ` · ${s.orbit_state}` : ""}{s.cloud_cover != null ? ` · cloud ${Math.round(s.cloud_cover)}%` : ""}</div>
                   <div className="mt-1.5 flex items-center gap-1.5">
                     {s.registered_scene_id ? <span className="rounded px-1.5 py-0.5 font-mono text-[10px] text-emerald-700" style={{ border: "1px solid rgba(46,139,106,0.4)" }} data-testid={`scene-registered-${s.stac_id}`}>registered</span>
-                      : <button data-testid={`btn-register-${s.stac_id}`} onClick={() => register(s, false)} className="rounded border px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-slate-700 hover:text-ink" style={bd}>Register</button>}
+                      : <button data-testid={`btn-register-${s.stac_id}`} onClick={() => register(s, false)} className="rounded border px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-slate-700 hover:text-white" style={bd}>Register</button>}
                     <button data-testid={`btn-register-detect-${s.stac_id}`} onClick={() => register(s, true)} className="inline-flex items-center gap-1 rounded border px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-purple-300 hover:bg-purple-400/10" style={{ borderColor: "rgba(124,92,191,0.5)" }}><Scan size={10} /> Register + detect ⚠</button>
                     <a href={s.stac_href} target="_blank" rel="noreferrer" className="ml-auto font-mono text-[10px] text-slate-500 hover:text-slate-600" data-testid={`stac-link-${s.stac_id}`}>STAC ↗</a>
                   </div>

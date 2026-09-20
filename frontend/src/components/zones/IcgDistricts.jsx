@@ -38,7 +38,7 @@ export const IcgDistricts = ({ onChanged }) => {
   return (
     <div className="mt-5 rounded border p-4" style={{ borderColor: "rgba(46,139,106,0.4)", background: "rgba(46,139,106,0.04)" }} data-testid="icg-districts">
       <div className="mb-1 flex items-center gap-2"><Anchor size={14} color="#2E8B6A" /><h2 className="font-display font-semibold">Indian Coast Guard alert routing</h2>
-        {admin && <button data-testid="btn-icg-resolve-all" disabled={busy} onClick={resolveAll} className="ml-auto inline-flex items-center gap-1 rounded border px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-slate-600 hover:text-ink disabled:opacity-50" style={bd}><RefreshCw size={10} /> Re-route all cases</button>}
+        {admin && <button data-testid="btn-icg-resolve-all" disabled={busy} onClick={resolveAll} className="ml-auto inline-flex items-center gap-1 rounded border px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-slate-600 hover:text-white disabled:opacity-50" style={bd}><RefreshCw size={10} /> Re-route all cases</button>}
       </div>
       <p className="mb-3 text-[11px] text-amber-700/90" data-testid="icg-disclaimer">{data.disclaimer}. Admins can replace any polygon with an official boundary.</p>
       <div className="grid gap-1.5 md:grid-cols-2" data-testid="icg-district-list">

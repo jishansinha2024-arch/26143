@@ -86,7 +86,7 @@ export default function Users() {
   };
 
   return (
-    <div className="h-full overflow-y-auto p-4 sm:p-6 lg:p-8 bg-transparent text-slate-900" data-testid="users-page">
+    <div className="h-full overflow-y-auto p-4 sm:p-6 lg:p-8 bg-[#F7F6F2] text-slate-900" data-testid="users-page">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="border-b border-slate-200 pb-5">
