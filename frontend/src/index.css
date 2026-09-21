@@ -1,5 +1,6 @@
 /* Fonts first — a CSS @import must precede every other statement.
    Inter = the app's declared sans; Bricolage Grotesque + IBM Plex Mono = entry-screen display / mono faces. */
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block');
 @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Geist:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 /* Tailwind must be emitted from here (CRA compiles it through PostCSS). Without these three
@@ -7,6 +8,20 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  /* Icon font: defined here so the sidebar/header icons never fall back to their ligature names as plain text.
+     Lives in the components layer so Tailwind size utilities (text-[20px]) still win. */
+  .material-symbols-outlined {
+    font-family: 'Material Symbols Outlined';
+    font-weight: normal; font-style: normal; font-size: 24px; line-height: 1;
+    letter-spacing: normal; text-transform: none; white-space: nowrap; word-wrap: normal; direction: ltr;
+    display: inline-block; flex-shrink: 0; overflow: hidden; user-select: none;
+    -webkit-font-feature-settings: 'liga'; font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+}
 
 @layer base {
   /* shadcn/ui tokens, mapped to the light "Varuna Netra" redesign palette in tailwind.config.js
