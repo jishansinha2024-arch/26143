@@ -1,5 +1,8 @@
-# Render deployment fix
+# Render build fix
 
-The previous UI merge imported `three` from the template but `three` was missing from `frontend/package.json` and `frontend/yarn.lock`. Render uses `yarn install --frozen-lockfile`, so that mismatch caused the Docker frontend build to fail.
+Fixed the production React build error:
+`Module not found: Error: Can't resolve "@/components/archive/ArchiveLessons"`.
 
-This version adds `three@0.169.0` to both files. The Render service also declares `AIS_INGEST_ENABLED` and `AISSTREAM_API_KEY` environment variables; configure the key only on the single production AIS-ingest instance.
+The project now explicitly installs the `@` webpack alias in the final CRACO webpack config, and `Archive.jsx` uses a relative import as an additional CI-safe fallback.
+
+Render uses the root Dockerfile; no Render service settings need to change for this specific error.

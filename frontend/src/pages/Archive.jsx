@@ -5,7 +5,7 @@ import { BookOpen, Plus, List, MapPin } from "lucide-react";
 import { MapContainer, TileLayer, CircleMarker, Popup, useMap } from "react-leaflet";
 import { api, apiError, fmtTime, hasRole } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
-import { ArchiveLessons } from "@/components/archive/ArchiveLessons";
+import ArchiveLessons from "../components/archive/ArchiveLessons";
 
 const FitBounds = ({ pts }) => {
   const map = useMap();

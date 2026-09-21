@@ -85,6 +85,16 @@ let webpackConfig = {
     },
     configure: (webpackConfig) => {
 
+      // Render/CI must resolve the @ alias deterministically. CRACO's
+      // webpack.alias is normally sufficient, but explicitly applying it
+      // to the final webpack config prevents Linux/CI builds from losing
+      // the alias during config merging.
+      webpackConfig.resolve = webpackConfig.resolve || {};
+      webpackConfig.resolve.alias = {
+        ...(webpackConfig.resolve.alias || {}),
+        '@': path.resolve(__dirname, 'src'),
+      };
+
       // Add ignored patterns to reduce watched directories
         webpackConfig.watchOptions = {
           ...webpackConfig.watchOptions,

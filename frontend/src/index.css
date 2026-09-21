@@ -1,160 +1,59 @@
-@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Geist:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
-@import 'leaflet/dist/leaflet.css';
+/* Fonts first — a CSS @import must precede every other statement.
+   Inter = the app's declared sans; Bricolage Grotesque + IBM Plex Mono = entry-screen display / mono faces. */
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap');
+
+/* Tailwind must be emitted from here (CRA compiles it through PostCSS). Without these three
+   directives no utility class in the app is generated. Keep them above all custom CSS. */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-    /* Redesign surfaces (tonal, borderless cards) */
-    --bg-primary: #f7f9fb;
-    --bg-secondary: #f2f4f6;
-    --bg-card: #ffffff;
-    --border-default: #e0e3e5;
-    --border-highlight: #bfc7d2;
-    --text-primary: #191c1e;
-    --text-muted: #707881;
-    --accent-cyan: #006194;
-    --accent-amber: #b26a00;
-    --accent-crimson: #ba1a1a;
-    --accent-emerald: #006a61;
-    --accent-purple: #6f4fa8;
-
-    /* shadcn/radix tokens (hsl triplets) */
+@layer base {
+  /* shadcn/ui tokens, mapped to the light "Varuna Netra" redesign palette in tailwind.config.js
+     (so `bg-primary`, `bg-background`, `text-secondary` … resolve to the same colours as the shell). */
+  :root {
     --background: 210 33% 98%;
-    --foreground: 210 9% 11%;
+    --foreground: 204 9% 11%;
     --card: 0 0% 100%;
-    --card-foreground: 210 9% 11%;
+    --card-foreground: 204 9% 11%;
     --popover: 0 0% 100%;
-    --popover-foreground: 210 9% 11%;
-    --primary: 203 100% 29%;
+    --popover-foreground: 204 9% 11%;
+    --primary: 201 100% 29%;
     --primary-foreground: 0 0% 100%;
     --secondary: 175 100% 21%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 210 11% 94%;
-    --muted-foreground: 208 12% 29%;
-    --accent: 210 8% 91%;
-    --accent-foreground: 210 9% 11%;
+    --muted: 210 12% 93%;
+    --muted-foreground: 208 12% 28%;
+    --accent: 210 9% 91%;
+    --accent-foreground: 204 9% 11%;
     --destructive: 0 75% 42%;
     --destructive-foreground: 0 0% 100%;
-    --border: 210 12% 89%;
-    --input: 213 17% 78%;
-    --ring: 203 100% 29%;
+    --border: 215 17% 79%;
+    --input: 215 17% 79%;
+    --ring: 201 100% 29%;
+    --chart-1: 201 100% 29%;
+    --chart-2: 175 100% 21%;
+    --chart-3: 36 100% 35%;
+    --chart-4: 0 75% 42%;
+    --chart-5: 262 36% 48%;
     --radius: 0.5rem;
-}
+  }
 
-* { border-color: hsl(var(--border)); }
-
-html, body, #root { height: 100%; }
-
-body {
-    margin: 0;
-    background: var(--bg-primary);
-    color: var(--text-primary);
-    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
-    font-size: 13px;
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
     -webkit-font-smoothing: antialiased;
+  }
 }
 
-.font-display { font-family: 'Geist', 'Inter', sans-serif; letter-spacing: -0.01em; }
-.font-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+/* ---- Entry / sign-in screen (components/landing/EntryScreen.jsx) ---- */
+.daylight { background: radial-gradient(115% 85% at 66% 40%, #fff 0%, #f5f3ee 46%, #e9e5dc 100%); }
 
-::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #bfc7d2; border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: #707881; }
+/* The entry screen's slate-blue body text (#5f7684). Scoping the shadcn `--muted` variable here keeps the
+   upstream `text-muted` / `text-muted/60` classes working without a second, colliding `muted` colour. */
+.entry-theme { --muted: 202.7 16.3% 44.5%; }
+.entry-theme .font-mono { font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
 
-::selection { background: rgba(0, 97, 148, 0.18); color: #001d31; }
-
-/* Cards: white, softly elevated, no hard border (as in the redesign) */
-.panel {
-    background: var(--bg-card);
-    border: 1px solid rgba(25, 28, 30, 0.05);
-    border-radius: 0.75rem;
-    box-shadow: 0 1px 3px rgba(25, 28, 30, 0.05);
-}
-
-.label-mono {
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 0.65rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    font-weight: 600;
-    color: var(--text-muted);
-}
-
-.grid-bg {
-    background-image: linear-gradient(rgba(112, 120, 129, 0.10) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(112, 120, 129, 0.10) 1px, transparent 1px);
-    background-size: 32px 32px;
-}
-
-@keyframes fade-up {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-.fade-up { animation: fade-up 0.4s ease both; }
-
-@keyframes pulse-ring {
-    0% { transform: scale(0.6); opacity: 0.9; }
-    100% { transform: scale(2.2); opacity: 0; }
-}
-.pulse-dot { position: relative; display: inline-block; width: 8px; height: 8px; border-radius: 9999px; background: var(--accent-emerald); }
-.pulse-dot::after {
-    content: ''; position: absolute; inset: 0; border-radius: 9999px; background: var(--accent-emerald);
-    animation: pulse-ring 1.6s ease-out infinite;
-}
-
-/* Material Symbols (icon font used by the shell) */
-.material-symbols-outlined {
-    font-family: 'Material Symbols Outlined';
-    font-weight: normal;
-    font-style: normal;
-    line-height: 1;
-    letter-spacing: normal;
-    text-transform: none;
-    display: inline-block;
-    white-space: nowrap;
-    word-wrap: normal;
-    direction: ltr;
-    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-    -webkit-font-feature-settings: 'liga';
-    font-feature-settings: 'liga';
-    -webkit-font-smoothing: antialiased;
-    user-select: none;
-}
-.material-symbols-outlined.filled { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-
-/* Maps: light tactical base like the redesign's viewport */
-.leaflet-container { background: #f2f4f6; font-family: 'Inter', sans-serif; }
-.dark-tiles { filter: grayscale(0.65) contrast(0.92) brightness(1.04) saturate(0.7); }
-.leaflet-popup-content-wrapper, .leaflet-popup-tip {
-    background: rgba(255, 255, 255, 0.98); color: #191c1e; border: 1px solid #e0e3e5;
-    box-shadow: 0 8px 24px rgba(25, 28, 30, 0.14);
-}
-.leaflet-popup-content { margin: 10px 14px; font-size: 12px; }
-.leaflet-control-zoom a { background: #ffffff !important; color: #191c1e !important; border-color: #e0e3e5 !important; }
-.leaflet-control-attribution { background: rgba(255, 255, 255, 0.8) !important; color: #707881 !important; font-size: 9px; }
-.leaflet-control-attribution a { color: #006194 !important; }
-
-input, textarea, select {
-    color-scheme: light;
-}
-input:not([type='checkbox']):not([type='radio']):not([type='range']):focus,
-textarea:focus, select:focus {
-    outline: none;
-    border-color: #006194;
-    box-shadow: 0 0 0 3px rgba(0, 97, 148, 0.14);
-}
-input[type='checkbox'], input[type='radio'] { accent-color: #006194; }
-
-.scrubber { -webkit-appearance: none; appearance: none; height: 4px; border-radius: 2px; background: linear-gradient(90deg, #cce5ff, #93ccff); outline: none; }
-.scrubber::-webkit-slider-thumb { -webkit-appearance: none; height: 14px; width: 14px; border-radius: 50%; background: #006194; border: 2px solid #ffffff; box-shadow: 0 0 0 2px rgba(0, 97, 148, 0.35); cursor: pointer; }
-.scrubber::-moz-range-thumb { height: 14px; width: 14px; border-radius: 50%; background: #006194; border: 2px solid #ffffff; cursor: pointer; }
-
-/* Template UI additions */
-.daylight { background: radial-gradient(115% 85% at 66% 40%, #ffffff 0%, #f5f3ee 46%, #e9e5dc 100%); }
-.feed-track { animation: feed-scroll 48s linear infinite; }
 @keyframes feed-scroll { from { transform: translate3d(0,0,0); } to { transform: translate3d(-50%,0,0); } }
+.feed-track { animation: feed-scroll 48s linear infinite; }
 @media (prefers-reduced-motion: reduce) { .feed-track { animation: none; } }
-.template-display { font-family: 'Bricolage Grotesque', 'Inter', sans-serif; }
-.template-mono { font-family: 'IBM Plex Mono', 'JetBrains Mono', monospace; }

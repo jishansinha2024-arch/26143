@@ -30,7 +30,3 @@ services:
         value: "2"
       - key: WEBHOOK_CRON_SECRET
         generateValue: true
-      - key: AIS_INGEST_ENABLED
-        value: "true"
-      - key: AISSTREAM_API_KEY
-        sync: false

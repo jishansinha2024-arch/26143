@@ -60,7 +60,9 @@ module.exports = {
         mist: '#ffffff',
         shell: '#e7e3da',
         ink: '#16262e',
-        muted: '#5f7684',
+        // NOTE: no `muted` here on purpose. `muted` is the shadcn token below (hsl(var(--muted))); declaring it twice
+        // made the later one silently win. The entry screen's slate-blue text (#5f7684) is supplied by scoping
+        // --muted inside `.entry-theme` (see src/index.css), so `text-muted` still reads correctly there.
         tide: '#1f7f93',
         flare: '#c25a49',
         signal: '#b8862a',

@@ -17,6 +17,13 @@ export const LOGIN = {
 	submitButton: 'login-submit-button',
 	forgotPasswordLink: 'login-forgot-password-link',
 	registerLink: 'login-register-link',
+	page: 'login-page',
+	guestButton: 'login-guest-button',
+	openSignInButton: 'login-open-sign-in-button',
+	guestError: 'login-guest-error',
+	formError: 'login-form-error',
+	googleButton: 'login-google-button',
+	closePanelButton: 'login-close-panel-button',
 };
 
 export const REGISTER = {

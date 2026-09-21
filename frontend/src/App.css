@@ -5,9 +5,3 @@
 
 .critical-banner { background: #ba1a1a; color: #fff; border-bottom: 1px solid #93000a; animation: critical-pulse 1.2s ease-in-out infinite; }
 @keyframes critical-pulse { 0%, 100% { background: #ba1a1a; } 50% { background: #93000a; } }
-
-/* Template entry-screen UI */
-.daylight { background: radial-gradient(115% 85% at 66% 40%, #fff 0%, #f5f3ee 46%, #e9e5dc 100%); }
-@keyframes feed-scroll { from { transform: translate3d(0,0,0); } to { transform: translate3d(-50%,0,0); } }
-.feed-track { animation: feed-scroll 48s linear infinite; }
-@media (prefers-reduced-motion: reduce) { .feed-track { animation: none; } }
