@@ -26,8 +26,9 @@ module.exports = {
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
+        'template-display': ['\"Bricolage Grotesque\"', 'system-ui', 'sans-serif'],
         mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
-        display: ['Geist', 'Inter', 'system-ui', 'sans-serif'],
+        display: ['\"Bricolage Grotesque\"', 'Geist', 'Inter', 'system-ui', 'sans-serif'],
         'display-lg': ['Geist', 'Inter', 'sans-serif'],
         'headline-lg': ['Geist', 'Inter', 'sans-serif'],
         'headline-md': ['Geist', 'Inter', 'sans-serif'],
@@ -40,6 +41,7 @@ module.exports = {
         'code-telemetry': ['"JetBrains Mono"', 'monospace'],
         'code-telemetry-sm': ['"JetBrains Mono"', 'monospace']
       },
+      transitionTimingFunction: { surge: 'cubic-bezier(0.23, 1, 0.32, 1)' },
       fontSize: {
         'display-lg': ['32px', { lineHeight: '40px', letterSpacing: '-0.02em', fontWeight: '600' }],
         'headline-lg': ['24px', { lineHeight: '32px', letterSpacing: '-0.015em', fontWeight: '600' }],
@@ -54,6 +56,14 @@ module.exports = {
         'code-telemetry-sm': ['10px', { lineHeight: '12px', letterSpacing: '0.02em', fontWeight: '500' }]
       },
       colors: {
+        paper: '#f3f1ec',
+        mist: '#ffffff',
+        shell: '#e7e3da',
+        ink: '#16262e',
+        muted: '#5f7684',
+        tide: '#1f7f93',
+        flare: '#c25a49',
+        signal: '#b8862a',
         /* ---- Varuna Netra redesign palette (Material-style tonal surfaces) ---- */
         'surface': '#f7f9fb',
         'surface-bright': '#f7f9fb',
