@@ -10,7 +10,7 @@ import { GibsLayer } from "@/components/map/GibsLayer";
 const GIBS_LAYER = { id: "MODIS_Terra_CorrectedReflectance_TrueColor", matrix: "GoogleMapsCompatible_Level9", ext: "jpg" };
 const GIBS_TEMPLATE = "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/{layer}/default/{time}/{matrix}/{z}/{y}/{x}.{ext}";
 const FOOT_STYLE = { color: "#ba1a1a", weight: 1.5, fillColor: "#ba1a1a", fillOpacity: 0.35 };
-const ORIGIN_STYLE = { color: "#191c1e", fillColor: "#ba1a1a", fillOpacity: 1 };
+const ORIGIN_STYLE = { color: "#0a2540", fillColor: "#ba1a1a", fillOpacity: 1 };
 const ellipse = (lat, lon, rKm, elong, bearing = 60) => {
   const pts = [];
   for (let i = 0; i <= 48; i++) {

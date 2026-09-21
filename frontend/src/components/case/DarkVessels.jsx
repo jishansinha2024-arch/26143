@@ -6,8 +6,8 @@ import { api, apiError, fmtTime } from "@/lib/api";
 const STATE_UI = {
   SAR_READY: { color: "#006a61", label: "SENTINEL-1 SAR READY", hint: "Real Sentinel-1 SAR attached · dark-vessel scan available" },
   QUICKLOOK_GENERATING: { color: "#b26a00", label: "QUICKLOOK GENERATING", hint: "SAR available · preview still being generated" },
-  NO_SCENE_SELECTED: { color: "#707881", label: "NO SCENE SELECTED", hint: "Run the acquisition search to find the nearest real Sentinel-1 pass" },
-  SEARCHING: { color: "#006194", label: "SEARCHING SENTINEL-1", hint: "Querying Planetary Computer STAC (±36 h → ±72 h → ±5 d → ±7 d)" },
+  NO_SCENE_SELECTED: { color: "#5b86b3", label: "NO SCENE SELECTED", hint: "Run the acquisition search to find the nearest real Sentinel-1 pass" },
+  SEARCHING: { color: "#0a67ad", label: "SEARCHING SENTINEL-1", hint: "Querying Planetary Computer STAC (±36 h → ±72 h → ±5 d → ±7 d)" },
   NO_36H: { color: "#b26a00", label: "NO ACQUISITION IN ±36 H", hint: "" },
   NEAREST_FOUND_EXTENDED: { color: "#b26a00", label: "NEAREST SENTINEL-1 FOUND (EXTENDED WINDOW)", hint: "" },
   NO_COVERAGE_7D: { color: "#ba1a1a", label: "NO SENTINEL-1 ACQUISITION FOUND", hint: "Satellite revisit gap for this AOI/time. AIS/jurisdiction investigation can continue." },
@@ -51,7 +51,7 @@ const SceneStatus = ({ s, caseId, acquisitionTime, onAttached }) => {
       )}
       {!s.scene_id && search?.stages_tried?.length > 0 && <div className="text-slate-500" data-testid="scene-search-stages">Search windows tried: {search.stages_tried.map((x) => `±${x.window_hours} h → ${x.scenes}`).join(" · ")}</div>}
       <div className="flex flex-wrap gap-1.5">
-        {!s.scene_id && <button data-testid="btn-attach-scene" disabled={!!busy} onClick={() => attach()} className="inline-flex items-center gap-1 rounded border px-2 py-0.5 uppercase tracking-wider text-cyan-300 hover:bg-cyan-400/10 disabled:opacity-50" style={{ borderColor: "rgba(0,97,148,0.4)" }}><Satellite size={10} /> {busy === "auto" ? "Searching STAC…" : state === "NO_SCENE_SELECTED" ? "Find nearest Sentinel-1 scene" : "Retry search"}</button>}
+        {!s.scene_id && <button data-testid="btn-attach-scene" disabled={!!busy} onClick={() => attach()} className="inline-flex items-center gap-1 rounded border px-2 py-0.5 uppercase tracking-wider text-cyan-300 hover:bg-cyan-400/10 disabled:opacity-50" style={{ borderColor: "rgba(10,103,173,0.4)" }}><Satellite size={10} /> {busy === "auto" ? "Searching STAC…" : state === "NO_SCENE_SELECTED" ? "Find nearest Sentinel-1 scene" : "Retry search"}</button>}
         <button data-testid="btn-view-scenes" disabled={!!busy} onClick={view} className="rounded border px-2 py-0.5 uppercase tracking-wider text-slate-300 hover:text-on-surface disabled:opacity-50" style={{ borderColor: "var(--border-highlight)" }}>{busy === "list" ? "Searching…" : s.scene_id ? "Change scene" : "View available scenes"}</button>
         {!s.scene_id && !skipSar && <button data-testid="btn-continue-without-sar" onClick={() => setSkipSar(true)} className="rounded border px-2 py-0.5 uppercase tracking-wider text-slate-400 hover:text-on-surface" style={{ borderColor: "var(--border-default)" }}>Continue without SAR</button>}
         {skipSar && <span className="text-amber-300" data-testid="without-sar-note">Continuing with AIS + jurisdiction only · SAR confirmation pending · re-check satellite later</span>}

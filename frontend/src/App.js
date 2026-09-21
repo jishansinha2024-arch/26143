@@ -29,6 +29,7 @@ import Account from "@/pages/Account";
 import Validation from "@/pages/Validation";
 import AdminSecurity from "@/pages/AdminSecurity";
 import Billing from "@/pages/Billing";
+import About from "@/pages/About";
 
 const Protected = ({ children, role }) => {
   const { user } = useAuth();
@@ -58,6 +59,7 @@ const AppRoutes = () => {
               <Route path="/validation" element={<Validation />} />
               <Route path="/account" element={<Account />} />
               <Route path="/billing" element={<Billing />} />
+              <Route path="/about" element={<About />} />
               <Route path="/watchlist" element={<Watchlist />} />
               <Route path="/compare" element={<Compare />} />
               <Route path="/explorer" element={<SceneExplorer />} />
@@ -86,7 +88,7 @@ function App() {
           </LiveFeedProvider>
         </BrowserRouter>
       </AuthProvider>
-      <Toaster theme="light" position="bottom-right" toastOptions={{ style: { background: "#ffffff", border: "1px solid #bfc7d2", color: "#191c1e" } }} />
+      <Toaster theme="light" position="bottom-right" toastOptions={{ style: { background: "#ffffff", border: "1px solid #bcd3ea", color: "#0a2540" } }} />
     </div>
   );
 }

@@ -46,9 +46,9 @@ export const CsvUpload = ({ onDone }) => {
         onDragOver={(e) => { e.preventDefault(); setDrag(true); }} onDragLeave={() => setDrag(false)}
         onDrop={(e) => { e.preventDefault(); setDrag(false); pick(e.dataTransfer.files?.[0]); }}
         className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded border-2 border-dashed px-4 py-6 text-center transition-colors"
-        style={{ borderColor: drag ? "#006194" : "var(--border-highlight)", background: drag ? "rgba(0,97,148,0.06)" : "rgba(255,255,255,0.5)" }}>
+        style={{ borderColor: drag ? "#0a67ad" : "var(--border-highlight)", background: drag ? "rgba(10,103,173,0.06)" : "rgba(255,255,255,0.5)" }}>
         <input ref={inputRef} data-testid="csv-file-input" type="file" accept=".csv,text/csv" className="hidden" onChange={(e) => pick(e.target.files?.[0])} />
-        <FileSpreadsheet size={22} color="#006194" />
+        <FileSpreadsheet size={22} color="#0a67ad" />
         <p className="text-sm text-slate-200">{file ? file.name : "Drop an AIS CSV export here or click to browse"}</p>
         <p className="font-mono text-[10px] text-slate-500">MMSI · BaseDateTime/timestamp · LAT · LON · SOG · COG · Heading · VesselName · IMO · VesselType · up to 25 MB</p>
       </div>

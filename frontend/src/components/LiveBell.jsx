@@ -5,13 +5,13 @@ export const LiveBell = () => {
   const live = useLive();
   const nav = useNavigate();
   if (!live) return null;
-  const modeTone = live.mode === "live" ? "text-secondary" : live.mode === "polling" ? "text-[#b26a00]" : "text-outline";
+  const modeTone = live.mode === "live" ? "text-primary" : live.mode === "polling" ? "text-[#b26a00]" : "text-outline";
   return (
     <button data-testid="live-bell" onClick={() => { live.clearUnread(); nav("/alerts"); }} title={`Live feed: ${live.mode}`}
-      className="relative inline-flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-on-surface-variant transition-colors hover:bg-surface-container hover:text-on-surface">
+      className="relative inline-flex items-center gap-1.5 rounded-full border border-[var(--border-default)] bg-surface-container-lowest px-3 py-1.5 text-on-surface-variant shadow-sm transition-colors hover:bg-surface-container hover:text-on-surface">
       <span className="material-symbols-outlined text-[20px]">notifications</span>
       {live.unread > 0 && <span data-testid="live-bell-count" className="absolute -right-0.5 -top-0.5 grid h-4 min-w-4 place-items-center rounded-full bg-error px-1 font-code-telemetry-sm text-[9px] font-bold text-on-error">{live.unread}</span>}
-      <span data-testid="live-mode" className={`hidden items-center gap-0.5 font-code-telemetry-sm text-code-telemetry-sm font-semibold uppercase tracking-wider lg:inline-flex ${modeTone}`}>
+      <span data-testid="live-mode" className={`hidden items-center gap-1 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] lg:inline-flex ${modeTone}`}>
         <span className="material-symbols-outlined text-[12px]">{live.mode === "live" ? "wifi" : "sync"}</span> {live.mode}
       </span>
     </button>

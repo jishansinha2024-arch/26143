@@ -7,7 +7,7 @@ import { useAuth } from "@/context/AuthContext";
 
 const inputCls = "w-full rounded border bg-slate-900/60 px-2.5 py-1.5 font-mono text-xs text-slate-100 outline-none focus:border-cyan-400/60";
 const bd = { borderColor: "var(--border-highlight)" };
-const SEV = { high: "#ba1a1a", medium: "#b26a00", low: "#707881" };
+const SEV = { high: "#ba1a1a", medium: "#b26a00", low: "#5b86b3" };
 
 export default function Watchlist() {
   const { user } = useAuth();
@@ -55,7 +55,7 @@ export default function Watchlist() {
               <tbody>
                 {active.map((w) => (
                   <tr key={w.id} data-testid={`watchlist-row-${w.mmsi}`} className="border-t" style={{ borderColor: "var(--border-default)" }}>
-                    <td className="px-4 py-2.5"><button data-testid={`watchlist-vessel-${w.mmsi}`} onClick={() => nav(`/vessels/${w.mmsi}`)} className="flex items-center gap-2 hover:underline"><Ship size={12} color="#006194" /><span className="font-display font-semibold">{w.vessel_name || "UNKNOWN"}</span><span className="font-mono text-slate-400">{w.mmsi}</span></button></td>
+                    <td className="px-4 py-2.5"><button data-testid={`watchlist-vessel-${w.mmsi}`} onClick={() => nav(`/vessels/${w.mmsi}`)} className="flex items-center gap-2 hover:underline"><Ship size={12} color="#0a67ad" /><span className="font-display font-semibold">{w.vessel_name || "UNKNOWN"}</span><span className="font-mono text-slate-400">{w.mmsi}</span></button></td>
                     <td className="px-4 py-2.5 font-mono text-[10px] uppercase tracking-wider" style={{ color: SEV[w.severity] }}>{w.severity}</td>
                     <td className="px-4 py-2.5 text-slate-300 max-w-xs">{w.reason}</td>
                     <td className="px-4 py-2.5 font-mono text-slate-400">{w.added_by}<br />{fmtTime(w.created_at)}</td>

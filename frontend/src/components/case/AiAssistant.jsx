@@ -29,7 +29,7 @@ export function AiAssistant({ caseId }) {
 
   return (
     <div className="flex h-[520px] flex-col" data-testid="ai-assistant">
-      <div className="mb-2 flex items-center gap-2"><Sparkles size={15} color="#006194" /><h3 className="font-display text-sm font-semibold">Case assistant</h3>
+      <div className="mb-2 flex items-center gap-2"><Sparkles size={15} color="#0a67ad" /><h3 className="font-display text-sm font-semibold">Case assistant</h3>
         <span className="ml-auto font-mono text-[10px] text-slate-500">grounded in stored case evidence only</span></div>
       <div className="flex-1 space-y-3 overflow-y-auto rounded-md border p-3" style={{ borderColor: "var(--border-default)" }} data-testid="assistant-messages">
         {msgs.length === 0 && (

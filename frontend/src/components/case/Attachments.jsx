@@ -17,8 +17,8 @@ const Thumb = ({ att }) => {
     api.get(`/attachments/${att.id}/download`, { responseType: "blob" }).then((r) => { u = URL.createObjectURL(r.data); setUrl(u); }).catch(() => {});
     return () => { if (u) URL.revokeObjectURL(u); };
   }, [att.id, att.is_image]);
-  if (!att.is_image) return <div className="grid h-20 w-full place-items-center rounded bg-slate-900/60"><FileText size={22} color="#707881" /></div>;
-  return url ? <img src={url} alt={att.caption || att.original_filename} className="h-20 w-full rounded object-cover" data-testid={`attachment-thumb-${att.id}`} /> : <div className="grid h-20 w-full place-items-center rounded bg-slate-900/60"><ImageIcon size={22} color="#707881" /></div>;
+  if (!att.is_image) return <div className="grid h-20 w-full place-items-center rounded bg-slate-900/60"><FileText size={22} color="#5b86b3" /></div>;
+  return url ? <img src={url} alt={att.caption || att.original_filename} className="h-20 w-full rounded object-cover" data-testid={`attachment-thumb-${att.id}`} /> : <div className="grid h-20 w-full place-items-center rounded bg-slate-900/60"><ImageIcon size={22} color="#5b86b3" /></div>;
 };
 
 export const Attachments = ({ caseId, onChanged }) => {

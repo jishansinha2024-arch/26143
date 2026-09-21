@@ -50,8 +50,8 @@ export default function Signup() {
     <div className="grid h-screen grid-cols-1 lg:grid-cols-[1.1fr_1fr]" style={{ background: "var(--bg-primary)" }} data-testid="signup-page">
       <div className="hidden lg:flex flex-col justify-between p-12 grid-bg bg-surface-container-low" style={{ borderColor: "var(--border-default)" }}>
         <div className="flex items-center gap-2.5">
-          <span className="grid h-9 w-9 place-items-center rounded-md" style={{ background: "rgba(0,97,148,0.12)", border: "1px solid rgba(0,97,148,0.4)" }}><Radar size={18} color="#006194" /></span>
-          <span className="font-display text-xl font-bold tracking-tight">Varuna <span style={{ color: "#006194" }}>Netra</span></span>
+          <span className="grid h-9 w-9 place-items-center rounded-md" style={{ background: "rgba(10,103,173,0.12)", border: "1px solid rgba(10,103,173,0.4)" }}><Radar size={18} color="#0a67ad" /></span>
+          <span className="font-display text-xl font-bold tracking-tight">Varuna <span style={{ color: "#0a67ad" }}>Netra</span></span>
         </div>
         <div className="max-w-lg fade-up">
           <p className="label-mono mb-3">Create your account</p>
@@ -85,7 +85,7 @@ export default function Signup() {
             </button>
           )}
           <div className="mt-5 flex items-center gap-3"><span className="h-px flex-1" style={{ background: "var(--border-default)" }} /><span className="label-mono">or</span><span className="h-px flex-1" style={{ background: "var(--border-default)" }} /></div>
-          <button type="button" data-testid="signup-explore-button" onClick={explore} disabled={exploreBusy} className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded border px-4 py-2 font-mono text-xs font-semibold uppercase tracking-wider text-cyan-200 hover:bg-cyan-400/10 disabled:opacity-50" style={{ borderColor: "rgba(0,97,148,0.4)" }}>
+          <button type="button" data-testid="signup-explore-button" onClick={explore} disabled={exploreBusy} className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded border px-4 py-2 font-mono text-xs font-semibold uppercase tracking-wider text-cyan-200 hover:bg-cyan-400/10 disabled:opacity-50" style={{ borderColor: "rgba(10,103,173,0.4)" }}>
             <Compass size={14} /> {exploreBusy ? "Entering…" : "Explore without an account"}
           </button>
           <Link to="/login" data-testid="have-account-link" className="mt-3 block text-center font-mono text-[11px] uppercase tracking-wider text-slate-400 hover:text-cyan-300">Already have an account? Sign in</Link>

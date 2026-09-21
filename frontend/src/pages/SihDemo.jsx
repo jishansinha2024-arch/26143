@@ -10,7 +10,7 @@ import { ChronoTimeline } from "@/components/case/ChronoTimeline";
 
 const fmtDiff = (h) => (h == null ? "—" : `${Math.floor(h)} h ${String(Math.round((h % 1) * 60)).padStart(2, "0")} min`);
 const Row = ({ k, v, testid }) => <div className="flex justify-between gap-3 border-b border-dashed py-1 font-mono text-[11px]" style={{ borderColor: "var(--border-default)" }}><span className="text-slate-500">{k}</span><span className="text-right text-slate-100" data-testid={testid}>{v ?? "UNAVAILABLE"}</span></div>;
-const Tag = ({ children, tone = "#007bb9", testid }) => <span data-testid={testid} className="rounded px-1.5 py-0.5 font-mono text-[9px] font-bold uppercase tracking-wider" style={{ color: tone, border: `1px solid ${tone}66` }}>{children}</span>;
+const Tag = ({ children, tone = "#1479c4", testid }) => <span data-testid={testid} className="rounded px-1.5 py-0.5 font-mono text-[9px] font-bold uppercase tracking-wider" style={{ color: tone, border: `1px solid ${tone}66` }}>{children}</span>;
 
 /** Judge walkthrough — every value is fetched from the real backend; the case is a stored REFERENCE CASE, never presented as live. */
 export default function SihDemo() {
@@ -48,7 +48,7 @@ export default function SihDemo() {
       <div className="mb-2 flex gap-2"><Tag tone="#006a61" testid="demo-scene-badge">{d.c.scene_status?.state === "SAR_READY" ? "REAL SENTINEL-1 · SAR READY" : d.c.scene_status?.state}</Tag><Tag>LATEST AVAILABLE ACQUISITION — not real-time</Tag></div>
       <Row k="scene" v={d.c.scene_status?.provider_scene_id} testid="demo-scene-id" /><Row k="acquired" v={d.c.scene_status?.acquisition_time ? fmtTime(d.c.scene_status.acquisition_time) : null} /><Row k="event time" v={fmtTime(d.c.acquisition_time)} /><Row k="Δ event → scene" v={fmtDiff(d.c.scene_status?.time_difference_hours)} /><Row k="platform · polarization · asset" v={[d.c.scene_status?.platform, d.c.scene_status?.polarization, d.c.scene_status?.analysis_asset].filter(Boolean).join(" · ") || null} /><Row k="provider" v="Microsoft Planetary Computer STAC (sentinel-1-grd)" /></> },
     { t: "Spill candidate", icon: Waves, body: <>
-      <div className="mb-2 flex gap-2"><Tag tone="#b26a00">EXPERIMENTAL SAR DARK-SPOT DETECTOR</Tag><Tag tone="#707881">validation pending</Tag></div>
+      <div className="mb-2 flex gap-2"><Tag tone="#b26a00">EXPERIMENTAL SAR DARK-SPOT DETECTOR</Tag><Tag tone="#5b86b3">validation pending</Tag></div>
       <Row k="source · version" v={`${d.c.source}${d.geo?.features?.[0]?.properties?.processing_version ? ` · ${d.geo.features[0].properties.processing_version}` : ""}`} /><Row k="detection confidence" v={d.c.detection_confidence != null ? d.c.detection_confidence.toFixed(2) : null} /><Row k="centroid (lon, lat)" v={d.c.centroid.coordinates.map((x) => x.toFixed(4)).join(", ")} /><Row k="quality flags" v={(d.c.quality_flags || []).join(", ") || "none"} />
       <p className="mt-2 text-[11px] text-amber-300/90">Dark formations in SAR imagery may also be caused by low wind, biogenic films or other oceanographic phenomena. Detection is an investigation candidate, not automatic proof of an oil spill.</p></> },
     { t: "AIS vessels", icon: Radio, body: <>

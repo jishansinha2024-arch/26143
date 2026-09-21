@@ -35,7 +35,7 @@ export const EmailSettings = ({ onChanged }) => {
   if (!s) return null;
   return (
     <div className="panel p-5 fade-up" data-testid="email-settings">
-      <div className="mb-3 flex items-center gap-2"><Mail size={16} color="#006194" /><h2 className="font-display text-lg font-semibold">Email delivery (Resend)</h2>
+      <div className="mb-3 flex items-center gap-2"><Mail size={16} color="#0a67ad" /><h2 className="font-display text-lg font-semibold">Email delivery (Resend)</h2>
         <span data-testid="email-configured-badge" className="ml-auto rounded-full px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider" style={{ color: s.configured ? "#006a61" : "#b26a00", border: `1px solid ${s.configured ? "#006a61" : "#b26a00"}66` }}>{s.configured ? "configured" : "not configured"}</span></div>
       <p className="mb-3 text-xs text-slate-400">Password-reset links and alert notifications (watchlist hits, high-confidence correlations, zone rules) are emailed through Resend. Create a key at resend.com/api-keys and verify a sender domain; <span className="font-mono">onboarding@resend.dev</span> works for test mode only.</p>
       <div className="grid gap-2 sm:grid-cols-2">

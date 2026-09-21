@@ -8,7 +8,7 @@ import { PROV_COLOR, TYPE_LABEL } from "@/components/zones/ZonesLayer";
 const inputCls = "w-full rounded border bg-slate-900/60 px-2.5 py-1.5 font-mono text-xs text-slate-100 outline-none focus:border-cyan-400/60";
 const bd = { borderColor: "var(--border-highlight)" };
 
-export const ProvBadge = ({ p, testId }) => <span data-testid={testId} className="rounded px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider" style={{ color: PROV_COLOR[p] || "#707881", border: `1px solid ${PROV_COLOR[p] || "#707881"}55` }}>{p || "UNVERIFIED"}</span>;
+export const ProvBadge = ({ p, testId }) => <span data-testid={testId} className="rounded px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider" style={{ color: PROV_COLOR[p] || "#5b86b3", border: `1px solid ${PROV_COLOR[p] || "#5b86b3"}55` }}>{p || "UNVERIFIED"}</span>;
 
 /** Global maritime zone selector: country search → zone → AOI; presets; custom draw. Drives Sentinel + AIS + jurisdiction. */
 export const AoiPanel = ({ onFlyTo, onAoiChange, drawing, setDrawing, drawnGeometry, onDrawnConsumed, compact = false }) => {
@@ -41,12 +41,12 @@ export const AoiPanel = ({ onFlyTo, onAoiChange, drawing, setDrawing, drawnGeome
   const clear = async () => { try { await api.delete("/aoi"); setAoi(null); onAoiChange?.(null); toast.success("AOI cleared · AIS back to regional defaults"); } catch (e) { toast.error(apiError(e)); } };
 
   return (
-    <div className="rounded border p-3" style={{ borderColor: "rgba(0,97,148,0.35)", background: "rgba(0,97,148,0.04)" }} data-testid="aoi-panel">
-      <div className="mb-2 flex items-center gap-2"><Globe2 size={14} color="#006194" /><h2 className="font-display font-semibold">Investigation AOI · worldwide</h2>
+    <div className="rounded border p-3" style={{ borderColor: "rgba(10,103,173,0.35)", background: "rgba(10,103,173,0.04)" }} data-testid="aoi-panel">
+      <div className="mb-2 flex items-center gap-2"><Globe2 size={14} color="#0a67ad" /><h2 className="font-display font-semibold">Investigation AOI · worldwide</h2>
         {aoi && analyst && <button data-testid="aoi-clear" onClick={clear} className="ml-auto rounded p-1 text-slate-400 hover:text-rose-300" title="clear AOI"><X size={12} /></button>}</div>
       {aoi ? (
         <div className="mb-2 rounded border p-2 text-[11px]" style={{ borderColor: "var(--border-default)" }} data-testid="aoi-current">
-          <div className="flex items-center gap-2"><Crosshair size={11} color="#006194" /><span className="text-slate-100">{aoi.name}</span><ProvBadge p={aoi.provenance} testId="aoi-provenance" /></div>
+          <div className="flex items-center gap-2"><Crosshair size={11} color="#0a67ad" /><span className="text-slate-100">{aoi.name}</span><ProvBadge p={aoi.provenance} testId="aoi-provenance" /></div>
           <div className="mt-1 grid grid-cols-1 gap-0.5 font-mono text-[10px] text-slate-400">
             <span className="flex items-center gap-1"><Satellite size={10} /> Sentinel-1 bbox {aoi.bbox.map((x) => x.toFixed(2)).join(", ")}</span>
             <span className="flex items-center gap-1" data-testid="aoi-ais-boxes"><Radio size={10} /> AIS coverage: {aoi.ais_bboxes_swne.length} bbox(es), +margin</span>
@@ -75,7 +75,7 @@ export const AoiPanel = ({ onFlyTo, onAoiChange, drawing, setDrawing, drawnGeome
       )}
       <div className="mt-2 flex flex-wrap gap-1.5" data-testid="aoi-presets">
         {Object.entries(presets).map(([k, p]) => (
-          <button key={k} data-testid={`aoi-preset-${k}`} disabled={busy || !analyst} onClick={() => select({ kind: "preset", preset: k })} className="rounded border px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider disabled:opacity-40" style={{ borderColor: k === "sih_mumbai" ? "rgba(178,106,0,0.6)" : "var(--border-highlight)", color: k === "sih_mumbai" ? "#b26a00" : "#3f4850" }} title={p.note || p.name}>{k === "sih_mumbai" ? "★ SIH · Mumbai" : p.name}</button>))}
+          <button key={k} data-testid={`aoi-preset-${k}`} disabled={busy || !analyst} onClick={() => select({ kind: "preset", preset: k })} className="rounded border px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider disabled:opacity-40" style={{ borderColor: k === "sih_mumbai" ? "rgba(178,106,0,0.6)" : "var(--border-highlight)", color: k === "sih_mumbai" ? "#b26a00" : "#2b5b8f" }} title={p.note || p.name}>{k === "sih_mumbai" ? "★ SIH · Mumbai" : p.name}</button>))}
         {analyst && setDrawing && <button data-testid="aoi-draw-toggle" onClick={() => setDrawing(!drawing)} className="inline-flex items-center gap-1 rounded border px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider" style={{ borderColor: "rgba(111,79,168,0.6)", color: drawing ? "#ffffff" : "#6f4fa8", background: drawing ? "rgba(111,79,168,0.6)" : "transparent" }}><PenTool size={10} /> {drawing ? "drawing… (Esc)" : "draw custom AOI"}</button>}
       </div>
       {!compact && <p className="mt-2 text-[10px] leading-relaxed text-slate-500">Zones: Marine Regions Maritime Boundaries v12 (CC-BY 4.0) — REFERENCE geometry, simplified for display. Intersection is investigation context, not a legal determination. India/Mumbai is only the SIH demo preset; the same pipeline runs anywhere.</p>}

@@ -26,6 +26,7 @@ module.exports = {
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
+        // varuna-blue text ramp lives in index.css (.text-blue-grad) + the slate/cyan/sky scales below
         'template-display': ['\"Bricolage Grotesque\"', 'system-ui', 'sans-serif'],
         mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
         display: ['\"Bricolage Grotesque\"', 'Geist', 'Inter', 'system-ui', 'sans-serif'],
@@ -56,42 +57,44 @@ module.exports = {
         'code-telemetry-sm': ['10px', { lineHeight: '12px', letterSpacing: '0.02em', fontWeight: '500' }]
       },
       colors: {
-        paper: '#f3f1ec',
+        paper: '#f4f8fc',
         mist: '#ffffff',
-        shell: '#e7e3da',
-        ink: '#16262e',
+        shell: '#e2edf8',
+        ink: '#0a2540',
         // NOTE: no `muted` here on purpose. `muted` is the shadcn token below (hsl(var(--muted))); declaring it twice
         // made the later one silently win. The entry screen's slate-blue text (#5f7684) is supplied by scoping
         // --muted inside `.entry-theme` (see src/index.css), so `text-muted` still reads correctly there.
-        tide: '#1f7f93',
+        tide: '#1479c4',
+        navy: '#0a2540',
+        skyblue: '#38a3e0',
         flare: '#c25a49',
         signal: '#b8862a',
         /* ---- Varuna Netra redesign palette (Material-style tonal surfaces) ---- */
-        'surface': '#f7f9fb',
-        'surface-bright': '#f7f9fb',
-        'surface-dim': '#d8dadc',
-        'surface-tint': '#006398',
-        'surface-variant': '#e0e3e5',
+        'surface': '#f6f9fc',
+        'surface-bright': '#f6f9fc',
+        'surface-dim': '#cfdcea',
+        'surface-tint': '#0a67ad',
+        'surface-variant': '#d9e6f3',
         'surface-container-lowest': '#ffffff',
-        'surface-container-low': '#f2f4f6',
-        'surface-container': '#eceef0',
-        'surface-container-high': '#e6e8ea',
-        'surface-container-highest': '#e0e3e5',
-        'on-surface': '#191c1e',
-        'on-surface-variant': '#3f4850',
-        'on-background': '#191c1e',
-        'outline': '#707881',
-        'outline-variant': '#bfc7d2',
-        'inverse-surface': '#2d3133',
-        'inverse-on-surface': '#eff1f3',
-        'inverse-primary': '#93ccff',
-        'primary-container': '#007bb9',
-        'primary-fixed': '#cce5ff',
-        'primary-fixed-dim': '#93ccff',
+        'surface-container-low': '#eff5fb',
+        'surface-container': '#e7f0f9',
+        'surface-container-high': '#dfeaf6',
+        'surface-container-highest': '#d9e6f3',
+        'on-surface': '#0a2540',
+        'on-surface-variant': '#2b5b8f',
+        'on-background': '#0a2540',
+        'outline': '#5b86b3',
+        'outline-variant': '#c6d9ec',
+        'inverse-surface': '#0a2540',
+        'inverse-on-surface': '#eaf3fc',
+        'inverse-primary': '#8ec9f5',
+        'primary-container': '#1479c4',
+        'primary-fixed': '#d8ebfb',
+        'primary-fixed-dim': '#8ec9f5',
         'on-primary': '#ffffff',
         'on-primary-container': '#fdfcff',
-        'on-primary-fixed': '#001d31',
-        'on-primary-fixed-variant': '#004b73',
+        'on-primary-fixed': '#06294f',
+        'on-primary-fixed-variant': '#0a4f94',
         'secondary-container': '#86f2e4',
         'secondary-fixed': '#89f5e7',
         'secondary-fixed-dim': '#6bd8cb',
@@ -115,14 +118,14 @@ module.exports = {
               text-slate-*, bg-slate-*, text-cyan-* ... class resolves to the light redesign
               (100 = strongest text ... 900 = subtle panel tint). ---- */
         slate: {
-          50: '#f7f9fb', 100: '#191c1e', 200: '#24292c', 300: '#3f4850', 400: '#566069', 500: '#707881',
-          600: '#8b939b', 700: '#bfc7d2', 800: '#e6e8ea', 900: '#f2f4f6', 950: '#ffffff'
+          50: '#f6f9fc', 100: '#0a2540', 200: '#0d3260', 300: '#164a83', 400: '#2b6199', 500: '#3b78ad', 600: '#5b9bd0',
+          700: '#c6d9ec', 800: '#e1ecf7', 900: '#eff5fb', 950: '#ffffff'
         },
         cyan: {
-          50: '#eaf5fc', 100: '#004b73', 200: '#004b73', 300: '#006a9e', 400: '#006194', 500: '#006194', 600: '#004b73', 700: '#004b73', 800: '#003a5a', 900: '#002b44', 950: '#001d31'
+          50: '#eaf4fd', 100: '#062f5c', 200: '#0a4f94', 300: '#1479c4', 400: '#0a67ad', 500: '#0a67ad', 600: '#0a4f94', 700: '#083f78', 800: '#062f5c', 900: '#04234a', 950: '#021a38'
         },
         sky: {
-          50: '#eaf5fc', 100: '#cce5ff', 200: '#93ccff', 300: '#006194', 400: '#007bb9', 500: '#006194', 600: '#004b73', 700: '#004b73', 800: '#003a5a', 900: '#002b44', 950: '#001d31'
+          50: '#eaf4fd', 100: '#d8ebfb', 200: '#8ec9f5', 300: '#1479c4', 400: '#2f9be0', 500: '#0a67ad', 600: '#0a4f94', 700: '#083f78', 800: '#062f5c', 900: '#04234a', 950: '#021a38'
         },
         amber: {
           50: '#fff8ea', 100: '#ffefc9', 200: '#7a4b00', 300: '#8a5300', 400: '#b26a00', 500: '#b26a00', 600: '#8a5300', 700: '#6b4000', 800: '#4f2f00', 900: '#3a2200', 950: '#261600'

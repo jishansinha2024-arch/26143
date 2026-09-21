@@ -4,7 +4,7 @@ import { Share2, FileDown, Link2, Ban } from "lucide-react";
 import { api, apiError, fmtTime, hasRole } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
 
-const KIND_COLOR = { scene: "#6f4fa8", spill: "#ba1a1a", ais: "#007bb9", case: "#006194", env: "#8a63d2", correlation: "#006194", decision: "#006a61", alert: "#c2410c", export: "#707881" };
+const KIND_COLOR = { scene: "#6f4fa8", spill: "#ba1a1a", ais: "#1479c4", case: "#0a67ad", env: "#8a63d2", correlation: "#0a67ad", decision: "#006a61", alert: "#c2410c", export: "#5b86b3" };
 const btn = "inline-flex items-center gap-1.5 rounded border px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider text-slate-300 hover:text-on-surface disabled:opacity-50";
 
 export const CaseTimeline = ({ caseId, caseNumber }) => {
@@ -56,7 +56,7 @@ export const CaseTimeline = ({ caseId, caseNumber }) => {
             const dead = s.revoked || new Date(s.expires_at) < new Date();
             return (
               <div key={s.id} data-testid={`share-link-${s.id}`} className="flex items-center gap-2 rounded border px-2.5 py-1.5 font-mono text-[10px]" style={{ borderColor: "var(--border-default)", opacity: dead ? 0.5 : 1 }}>
-                <Link2 size={11} color={dead ? "#707881" : "#b26a00"} />
+                <Link2 size={11} color={dead ? "#5b86b3" : "#b26a00"} />
                 <span className="text-slate-300">{s.recipient_note || "share link"}</span>
                 <span className="text-slate-500">by {s.created_by} · {s.revoked ? "revoked" : `expires ${fmtTime(s.expires_at)}`} · {s.views} views</span>
                 {!dead && hasRole(user, "supervisor") && <button data-testid={`revoke-share-${s.id}`} onClick={() => revoke(s)} className="ml-auto inline-flex items-center gap-1 text-rose-300 hover:underline"><Ban size={10} /> revoke</button>}
@@ -68,7 +68,7 @@ export const CaseTimeline = ({ caseId, caseNumber }) => {
       <ol className="relative ml-2 mt-4 space-y-3 border-l pl-5" style={{ borderColor: "var(--border-highlight)" }} data-testid="timeline-events">
         {tl.events.map((e, i) => (
           <li key={`${e.at || e.t || ""}-${e.kind}-${i}`} className="relative text-xs" data-testid={`timeline-event-${e.kind}`}>
-            <span className="absolute -left-[26px] top-1 h-2.5 w-2.5 rounded-full" style={{ background: KIND_COLOR[e.kind] || "#707881", boxShadow: "0 0 0 3px var(--bg-secondary)" }} />
+            <span className="absolute -left-[26px] top-1 h-2.5 w-2.5 rounded-full" style={{ background: KIND_COLOR[e.kind] || "#5b86b3", boxShadow: "0 0 0 3px var(--bg-secondary)" }} />
             <div className="flex flex-wrap items-baseline gap-x-2">
               <span className="font-mono text-[10px] text-slate-400">{fmtTime(e.t)}</span>
               <span className="label-mono" style={{ color: KIND_COLOR[e.kind] }}>{e.kind}</span>

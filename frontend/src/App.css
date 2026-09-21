@@ -1,6 +1,6 @@
 .App { height: 100%; }
 
-.focus-tip { background: rgba(255,255,255,0.97); color: #191c1e; border: 1px solid #b26a00; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; box-shadow: 0 4px 12px rgba(25,28,30,.12); }
+.focus-tip { background: rgba(255,255,255,0.97); color: #0a2540; border: 1px solid #b26a00; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; box-shadow: 0 4px 12px rgba(25,28,30,.12); }
 .focus-tip::before { border-top-color: #b26a00; }
 
 .critical-banner { background: #ba1a1a; color: #fff; border-bottom: 1px solid #93000a; animation: critical-pulse 1.2s ease-in-out infinite; }

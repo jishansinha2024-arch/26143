@@ -10,7 +10,7 @@ const bd = { borderColor: "var(--border-highlight)" };
 const Shell = ({ title, sub, children, testId }) => (
   <div className="grid h-screen place-items-center p-6 grid-bg" style={{ background: "var(--bg-primary)" }} data-testid={testId}>
     <div className="w-full max-w-md rounded-xl bg-surface-container-lowest p-8 shadow-[0_8px_32px_rgba(25,28,30,0.08)] fade-up">
-      <div className="mb-5 flex items-center gap-2.5"><span className="grid h-8 w-8 place-items-center rounded-md" style={{ background: "rgba(0,97,148,0.12)", border: "1px solid rgba(0,97,148,0.4)" }}><Radar size={16} color="#006194" /></span><span className="font-display text-lg font-bold">VARUNA <span style={{ color: "#006194" }}>NETRA</span></span></div>
+      <div className="mb-5 flex items-center gap-2.5"><span className="grid h-8 w-8 place-items-center rounded-md" style={{ background: "rgba(10,103,173,0.12)", border: "1px solid rgba(10,103,173,0.4)" }}><Radar size={16} color="#0a67ad" /></span><span className="font-display text-lg font-bold">VARUNA <span style={{ color: "#0a67ad" }}>NETRA</span></span></div>
       <h1 className="font-display text-2xl font-bold tracking-tight">{title}</h1>
       <p className="mt-1 text-xs text-slate-400">{sub}</p>
       {children}

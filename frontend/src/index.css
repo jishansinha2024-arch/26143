@@ -1,6 +1,6 @@
 /* Fonts first — a CSS @import must precede every other statement.
    Inter = the app's declared sans; Bricolage Grotesque + IBM Plex Mono = entry-screen display / mono faces. */
-@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Geist:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 /* Tailwind must be emitted from here (CRA compiles it through PostCSS). Without these three
    directives no utility class in the app is generated. Keep them above all custom CSS. */
@@ -12,31 +12,44 @@
   /* shadcn/ui tokens, mapped to the light "Varuna Netra" redesign palette in tailwind.config.js
      (so `bg-primary`, `bg-background`, `text-secondary` … resolve to the same colours as the shell). */
   :root {
-    --background: 210 33% 98%;
-    --foreground: 204 9% 11%;
+    --background: 210 45% 98%;
+    --foreground: 212 75% 15%;
     --card: 0 0% 100%;
-    --card-foreground: 204 9% 11%;
+    --card-foreground: 212 75% 15%;
     --popover: 0 0% 100%;
-    --popover-foreground: 204 9% 11%;
-    --primary: 201 100% 29%;
+    --popover-foreground: 212 75% 15%;
+    --primary: 208 89% 36%;
     --primary-foreground: 0 0% 100%;
     --secondary: 175 100% 21%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 210 12% 93%;
-    --muted-foreground: 208 12% 28%;
-    --accent: 210 9% 91%;
-    --accent-foreground: 204 9% 11%;
+    --muted: 210 55% 95%;
+    --muted-foreground: 210 53% 37%;
+    --accent: 208 65% 93%;
+    --accent-foreground: 212 75% 15%;
     --destructive: 0 75% 42%;
     --destructive-foreground: 0 0% 100%;
-    --border: 215 17% 79%;
-    --input: 215 17% 79%;
-    --ring: 201 100% 29%;
-    --chart-1: 201 100% 29%;
+    --border: 210 48% 87%;
+    --input: 210 48% 84%;
+    --ring: 208 89% 36%;
+    --chart-1: 208 89% 36%;
     --chart-2: 175 100% 21%;
     --chart-3: 36 100% 35%;
     --chart-4: 0 75% 42%;
     --chart-5: 262 36% 48%;
     --radius: 0.5rem;
+
+    /* Varuna Netra console surface tokens (used by inline styles across the pages) */
+    --bg-primary: #f6f9fc;
+    --bg-secondary: #f1f6fb;
+    --bg-card: #ffffff;
+    --border-default: #dbe7f3;
+    --border-highlight: #bcd3ea;
+
+    /* Text colour ramp: dark blue -> sky blue */
+    --ink-navy: #0a2540;
+    --ink-deep: #0a4f94;
+    --ink-blue: #1479c4;
+    --ink-sky: #38a3e0;
   }
 
   body {
@@ -47,13 +60,96 @@
 }
 
 /* ---- Entry / sign-in screen (components/landing/EntryScreen.jsx) ---- */
-.daylight { background: radial-gradient(115% 85% at 66% 40%, #fff 0%, #f5f3ee 46%, #e9e5dc 100%); }
+.daylight { background: radial-gradient(115% 85% at 66% 40%, #fff 0%, #f1f7fd 46%, #dcebf8 100%); }
 
 /* The entry screen's slate-blue body text (#5f7684). Scoping the shadcn `--muted` variable here keeps the
    upstream `text-muted` / `text-muted/60` classes working without a second, colliding `muted` colour. */
-.entry-theme { --muted: 202.7 16.3% 44.5%; }
+.entry-theme { --muted: 208 42% 41%; }
 .entry-theme .font-mono { font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
 
 @keyframes feed-scroll { from { transform: translate3d(0,0,0); } to { transform: translate3d(-50%,0,0); } }
 .feed-track { animation: feed-scroll 48s linear infinite; }
 @media (prefers-reduced-motion: reduce) { .feed-track { animation: none; } }
+
+/* =====================================================================================================
+   Varuna Netra console — light "command console" design system
+   (the same visual language as the login screen and the Ingestion page reference)
+   ===================================================================================================== */
+
+html, body, #root { height: 100%; }
+body { font-family: 'Inter', system-ui, sans-serif; font-size: 14px; line-height: 1.5; }
+::selection { background: #bfe0fa; color: #062f5c; }
+
+/* Cards: white, big radius, hairline blue border, soft shadow */
+.panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-default);
+  border-radius: 1rem;
+  box-shadow: 0 1px 2px rgba(10, 37, 64, .04), 0 8px 24px -12px rgba(10, 79, 148, .14);
+}
+.panel .panel { box-shadow: none; border-radius: .75rem; }
+
+/* Eyebrow / field labels: mono, uppercase, tracked, sky-blue -> readable mid blue */
+.label-mono {
+  font-family: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 10.5px; font-weight: 500; line-height: 1.4;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: #3b78ad;
+}
+
+/* Page titles: dark navy -> sky blue gradient. width:fit-content makes the gradient span the words themselves. */
+h1.font-display, .text-blue-grad {
+  background-image: linear-gradient(95deg, #062a55 0%, #0a4f94 42%, #1f8fdc 78%, #38a3e0 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+  width: fit-content; max-width: 100%;
+  padding-bottom: .06em;
+}
+.entry-theme h1.font-display { background-image: none; -webkit-text-fill-color: initial; color: inherit; width: auto; }
+
+/* Card / section headings: solid dark blue */
+h2.font-display, h3.font-display { color: #0a2f5c; }
+
+.fade-up { animation: fade-up .45s cubic-bezier(.23, 1, .32, 1) both; }
+@keyframes fade-up { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .fade-up { animation: none; } }
+
+.pulse-dot { display: inline-block; height: 8px; width: 8px; border-radius: 9999px; background: #38a3e0; box-shadow: 0 0 0 0 rgba(56, 163, 224, .55); animation: pulse-dot 2s ease-out infinite; }
+@keyframes pulse-dot { 70% { box-shadow: 0 0 0 7px rgba(56, 163, 224, 0); } 100% { box-shadow: 0 0 0 0 rgba(56, 163, 224, 0); } }
+
+.grid-bg {
+  background-image: linear-gradient(rgba(20, 121, 196, .07) 1px, transparent 1px), linear-gradient(90deg, rgba(20, 121, 196, .07) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* Form controls inside the console: white fields, blue focus ring */
+main input:not([type=checkbox]):not([type=radio]):not([type=range]), main select, main textarea {
+  background-color: #fff; color: #0a2540; border-color: var(--border-highlight);
+  border-radius: .625rem;
+}
+main input::placeholder, main textarea::placeholder { color: #7ba6cf; }
+main input:focus, main select:focus, main textarea:focus { outline: none; border-color: #1479c4; box-shadow: 0 0 0 3px rgba(20, 121, 196, .16); }
+main input[type=checkbox], main input[type=radio], main input[type=range] { accent-color: #1479c4; }
+
+/* Tables */
+main table { border-collapse: collapse; }
+main thead tr { background: #f1f7fc; }
+main tbody tr:hover { background: #f4f9fd; }
+main th { color: #3b78ad; }
+
+code { font-family: 'JetBrains Mono', ui-monospace, monospace; background: #eaf3fc; color: #0a4f94; padding: 0 .3em; border-radius: .3em; font-size: .92em; }
+
+/* Scrollbars */
+* { scrollbar-width: thin; scrollbar-color: #bcd3ea transparent; }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: #bcd3ea; border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: #8ec0e8; }
+
+/* Leaflet: light basemap, blue-tinted, on-brand controls */
+.leaflet-container { background: #e8f1f9; font-family: 'Inter', system-ui, sans-serif; }
+.dark-tiles { filter: saturate(.72) hue-rotate(-6deg) brightness(1.02) contrast(.96); }
+.leaflet-bar a, .leaflet-bar a:hover { color: #0a4f94; border-color: #dbe7f3; }
+.leaflet-popup-content-wrapper, .leaflet-popup-tip { background: #fff; color: #0a2540; border-radius: .75rem; box-shadow: 0 8px 28px -8px rgba(10, 79, 148, .35); }
+.leaflet-tooltip { background: #fff; color: #0a2540; border: 1px solid #bcd3ea; box-shadow: 0 4px 14px rgba(10, 79, 148, .18); }
+.leaflet-control-attribution { background: rgba(255, 255, 255, .8) !important; color: #3b78ad; }
+.leaflet-control-attribution a { color: #1479c4; }

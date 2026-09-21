@@ -33,7 +33,7 @@ export const LiveAis = ({ onChanged }) => {
   const showPrompt = cov?.prompt && !dismissed;
   return (
     <div className="panel p-5 fade-up" data-testid="live-ais-panel">
-      <div className="mb-2 flex items-center gap-2"><Radio size={16} color="#006194" /><h2 className="font-display text-lg font-semibold">Live AIS feed (AISStream)</h2>
+      <div className="mb-2 flex items-center gap-2"><Radio size={16} color="#0a67ad" /><h2 className="font-display text-lg font-semibold">Live AIS feed (AISStream)</h2>
         <span data-testid="live-ais-badge" className="ml-auto inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider" style={{ color: tone, border: `1px solid ${tone}66` }}>{s.state === "LIVE" ? <Wifi size={10} /> : <WifiOff size={10} />} {label}</span></div>
       {(s.state === "STANDBY" || s.state === "KEY_CONFLICT") && <p className="mb-2 rounded border border-amber-400/40 bg-amber-400/5 px-3 py-2 text-xs text-amber-200" data-testid="live-ais-reason">{s.reason}</p>}
       {showPrompt && (

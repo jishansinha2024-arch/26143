@@ -54,7 +54,7 @@ export const TimeScrubber = ({ geojson, acquisitionTime, windowAfterHours = 3, c
       </div>
       <div className="mt-1.5 flex items-center justify-between font-mono text-[10px] text-slate-400">
         <span className="flex items-center gap-1"><Clock size={10} /> <span data-testid="scrubber-time" className="text-slate-100">{cursor == null ? "full window" : fmtTime(new Date(cursor).toISOString())}</span></span>
-        <span data-testid="scrubber-relative" style={{ color: rel == null ? "#707881" : rel < 0 ? "#b26a00" : "#ba1a1a" }}>{rel == null ? `${fmtTime(new Date(range.min).toISOString())} → ${fmtTime(new Date(range.max).toISOString())}` : rel < 0 ? `T${rel.toFixed(1)}h before satellite pass` : `T+${rel.toFixed(1)}h after pass`}</span>
+        <span data-testid="scrubber-relative" style={{ color: rel == null ? "#5b86b3" : rel < 0 ? "#b26a00" : "#ba1a1a" }}>{rel == null ? `${fmtTime(new Date(range.min).toISOString())} → ${fmtTime(new Date(range.max).toISOString())}` : rel < 0 ? `T${rel.toFixed(1)}h before satellite pass` : `T+${rel.toFixed(1)}h after pass`}</span>
       </div>
     </div>
   );

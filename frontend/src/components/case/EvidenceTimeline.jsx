@@ -1,6 +1,6 @@
 import { fmtTime } from "@/lib/api";
 
-const ICON = { "case.opened": "#006194", "case.correlated": "#007bb9", "review.confirm": "#006a61", "review.reject": "#ba1a1a", "review.needs_more_data": "#b26a00", "alert.raised": "#ba1a1a", "spill.created": "#ba1a1a", "scene.registered": "#6f4fa8" };
+const ICON = { "case.opened": "#0a67ad", "case.correlated": "#1479c4", "review.confirm": "#006a61", "review.reject": "#ba1a1a", "review.needs_more_data": "#b26a00", "alert.raised": "#ba1a1a", "spill.created": "#ba1a1a", "scene.registered": "#6f4fa8" };
 
 export const EvidenceTimeline = ({ evidence }) => {
   if (!evidence) return null;
@@ -53,8 +53,8 @@ export const EvidenceTimeline = ({ evidence }) => {
         <ol className="relative ml-2 space-y-2 border-l pl-4" style={{ borderColor: "var(--border-highlight)" }} data-testid="audit-timeline">
           {[...audit_history].reverse().map((e) => (
             <li key={e.id} className="relative text-xs">
-              <span className="absolute -left-[21px] top-1 h-2.5 w-2.5 rounded-full border-2" style={{ borderColor: ICON[e.action] || "#707881", background: "var(--bg-card)" }} />
-              <div className="font-mono text-[11px]"><span style={{ color: ICON[e.action] || "#707881" }}>{e.action}</span> <span className="text-slate-500">· {e.actor} · {fmtTime(e.created_at)}</span></div>
+              <span className="absolute -left-[21px] top-1 h-2.5 w-2.5 rounded-full border-2" style={{ borderColor: ICON[e.action] || "#5b86b3", background: "var(--bg-card)" }} />
+              <div className="font-mono text-[11px]"><span style={{ color: ICON[e.action] || "#5b86b3" }}>{e.action}</span> <span className="text-slate-500">· {e.actor} · {fmtTime(e.created_at)}</span></div>
               <div className="text-slate-400">{e.entity_type} {e.entity_id.slice(0, 8)} {Object.keys(e.payload || {}).length > 0 && <span className="text-slate-500">{JSON.stringify(e.payload).slice(0, 140)}</span>}</div>
             </li>
           ))}

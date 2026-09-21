@@ -107,16 +107,16 @@ export default function SceneExplorer() {
           {asset?.geometry && <GeoJSON key={`asset-${asset.id}`} data={asset.geometry} style={{ color: "#b26a00", weight: 2, dashArray: "8,4", fillColor: "#b26a00", fillOpacity: 0.06 }} onEachFeature={(ft, l) => l.bindTooltip(`${asset.name} · ${asset.type}`, { permanent: true, direction: "top" })} />}
           <ViewTracker onView={setView} onZoom={setZoom} /><FlyTo bbox={flyTo} />
           {showZones && <ZonesLayer types={["eez", "territorial", "contiguous"]} />}
-          {aoi?.geometry && <GeoJSON key={`aoi-${aoi.updated_at}`} data={aoi.geometry} style={{ color: "#006194", weight: 2, dashArray: "10,5", fillOpacity: 0.04 }} onEachFeature={(ft, l) => l.bindTooltip(`AOI · ${aoi.name} (${aoi.provenance})`, { sticky: true })} />}
+          {aoi?.geometry && <GeoJSON key={`aoi-${aoi.updated_at}`} data={aoi.geometry} style={{ color: "#0a67ad", weight: 2, dashArray: "10,5", fillOpacity: 0.04 }} onEachFeature={(ft, l) => l.bindTooltip(`AOI · ${aoi.name} (${aoi.provenance})`, { sticky: true })} />}
           <DrawAoi active={drawing} onDone={(g) => { setDrawn(g); setDrawing(false); }} onCancel={() => setDrawing(false)} />
           {footprints && <GeoJSON key={res.scenes.map((s) => s.stac_id).join("|") + hover} data={footprints}
-            style={(ft) => ({ color: ft.properties.id === hover ? "#b26a00" : "#006194", weight: ft.properties.id === hover ? 2.5 : 1, fillOpacity: ft.properties.id === hover ? 0.2 : 0.05 })}
+            style={(ft) => ({ color: ft.properties.id === hover ? "#b26a00" : "#0a67ad", weight: ft.properties.id === hover ? 2.5 : 1, fillOpacity: ft.properties.id === hover ? 0.2 : 0.05 })}
             onEachFeature={(ft, layer) => layer.bindTooltip(ft.properties.id, { sticky: true })} />}
         </MapContainer>
         <DrawHint active={drawing} />
         <div className="absolute left-3 top-3 z-[1000] flex flex-wrap items-center gap-2">
           <AssetSearch compact onSelect={(h) => { setFlyTo(h.bbox); setAsset(h); }} />
-          <button data-testid="explorer-toggle-zones" onClick={() => setShowZones(!showZones)} className="rounded px-2.5 py-1.5 font-mono text-[10px] uppercase tracking-wider" style={{ background: "rgba(255,255,255,0.85)", border: "1px solid var(--border-highlight)", color: showZones ? "#007bb9" : "#707881" }}>EEZ zones</button>
+          <button data-testid="explorer-toggle-zones" onClick={() => setShowZones(!showZones)} className="rounded px-2.5 py-1.5 font-mono text-[10px] uppercase tracking-wider" style={{ background: "rgba(255,255,255,0.85)", border: "1px solid var(--border-highlight)", color: showZones ? "#1479c4" : "#5b86b3" }}>EEZ zones</button>
           {PRESETS.map(([l, b]) => <button key={l} data-testid={`preset-${l.replace(/[^a-z]/gi, "").toLowerCase()}`} onClick={() => setFlyTo(b)} className="rounded px-2.5 py-1.5 font-mono text-[10px] uppercase tracking-wider text-slate-200" style={{ background: "rgba(255,255,255,0.85)", border: "1px solid var(--border-highlight)", backdropFilter: "blur(12px)" }}><MapPin size={10} className="mr-1 inline" />{l}</button>)}
         </div>
         <div className="absolute bottom-3 left-3 z-[1000] flex gap-2">
@@ -135,7 +135,7 @@ export default function SceneExplorer() {
             <option value={0}>off</option><option value={24}>last 24 h</option><option value={168}>last 7 days</option><option value={2160}>last 90 days</option>
           </select>
           {density && <div className="mt-1 font-mono text-[10px] text-slate-400" data-testid="density-summary">{density.cells.length} bins · max {density.max} fixes/bin · {density.resolution_deg}° grid</div>}
-          <div className="mt-1 font-mono text-[10px]" data-testid="live-vessels-summary" style={{ color: liveAis?.state === "LIVE" ? "#006a61" : "#707881" }}>● live AIS ({liveAis?.source || "AISStream"}) · {liveAis?.state || "…"} · {liveAis?.count ?? 0} vessel(s) on map</div>
+          <div className="mt-1 font-mono text-[10px]" data-testid="live-vessels-summary" style={{ color: liveAis?.state === "LIVE" ? "#006a61" : "#5b86b3" }}>● live AIS ({liveAis?.source || "AISStream"}) · {liveAis?.state || "…"} · {liveAis?.count ?? 0} vessel(s) on map</div>
         </div>
         </div>
       </div>
@@ -163,7 +163,7 @@ export default function SceneExplorer() {
               <div key={s.stac_id} data-testid={`scene-result-${s.stac_id}`} onMouseEnter={() => setHover(s.stac_id)} onMouseLeave={() => setHover(null)} className="flex gap-3 rounded border p-2.5 text-xs transition-colors hover:border-amber-400/50" style={{ borderColor: "var(--border-default)" }}>
                 <Preview s={s} />
                 <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-1.5"><Satellite size={11} color="#006194" /><span className="font-display font-semibold">{s.platform?.toUpperCase()}</span><span className="font-mono text-[10px] text-slate-400">{fmtTime(s.datetime)}</span></div>
+                  <div className="flex items-center gap-1.5"><Satellite size={11} color="#0a67ad" /><span className="font-display font-semibold">{s.platform?.toUpperCase()}</span><span className="font-mono text-[10px] text-slate-400">{fmtTime(s.datetime)}</span></div>
                   <div className="truncate font-mono text-[10px] text-cyan-300" title={s.stac_id}>{s.stac_id}</div>
                   <div className="mt-0.5 font-mono text-[10px] text-slate-400">{s.instrument_mode || s.product_type}{s.polarizations ? ` · ${s.polarizations.join("+")}` : ""}{s.orbit_state ? ` · ${s.orbit_state}` : ""}{s.cloud_cover != null ? ` · cloud ${Math.round(s.cloud_cover)}%` : ""}</div>
                   <div className="mt-1.5 flex items-center gap-1.5">

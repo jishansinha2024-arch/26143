@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { api, fmtTime } from "@/lib/api";
 
-const TONE = { scene_acquisition: "#6f4fa8", detection: "#ba1a1a", corridor_entry: "#007bb9", closest_approach: "#b26a00", corridor_exit: "#007bb9", correlation: "#006194", review: "#006a61", case_created: "#707881", case_updated: "#707881" };
+const TONE = { scene_acquisition: "#6f4fa8", detection: "#ba1a1a", corridor_entry: "#1479c4", closest_approach: "#b26a00", corridor_exit: "#1479c4", correlation: "#0a67ad", review: "#006a61", case_created: "#5b86b3", case_updated: "#5b86b3" };
 
 /** Evidence timeline — every entry is a stored timestamp returned by the backend; unavailable events are listed, never estimated. */
 export const ChronoTimeline = ({ caseId }) => {
@@ -15,8 +15,8 @@ export const ChronoTimeline = ({ caseId }) => {
       <ol className="relative ml-2 space-y-2.5 border-l pl-4" style={{ borderColor: "var(--border-highlight)" }}>
         {t.events.map((e, i) => (
           <li key={`${e.kind}-${i}`} className="relative text-xs" data-testid={`timeline-event-${e.kind}`}>
-            <span className="absolute -left-[21px] top-1 h-2.5 w-2.5 rounded-full border-2" style={{ borderColor: TONE[e.kind] || "#707881", background: "var(--bg-card)" }} />
-            <div className="font-mono text-[11px]"><span style={{ color: TONE[e.kind] || "#707881" }}>{e.label}</span> <span className="text-slate-500">· {fmtTime(e.time)} UTC</span></div>
+            <span className="absolute -left-[21px] top-1 h-2.5 w-2.5 rounded-full border-2" style={{ borderColor: TONE[e.kind] || "#5b86b3", background: "var(--bg-card)" }} />
+            <div className="font-mono text-[11px]"><span style={{ color: TONE[e.kind] || "#5b86b3" }}>{e.label}</span> <span className="text-slate-500">· {fmtTime(e.time)} UTC</span></div>
             {e.detail && <div className="text-slate-400">{e.detail} <span className="text-slate-600">· {e.source}</span></div>}
           </li>
         ))}

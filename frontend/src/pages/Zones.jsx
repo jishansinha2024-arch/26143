@@ -68,7 +68,7 @@ export default function Zones() {
         <MapContainer center={[15, 60]} zoom={3} className="h-full w-full" worldCopyJump doubleClickZoom={!drawing}>
           <TileLayer url={OSM_URL} attribution="&copy; OpenStreetMap contributors" className="dark-tiles" {...TILE_PERF} />
           <ZonesLayer types={types} selected={selected?.code} onPick={pick} onStats={setLayerStats} />
-          {aoi?.geometry && <GeoJSON key={`aoi-${aoi.updated_at}`} data={aoi.geometry} style={{ color: "#006194", weight: 2, dashArray: "10,5", fillOpacity: 0.05 }} />}
+          {aoi?.geometry && <GeoJSON key={`aoi-${aoi.updated_at}`} data={aoi.geometry} style={{ color: "#0a67ad", weight: 2, dashArray: "10,5", fillOpacity: 0.05 }} />}
           {showIcg && icg && <GeoJSON key="icg" data={icg} style={icgStyle} onEachFeature={icgTip} />}
           <DrawAoi active={drawing} onDone={(g) => { setDrawn(g); setDrawing(false); }} onCancel={() => setDrawing(false)} />
           <FlyTo bbox={flyTo} />
@@ -107,8 +107,8 @@ export default function Zones() {
         <ZoneRules zones={cat?.zones || []} />
         <IcgDistricts onChanged={loadIcg} />
         {admin && (
-          <div className="mt-5 rounded border p-4" style={{ borderColor: "rgba(0,97,148,0.35)", background: "rgba(0,97,148,0.04)" }} data-testid="zone-import-form">
-            <div className="mb-2 flex items-center gap-2"><Globe size={14} color="#006194" /><h2 className="font-display font-semibold">Import reference boundaries</h2></div>
+          <div className="mt-5 rounded border p-4" style={{ borderColor: "rgba(10,103,173,0.35)", background: "rgba(10,103,173,0.04)" }} data-testid="zone-import-form">
+            <div className="mb-2 flex items-center gap-2"><Globe size={14} color="#0a67ad" /><h2 className="font-display font-semibold">Import reference boundaries</h2></div>
             <p className="mb-2 text-[11px] text-slate-400">Marine Regions Maritime Boundaries v12 (CC-BY 4.0) via WFS — validated, repaired, simplified, stored with a 2dsphere index. Use <span className="font-mono text-cyan-300">ALL</span> for the whole world or ISO3 codes.</p>
             <input data-testid="zone-import-iso-input" className={inputCls} style={bd} value={iso} onChange={(e) => setIso(e.target.value)} placeholder="ALL or ISO3 codes, comma separated" />
             <div className="mt-2 flex flex-wrap items-center gap-3 font-mono text-[10px]" data-testid="zone-import-layers">
@@ -124,7 +124,7 @@ export default function Zones() {
         )}
         {admin && (
           <div className="mt-5 rounded border p-4" style={{ borderColor: "var(--border-default)" }} data-testid="zone-create-form">
-            <div className="mb-3 flex items-center gap-2"><MapIcon size={14} color="#006194" /><h2 className="font-display font-semibold">Add USER-DEFINED zone</h2></div>
+            <div className="mb-3 flex items-center gap-2"><MapIcon size={14} color="#0a67ad" /><h2 className="font-display font-semibold">Add USER-DEFINED zone</h2></div>
             <div className="grid grid-cols-2 gap-2">
               <input data-testid="zone-code-input" placeholder="code e.g. NOR-PS-OSL" className={inputCls} style={bd} value={f.code} onChange={(e) => setF({ ...f, code: e.target.value })} />
               <select data-testid="zone-type-select" className={inputCls} style={bd} value={f.zone_type} onChange={(e) => setF({ ...f, zone_type: e.target.value })}>{Object.keys(TYPE_COLOR).map((t) => <option key={t} value={t}>{t}</option>)}</select>

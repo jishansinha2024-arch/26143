@@ -12,7 +12,7 @@ const ROLE_DESC = {
   supervisor: "Analyst permissions plus alert acknowledgement and case overrides.",
   admin: "Full administration: user & role management, reference-case pinning, system settings.",
 };
-const STATUS_COLOR = { pending: "#b26a00", approved: "#006a61", rejected: "#ba1a1a", cancelled: "#707881" };
+const STATUS_COLOR = { pending: "#b26a00", approved: "#006a61", rejected: "#ba1a1a", cancelled: "#5b86b3" };
 
 export default function Account() {
   const { user } = useAuth();
@@ -48,7 +48,7 @@ export default function Account() {
           {isGuest ? (
             <div>
               <p className="font-mono text-[11px] uppercase tracking-wider text-slate-500">Signed in as</p>
-              <p className="mt-1 font-display text-xl font-bold" style={{ color: "#707881" }}>Guest · read only</p>
+              <p className="mt-1 font-display text-xl font-bold" style={{ color: "#5b86b3" }}>Guest · read only</p>
               <p className="mt-2 text-sm text-slate-400">{ROLE_DESC.guest}</p>
               <Link to="/signup" data-testid="account-signup-link" className="mt-4 inline-flex items-center gap-2 rounded bg-cyan-400 px-4 py-2 font-mono text-[11px] font-semibold uppercase tracking-wider text-slate-950 hover:bg-cyan-300"><LogIn size={13} /> Create a free Viewer account</Link>
             </div>
@@ -57,7 +57,7 @@ export default function Account() {
               <div className="grid gap-4 sm:grid-cols-2">
                 <div><p className="label-mono">Name</p><p className="mt-1 text-sm text-slate-200" data-testid="account-name">{user?.name}</p></div>
                 <div><p className="label-mono">Email</p><p className="mt-1 font-mono text-sm text-slate-300" data-testid="account-email">{user?.email}</p></div>
-                <div><p className="label-mono">Current role</p><p className="mt-1 font-mono text-sm font-semibold uppercase" style={{ color: "#006194" }} data-testid="account-role">{ROLE_LABEL[user?.role] || user?.role}</p></div>
+                <div><p className="label-mono">Current role</p><p className="mt-1 font-mono text-sm font-semibold uppercase" style={{ color: "#0a67ad" }} data-testid="account-role">{ROLE_LABEL[user?.role] || user?.role}</p></div>
                 <div><p className="label-mono">Requested role</p>
                   <p className="mt-1 font-mono text-sm" data-testid="account-requested-role">
                     {req === undefined ? <span className="text-slate-500">checking…</span>
@@ -75,7 +75,7 @@ export default function Account() {
 
         {canRequest && (!req || req.status !== "pending") && (
           <div className="panel p-5 fade-up" data-testid="role-request-form">
-            <div className="mb-3 flex items-center gap-2"><ArrowUpCircle size={16} color="#006194" /><h2 className="font-display text-lg font-semibold">Request elevated access</h2></div>
+            <div className="mb-3 flex items-center gap-2"><ArrowUpCircle size={16} color="#0a67ad" /><h2 className="font-display text-lg font-semibold">Request elevated access</h2></div>
             <p className="mb-3 text-xs text-slate-400">Analyst and Supervisor access require administrator approval. Administrator access cannot be requested.</p>
             <div className="grid gap-2.5 sm:grid-cols-2">
               <label className="block"><span className="label-mono mb-1 block">Requested role</span>

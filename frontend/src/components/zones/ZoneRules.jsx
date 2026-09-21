@@ -6,7 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 
 const inputCls = "w-full rounded border bg-slate-900/60 px-2.5 py-1.5 font-mono text-xs text-slate-100 outline-none focus:border-cyan-400/60";
 const bd = { borderColor: "var(--border-highlight)" };
-const SEV = { high: "#ba1a1a", medium: "#b26a00", low: "#707881" };
+const SEV = { high: "#ba1a1a", medium: "#b26a00", low: "#5b86b3" };
 const empty = { name: "", zone_code: "", min_area_km2: "", min_confidence: "", severity: "high", primary_only: false, note: "" };
 
 export const ZoneRules = ({ zones }) => {

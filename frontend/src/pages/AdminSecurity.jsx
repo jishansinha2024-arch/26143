@@ -6,7 +6,7 @@ const STATE_STYLE = {
   PASS: { color: "#006a61", bg: "rgba(0,106,97,0.1)", bd: "rgba(0,106,97,0.35)" },
   WARNING: { color: "#b26a00", bg: "rgba(178,106,0,0.1)", bd: "rgba(178,106,0,0.35)" },
   FAIL: { color: "#ba1a1a", bg: "rgba(186,26,26,0.1)", bd: "rgba(186,26,26,0.35)" },
-  "NOT CONFIGURED": { color: "#707881", bg: "rgba(112,120,129,0.1)", bd: "rgba(112,120,129,0.3)" },
+  "NOT CONFIGURED": { color: "#5b86b3", bg: "rgba(112,120,129,0.1)", bd: "rgba(112,120,129,0.3)" },
 };
 
 export default function AdminSecurity() {

@@ -36,8 +36,8 @@ export const CandidatesTable = ({ candidates, selected, onSelect }) => {
                 </div>
               </div>
               <StatusBadge status={c.status} testId={`candidate-status-${c.mmsi}`} />
-              {c.zone && <span data-testid={`candidate-zone-${c.mmsi}`} title={`${c.zone.name} · ${c.zone.authority}`} className="ml-1 rounded px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider" style={{ color: "#007bb9", border: "1px solid rgba(0,123,185,0.5)" }}>{c.zone.code} · {c.zone.zone_label}</span>}
-              <button className="inline-flex items-center gap-1 rounded border px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-cyan-300" style={{ borderColor: "rgba(0,97,148,0.4)" }} data-testid={`score-breakdown-toggle-${c.mmsi}`}><HelpCircle size={12} /> Why this vessel? {isOpen ? <ChevronDown size={14} /> : <ChevronRight size={14} />}</button>
+              {c.zone && <span data-testid={`candidate-zone-${c.mmsi}`} title={`${c.zone.name} · ${c.zone.authority}`} className="ml-1 rounded px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider" style={{ color: "#1479c4", border: "1px solid rgba(20,121,196,0.5)" }}>{c.zone.code} · {c.zone.zone_label}</span>}
+              <button className="inline-flex items-center gap-1 rounded border px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-cyan-300" style={{ borderColor: "rgba(10,103,173,0.4)" }} data-testid={`score-breakdown-toggle-${c.mmsi}`}><HelpCircle size={12} /> Why this vessel? {isOpen ? <ChevronDown size={14} /> : <ChevronRight size={14} />}</button>
             </div>
             {isOpen && (
               <div className="px-4 pb-4 fade-up" data-testid={`score-breakdown-${c.mmsi}`}>
@@ -57,7 +57,7 @@ export const CandidatesTable = ({ candidates, selected, onSelect }) => {
                           <span className="label-mono">{FACTOR_LABEL[k] || k} <span className="text-slate-600">w={f.weight}</span></span>
                           <span className="font-mono text-xs" data-testid={`factor-points-${k}-${c.mmsi}`}>{Math.round(f.contribution * 100)}/{Math.round((f.weight / tw) * 100)} <span className="text-slate-500">({f.score.toFixed(2)})</span></span>
                         </div>
-                        <ScoreBar value={f.score} color="#006194" />
+                        <ScoreBar value={f.score} color="#0a67ad" />
                         <p className="mt-1.5 text-[11px] leading-snug text-slate-400">{f.detail}</p>
                       </div>
                     );

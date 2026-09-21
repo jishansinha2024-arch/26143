@@ -32,7 +32,7 @@ export default function Validation() {
 
       {det && (
         <div className="panel mb-4 p-5 fade-up" data-testid="validation-detector">
-          <div className="mb-2 flex items-center gap-2"><Cpu size={16} color="#006194" /><h2 className="font-display text-lg font-semibold">Active detector</h2></div>
+          <div className="mb-2 flex items-center gap-2"><Cpu size={16} color="#0a67ad" /><h2 className="font-display text-lg font-semibold">Active detector</h2></div>
           <div className="grid gap-3 sm:grid-cols-2">
             <div><p className="label-mono">Detector</p><p className="mt-0.5 font-mono text-sm text-cyan-300">{det.active_detector}</p></div>
             <div><p className="label-mono">Mode</p><p className="mt-0.5 font-mono text-sm" style={{ color: det.ml_model_installed ? "#006a61" : "#b26a00" }}>{det.status_text}</p></div>
@@ -45,7 +45,7 @@ export default function Validation() {
 
       {v && v.detection_metrics && (
         <div className="panel mb-4 overflow-hidden fade-up" data-testid="validation-detection">
-          <div className="flex items-center gap-2 border-b px-4 py-3" style={{ borderColor: "var(--border-default)" }}><FlaskConical size={15} color="#006194" /><h2 className="font-display font-semibold">Detection metrics</h2></div>
+          <div className="flex items-center gap-2 border-b px-4 py-3" style={{ borderColor: "var(--border-default)" }}><FlaskConical size={15} color="#0a67ad" /><h2 className="font-display font-semibold">Detection metrics</h2></div>
           <table className="w-full text-sm">
             <thead><tr className="label-mono text-left"><th className="px-4 py-2 font-normal">Metric</th><th className="px-4 py-2 font-normal">Measured</th><th className="px-4 py-2 font-normal">Target</th></tr></thead>
             <tbody>
@@ -57,7 +57,7 @@ export default function Validation() {
 
       {v && v.correlation_metrics && (
         <div className="panel overflow-hidden fade-up" data-testid="validation-correlation">
-          <div className="flex items-center gap-2 border-b px-4 py-3" style={{ borderColor: "var(--border-default)" }}><BadgeCheck size={15} color="#006194" /><h2 className="font-display font-semibold">Correlation metrics</h2></div>
+          <div className="flex items-center gap-2 border-b px-4 py-3" style={{ borderColor: "var(--border-default)" }}><BadgeCheck size={15} color="#0a67ad" /><h2 className="font-display font-semibold">Correlation metrics</h2></div>
           <table className="w-full text-sm">
             <thead><tr className="label-mono text-left"><th className="px-4 py-2 font-normal">Metric</th><th className="px-4 py-2 font-normal">Measured</th><th className="px-4 py-2 font-normal">Target</th></tr></thead>
             <tbody>

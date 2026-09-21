@@ -6,8 +6,8 @@ import { useAuth } from "@/context/AuthContext";
 
 const inputCls = "w-full rounded border bg-slate-900/60 px-2.5 py-1.5 font-mono text-xs text-slate-100 outline-none focus:border-cyan-400/60";
 const bd = { borderColor: "var(--border-highlight)" };
-const REGION_COLOR = { NW: "#b26a00", W: "#c2410c", E: "#007bb9", NE: "#6f4fa8", AN: "#006a61" };
-export const icgColor = (code) => REGION_COLOR[code] || "#707881";
+const REGION_COLOR = { NW: "#b26a00", W: "#c2410c", E: "#1479c4", NE: "#6f4fa8", AN: "#006a61" };
+export const icgColor = (code) => REGION_COLOR[code] || "#5b86b3";
 
 export const IcgDistricts = ({ onChanged }) => {
   const { user } = useAuth();

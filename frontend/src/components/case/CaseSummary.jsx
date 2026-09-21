@@ -9,7 +9,7 @@ const Prov = ({ label, p }) => {
   return (
     <div className="rounded-md border p-2.5" style={{ borderColor: "var(--border-default)" }}>
       <p className="label-mono">{label}</p>
-      <p className="mt-0.5 font-mono text-[11px]" style={{ color: ok ? "#006a61" : "#707881" }}>{st}</p>
+      <p className="mt-0.5 font-mono text-[11px]" style={{ color: ok ? "#006a61" : "#5b86b3" }}>{st}</p>
       {ok && <p className="font-mono text-[11px] text-slate-400">{p.speed_ms} m/s @ {p.direction_deg}°</p>}
     </div>
   );

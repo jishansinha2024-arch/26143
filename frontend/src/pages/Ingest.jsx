@@ -13,7 +13,7 @@ const Field = ({ label, children }) => <label className="block"><span className=
 const Btn = ({ children, ...p }) => <button {...p} className="rounded bg-cyan-400 px-4 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-slate-950 hover:bg-cyan-300 disabled:opacity-50">{children}</button>;
 const Card = ({ icon: Icon, title, sub, children, testId }) => (
   <div className="panel p-5 fade-up" data-testid={testId}>
-    <div className="mb-4 flex items-center gap-2"><Icon size={16} color="#006194" /><h2 className="font-display text-lg font-semibold">{title}</h2></div>
+    <div className="mb-4 flex items-center gap-2"><Icon size={16} color="#0a67ad" /><h2 className="font-display text-lg font-semibold">{title}</h2></div>
     <p className="mb-4 -mt-3 text-xs text-slate-400">{sub}</p>
     {children}
   </div>

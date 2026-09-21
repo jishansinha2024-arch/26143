@@ -33,7 +33,7 @@ export const ReviewForm = ({ caseId, candidates, reasonCodes, resultVersion, onS
       <div className="grid grid-cols-3 gap-2">
         {[["confirm", "Confirm", "#006a61", "btn-confirm-analyst-review"], ["reject", "Reject", "#ba1a1a", "btn-reject-analyst-review"], ["needs_more_data", "Needs data", "#b26a00", "btn-needs-data-analyst-review"]].map(([v, l, col, tid]) => (
           <button key={v} data-testid={tid} onClick={() => setDecision(v)} className="rounded border px-2 py-2 font-mono text-[11px] uppercase tracking-wider transition-colors"
-            style={{ borderColor: decision === v ? col : "var(--border-highlight)", color: decision === v ? col : "#707881", background: decision === v ? `${col}18` : "transparent" }}>{l}</button>
+            style={{ borderColor: decision === v ? col : "var(--border-highlight)", color: decision === v ? col : "#5b86b3", background: decision === v ? `${col}18` : "transparent" }}>{l}</button>
         ))}
       </div>
       <div>

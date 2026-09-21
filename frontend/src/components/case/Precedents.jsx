@@ -17,9 +17,9 @@ export const Precedents = ({ caseId }) => {
   if (!d) return null;
   if (!d.precedents?.length) return <div className="rounded border p-3 font-mono text-[11px] text-slate-500" style={{ borderColor: "var(--border-default)" }} data-testid="precedents-empty">No related historical precedent found for this case.</div>;
   return (
-    <div className="rounded border p-3" style={{ borderColor: "rgba(0,123,185,0.4)", background: "rgba(0,123,185,0.04)" }} data-testid="precedents-drawer">
+    <div className="rounded border p-3" style={{ borderColor: "rgba(20,121,196,0.4)", background: "rgba(20,121,196,0.04)" }} data-testid="precedents-drawer">
       <div className="mb-1 flex flex-wrap items-center gap-2">
-        <BookOpen size={13} color="#007bb9" />
+        <BookOpen size={13} color="#1479c4" />
         <span className="font-display text-sm font-semibold">Related historical precedent</span>
         <span className="font-mono text-[10px] text-slate-500">similarity = 0.5·distance + 0.3·volume + 0.2·oil type · est. {d.estimated_volume_tonnes} t</span>
         <Link to="/archive" className="ml-auto font-mono text-[10px] text-cyan-300 hover:underline" data-testid="precedents-archive-link">open archive →</Link>

@@ -20,11 +20,11 @@ const ArchiveMap = ({ rows }) => (
     {rows.length === 0 ? (
       <div className="grid h-full place-items-center font-mono text-xs text-slate-500" data-testid="archive-map-empty">No incidents with valid coordinates to plot</div>
     ) : (
-      <MapContainer center={[12, 74]} zoom={4} worldCopyJump style={{ height: "100%", width: "100%", background: "#f2f4f6" }}>
+      <MapContainer center={[12, 74]} zoom={4} worldCopyJump style={{ height: "100%", width: "100%", background: "#eff5fb" }}>
         <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" attribution="Tiles &copy; Esri — Source: Esri, Maxar, Earthstar Geographics" />
         <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}" />
         {rows.map((r) => (
-          <CircleMarker key={r.id} center={[r.lat, r.lon]} radius={7} pathOptions={{ color: "#007bb9", fillColor: "#007bb9", fillOpacity: 0.6, weight: 1.5 }}>
+          <CircleMarker key={r.id} center={[r.lat, r.lon]} radius={7} pathOptions={{ color: "#1479c4", fillColor: "#1479c4", fillOpacity: 0.6, weight: 1.5 }}>
             <Popup>
               <div style={{ minWidth: 190 }}>
                 <b>{r.name}</b><br />
@@ -86,7 +86,7 @@ export default function Archive() {
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3" data-testid="archive-list">
         {rows.map((r) => (
           <article key={r.id} data-testid={`archive-entry-${r.id}`} className="panel p-4 text-xs">
-            <div className="flex items-start gap-2"><BookOpen size={13} color="#007bb9" className="mt-0.5 shrink-0" /><h2 className="font-display text-base font-semibold text-slate-100">{r.name}</h2><Link to={`/archive/${r.id}`} data-testid={`archive-open-vault-${r.id}`} className="ml-auto shrink-0 rounded border px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-cyan-300 hover:bg-cyan-400/10" style={bd}>Open case file</Link></div>
+            <div className="flex items-start gap-2"><BookOpen size={13} color="#1479c4" className="mt-0.5 shrink-0" /><h2 className="font-display text-base font-semibold text-slate-100">{r.name}</h2><Link to={`/archive/${r.id}`} data-testid={`archive-open-vault-${r.id}`} className="ml-auto shrink-0 rounded border px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-cyan-300 hover:bg-cyan-400/10" style={bd}>Open case file</Link></div>
             <div className="mt-1 font-mono text-[10px] text-slate-500">{fmtTime(r.date).slice(0, 10)} · {r.country} · {r.lat}, {r.lon} · {r.volume_tonnes?.toLocaleString()} t · {r.oil_type}</div>
             <p className="mt-2 text-slate-300"><span className="text-slate-500">Cause:</span> {r.cause}</p>
             <p className="text-slate-300"><span className="text-slate-500">Source:</span> {r.vessel_facility}</p>

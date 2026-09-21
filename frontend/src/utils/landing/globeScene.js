@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { DETECTIONS, ROUTES } from '../../data/landing/geo';
 
-const TIDE = 0x1f7f93;
+const TIDE = 0x1479c4;
 const FLARE = 0xc25a49;
 const SIGNAL = 0xb8862a;
 
@@ -72,7 +72,7 @@ function buildSurfacePoints(count = 2600) {
 /** Soft daylight halo — normal blending so it stays gentle against the paper background. */
 function buildAtmosphere() {
   const material = new THREE.ShaderMaterial({
-    uniforms: { uColor: { value: new THREE.Color(0x8fc4d1) } },
+    uniforms: { uColor: { value: new THREE.Color(0x8ec9f5) } },
     vertexShader: `
       varying vec3 vNormal;
       void main() {
@@ -98,7 +98,7 @@ function buildAtmosphere() {
 function buildSweep() {
   const uniforms = {
     uTime: { value: 0 },
-    uColor: { value: new THREE.Color(0x2f93a8) }
+    uColor: { value: new THREE.Color(0x2f9be0) }
   };
   const material = new THREE.ShaderMaterial({
     uniforms,
@@ -148,7 +148,7 @@ function buildArcs(parent) {
     const tracerGeometry = new THREE.BufferGeometry().setFromPoints(points);
     const tracer = new THREE.Line(
       tracerGeometry,
-      new THREE.LineBasicMaterial({ color: 0x14606f, transparent: true, opacity: 0.9 })
+      new THREE.LineBasicMaterial({ color: 0x0a4f94, transparent: true, opacity: 0.9 })
     );
     tracer.geometry.setDrawRange(0, 0);
     parent.add(tracer);
@@ -216,7 +216,7 @@ export function createGlobeScene(container, options) {
 
   const core = new THREE.Mesh(
     new THREE.SphereGeometry(0.995, 72, 72),
-    new THREE.MeshStandardMaterial({ color: 0xe9eef0, roughness: 0.96, metalness: 0.02 })
+    new THREE.MeshStandardMaterial({ color: 0xecf3fa, roughness: 0.96, metalness: 0.02 })
   );
   spinner.add(core);
   spinner.add(buildGraticule());
@@ -231,11 +231,11 @@ export function createGlobeScene(container, options) {
   const arcs = buildArcs(spinner);
   const markers = buildMarkers(spinner);
 
-  scene.add(new THREE.AmbientLight(0xdfe9ec, 2.2));
+  scene.add(new THREE.AmbientLight(0xe2edf8, 2.2));
   const key = new THREE.DirectionalLight(0xffffff, 1.9);
   key.position.set(-2.6, 1.8, 2.2);
   scene.add(key);
-  const bounce = new THREE.DirectionalLight(0xbcd7de, 0.9);
+  const bounce = new THREE.DirectionalLight(0xc6dcf0, 0.9);
   bounce.position.set(2.4, -1.4, -1.6);
   scene.add(bounce);
 

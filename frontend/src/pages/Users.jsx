@@ -7,7 +7,7 @@ import { EmailSettings } from "@/components/admin/EmailSettings";
 
 const inputCls = "w-full rounded border bg-slate-900/60 px-2.5 py-1.5 font-mono text-xs text-slate-100 outline-none focus:border-cyan-400/60";
 const bd = { borderColor: "var(--border-highlight)" };
-const ROLE_COLOR = { viewer: "#007bb9", analyst: "#006194", supervisor: "#b26a00", admin: "#ba1a1a" };
+const ROLE_COLOR = { viewer: "#1479c4", analyst: "#0a67ad", supervisor: "#b26a00", admin: "#ba1a1a" };
 
 export default function Users() {
   const { user: me } = useAuth();
@@ -46,7 +46,7 @@ export default function Users() {
       </div>
       <div className="grid gap-4 xl:grid-cols-[380px_1fr]">
         <div className="panel p-5 fade-up" data-testid="user-create-form">
-          <div className="mb-4 flex items-center gap-2"><UserPlus size={16} color="#006194" /><h2 className="font-display text-lg font-semibold">Create account</h2></div>
+          <div className="mb-4 flex items-center gap-2"><UserPlus size={16} color="#0a67ad" /><h2 className="font-display text-lg font-semibold">Create account</h2></div>
           <div className="space-y-2.5">
             <label className="block"><span className="label-mono mb-1 block">Email</span><input data-testid="user-email-input" className={inputCls} style={bd} value={f.email} onChange={(e) => setF({ ...f, email: e.target.value })} /></label>
             <label className="block"><span className="label-mono mb-1 block">Name</span><input data-testid="user-name-input" className={inputCls} style={bd} value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} /></label>
@@ -70,10 +70,10 @@ export default function Users() {
                   <td className="px-4 py-2.5">
                     <select data-testid={`user-role-${u.email}`} value={u.role} disabled={u.id === me?.id} onChange={(e) => patch(u.id, { role: e.target.value }, `Role updated to ${e.target.value}`)}
                       className="rounded border bg-transparent px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider outline-none" style={{ color: ROLE_COLOR[u.role], borderColor: `${ROLE_COLOR[u.role]}66` }}>
-                      {["viewer", "analyst", "supervisor", "admin"].map((r) => <option key={r} value={r} style={{ color: "#191c1e", background: "#ffffff" }}>{r}</option>)}
+                      {["viewer", "analyst", "supervisor", "admin"].map((r) => <option key={r} value={r} style={{ color: "#0a2540", background: "#ffffff" }}>{r}</option>)}
                     </select>
                   </td>
-                  <td className="px-4 py-2.5 font-mono text-[10px] uppercase tracking-wider" style={{ color: u.active ? "#006a61" : "#707881" }}>{u.active ? "active" : "deactivated"}</td>
+                  <td className="px-4 py-2.5 font-mono text-[10px] uppercase tracking-wider" style={{ color: u.active ? "#006a61" : "#5b86b3" }}>{u.active ? "active" : "deactivated"}</td>
                   <td className="px-4 py-2.5">{u.role === "analyst" ? <span className="font-mono text-[10px] text-slate-600">—</span> : <label className="flex items-center gap-1.5 font-mono text-[10px] text-slate-300"><input type="checkbox" data-testid={`user-notify-${u.email}`} checked={u.notify_alerts !== false} onChange={(e) => patch(u.id, { notify_alerts: e.target.checked }, e.target.checked ? "Alert emails enabled" : "Alert emails muted")} /> {u.notify_alerts !== false ? "on" : "muted"}</label>}</td>
                   <td className="px-4 py-2.5 font-mono text-slate-400">{fmtTime(u.last_login)}</td>
                   <td className="px-4 py-2.5">
@@ -103,11 +103,11 @@ export default function Users() {
                 <td className="px-4 py-2 font-mono text-slate-400">{fmtTime(r.requested_at)}</td>
                 <td className="px-4 py-2 text-slate-200">{r.name || "—"}</td>
                 <td className="px-4 py-2 font-mono text-slate-300">{r.email}</td>
-                <td className="px-4 py-2 font-mono text-[10px] uppercase" style={{ color: ROLE_COLOR[r.current_role] || "#707881" }}>{r.current_role}</td>
+                <td className="px-4 py-2 font-mono text-[10px] uppercase" style={{ color: ROLE_COLOR[r.current_role] || "#5b86b3" }}>{r.current_role}</td>
                 <td className="px-4 py-2 font-mono text-[10px] uppercase" style={{ color: ROLE_COLOR[r.requested_role] }}>{r.requested_role}</td>
                 <td className="px-4 py-2 text-slate-400">{r.organization || "—"}</td>
                 <td className="px-4 py-2 text-slate-400 max-w-[220px] truncate" title={r.reason || ""}>{r.reason || "—"}</td>
-                <td className="px-4 py-2 font-mono text-[10px] uppercase" style={{ color: r.status === "pending" ? "#b26a00" : r.status === "approved" ? "#006a61" : "#707881" }}>{r.status}</td>
+                <td className="px-4 py-2 font-mono text-[10px] uppercase" style={{ color: r.status === "pending" ? "#b26a00" : r.status === "approved" ? "#006a61" : "#5b86b3" }}>{r.status}</td>
                 <td className="px-4 py-2">
                   {r.status === "pending" ? (
                     <div className="flex items-center gap-1.5">

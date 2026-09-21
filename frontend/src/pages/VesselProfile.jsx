@@ -6,7 +6,7 @@ import { api, apiError, fmtTime, hasRole } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
 import { StatusBadge } from "@/components/StatusBadge";
 
-const Kpi = ({ label, value, color = "#191c1e", testId }) => (
+const Kpi = ({ label, value, color = "#0a2540", testId }) => (
   <div className="panel p-3" data-testid={testId}><span className="label-mono">{label}</span><div className="mt-1 font-mono text-xl font-semibold" style={{ color }}>{value}</div></div>
 );
 const DECISION_COLOR = { confirm: "#006a61", reject: "#ba1a1a", needs_more_data: "#b26a00", supervisor_override: "#b26a00" };
@@ -37,7 +37,7 @@ export default function VesselProfile() {
       <div className="mt-2 mb-5 flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="label-mono mb-1">Vessel profile · MMSI {p.mmsi}{p.imo ? ` · IMO ${p.imo}` : ""}{p.vessel_type ? ` · ${p.vessel_type}` : ""}</p>
-          <h1 className="font-display text-3xl font-extrabold tracking-tight sm:text-4xl flex items-center gap-3"><Ship size={28} color="#006194" /> <span data-testid="vessel-name">{p.vessel_name || "UNKNOWN VESSEL"}</span></h1>
+          <h1 className="font-display text-3xl font-extrabold tracking-tight sm:text-4xl flex items-center gap-3"><Ship size={28} color="#0a67ad" /> <span data-testid="vessel-name">{p.vessel_name || "UNKNOWN VESSEL"}</span></h1>
           {p.name_variants.length > 1 && <p className="mt-1 font-mono text-[11px] text-amber-300" data-testid="vessel-name-variants"><AlertTriangle size={11} className="inline mr-1" />name variants seen in AIS: {p.name_variants.join(" / ")}</p>}
         </div>
         <div className="flex flex-col items-end gap-2">
@@ -49,11 +49,11 @@ export default function VesselProfile() {
         </div>
       </div>
       <div className="mb-5 grid grid-cols-2 gap-3 lg:grid-cols-5">
-        <Kpi label="Case appearances" value={p.summary.appearances} color="#006194" testId="vessel-kpi-appearances" />
+        <Kpi label="Case appearances" value={p.summary.appearances} color="#0a67ad" testId="vessel-kpi-appearances" />
         <Kpi label="Ranked #1" value={p.summary.top_ranked} color="#ba1a1a" testId="vessel-kpi-top" />
         <Kpi label="Probable / confirmed" value={p.summary.probable_or_confirmed} color="#c2410c" testId="vessel-kpi-probable" />
         <Kpi label="Analyst confirmations" value={p.summary.confirmed} color="#006a61" testId="vessel-kpi-confirmed" />
-        <Kpi label="Analyst rejections" value={p.summary.rejected} color="#707881" testId="vessel-kpi-rejected" />
+        <Kpi label="Analyst rejections" value={p.summary.rejected} color="#5b86b3" testId="vessel-kpi-rejected" />
       </div>
       <div className="grid gap-4 xl:grid-cols-[1fr_360px]">
         <div className="space-y-4">
@@ -85,7 +85,7 @@ export default function VesselProfile() {
               {p.decisions.map((d) => (
                 <div key={d.id} className="px-4 py-3 text-xs" style={{ borderColor: "var(--border-default)" }} data-testid={`vessel-decision-${d.id}`}>
                   <div className="flex flex-wrap items-center gap-2 font-mono text-[11px]">
-                    <span style={{ color: DECISION_COLOR[d.decision] || "#707881" }}>{d.decision.toUpperCase()}</span>
+                    <span style={{ color: DECISION_COLOR[d.decision] || "#5b86b3" }}>{d.decision.toUpperCase()}</span>
                     <Link to={`/cases/${d.case_id}`} className="text-cyan-300 hover:underline">{d.case_number}</Link>
                     <span className="text-slate-400">{d.analyst}{d.analyst_role ? ` (${d.analyst_role})` : ""} · {fmtTime(d.created_at)}</span>
                   </div>
@@ -98,15 +98,15 @@ export default function VesselProfile() {
           </div>
         </div>
         <div className="panel p-4 text-xs" data-testid="vessel-ais-summary">
-          <div className="mb-3 flex items-center gap-2 font-display font-semibold"><Radio size={14} color="#007bb9" /> AIS coverage</div>
+          <div className="mb-3 flex items-center gap-2 font-display font-semibold"><Radio size={14} color="#1479c4" /> AIS coverage</div>
           <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 font-mono text-[11px]">
             <dt className="text-slate-500">fixes</dt><dd>{a.fixes}</dd>
             <dt className="text-slate-500">first seen</dt><dd>{fmtTime(a.first_seen)}</dd>
             <dt className="text-slate-500">last seen</dt><dd>{fmtTime(a.last_seen)}</dd>
             <dt className="text-slate-500">last position</dt><dd>{a.last_position.lat.toFixed(4)}, {a.last_position.lon.toFixed(4)} · {a.last_position.sog_kn ?? "—"} kn · {a.last_position.cog_deg ?? "—"}°</dd>
-            <dt className="text-slate-500">gaps &gt; 2h</dt><dd style={{ color: a.gaps_over_2h ? "#b26a00" : "#191c1e" }}>{a.gaps_over_2h}</dd>
+            <dt className="text-slate-500">gaps &gt; 2h</dt><dd style={{ color: a.gaps_over_2h ? "#b26a00" : "#0a2540" }}>{a.gaps_over_2h}</dd>
             <dt className="text-slate-500">sources</dt><dd>{a.sources.join(", ") || "—"}</dd>
-            <dt className="text-slate-500">quality flags</dt><dd style={{ color: a.quality_flags.length ? "#b26a00" : "#191c1e" }}>{a.quality_flags.join(", ") || "none"}</dd>
+            <dt className="text-slate-500">quality flags</dt><dd style={{ color: a.quality_flags.length ? "#b26a00" : "#0a2540" }}>{a.quality_flags.join(", ") || "none"}</dd>
           </dl>
         </div>
       </div>

@@ -6,7 +6,7 @@ import { api, apiError, fmtTime } from "@/lib/api";
 import { CaseMap } from "@/components/case/CaseMap";
 import { StatusBadge } from "@/components/StatusBadge";
 
-const SIDE = { a: "#006194", b: "#ba1a1a" };
+const SIDE = { a: "#0a67ad", b: "#ba1a1a" };
 const sel = "rounded border bg-slate-900/60 px-2 py-1.5 font-mono text-[11px] text-slate-200 outline-none";
 
 const tag = (geo, side) => ({ ...geo, features: (geo?.features || []).map((f) => ({ ...f, properties: { ...f.properties, side } })) });

@@ -29,7 +29,7 @@ const Pane = ({ s, label, spill, bbox, id, register }) => {
         <GeoJSON data={spill} style={{ color: "#ba1a1a", weight: 2, dashArray: "4,4", fillOpacity: 0.1 }} />
       </MapContainer>
       <div className="absolute left-2 top-2 z-[1000] rounded px-2.5 py-1.5 text-[11px]" style={{ background: "rgba(255,255,255,0.85)", border: "1px solid var(--border-highlight)", backdropFilter: "blur(12px)" }}>
-        <span className="label-mono" style={{ color: id === "before" ? "#007bb9" : "#b26a00" }}>{label}</span>
+        <span className="label-mono" style={{ color: id === "before" ? "#1479c4" : "#b26a00" }}>{label}</span>
         {s ? <div className="font-mono text-[10px] text-slate-200">{s.platform?.toUpperCase()} · {fmtTime(s.datetime)}{url === "failed" ? " · preview unavailable" : !url ? " · loading…" : ""}</div> : <div className="text-slate-400">no scene found in window</div>}
       </div>
     </div>

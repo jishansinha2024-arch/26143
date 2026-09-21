@@ -28,7 +28,7 @@ export const DetectorFeedback = ({ caseId, source, onSaved }) => {
       <p className="mb-2 text-[11px] text-slate-400">Was this detection a real slick? Your verdict trains precision tracking per detector version and is written to the audit trail and the evidence PDF.</p>
       <div className="flex flex-wrap items-center gap-2">
         {[["true_positive", ThumbsUp, "#006a61", "True positive"], ["false_positive", ThumbsDown, "#ba1a1a", "False positive"], ["uncertain", HelpCircle, "#b26a00", "Uncertain"]].map(([v, Icon, col, l]) => (
-          <button key={v} data-testid={`feedback-${v}`} onClick={() => setVerdict(v)} className="inline-flex items-center gap-1 rounded border px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider" style={{ borderColor: verdict === v ? col : "var(--border-highlight)", color: verdict === v ? col : "#3f4850", background: verdict === v ? `${col}1a` : "transparent" }}><Icon size={11} /> {l}</button>
+          <button key={v} data-testid={`feedback-${v}`} onClick={() => setVerdict(v)} className="inline-flex items-center gap-1 rounded border px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider" style={{ borderColor: verdict === v ? col : "var(--border-highlight)", color: verdict === v ? col : "#2b5b8f", background: verdict === v ? `${col}1a` : "transparent" }}><Icon size={11} /> {l}</button>
         ))}
         {verdict === "false_positive" && <select data-testid="feedback-reason" className={`${inputCls} w-52`} style={bd} value={reason} onChange={(e) => setReason(e.target.value)}>{REASONS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select>}
       </div>

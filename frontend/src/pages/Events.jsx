@@ -18,7 +18,7 @@ const Thumb = ({ src, alt }) => {
     api.get(src, { responseType: "blob", timeout: 120000 }).then((r) => { u = URL.createObjectURL(r.data); setUrl(u); }).catch(() => setUrl("x"));
     return () => { if (u) URL.revokeObjectURL(u); };
   }, [src]);
-  if (!src || url === "x") return <div className="grid h-28 w-full place-items-center rounded bg-slate-900/70"><Satellite size={18} color="#bfc7d2" /></div>;
+  if (!src || url === "x") return <div className="grid h-28 w-full place-items-center rounded bg-slate-900/70"><Satellite size={18} color="#c6d9ec" /></div>;
   return url ? <img src={url} alt={alt} loading="lazy" className="h-28 w-full rounded object-cover" /> : <div className="h-28 w-full animate-pulse rounded bg-slate-900/70" />;
 };
 
