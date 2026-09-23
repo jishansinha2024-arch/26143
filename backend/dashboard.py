@@ -106,7 +106,45 @@ def real_alert_filter(demo_ids, unacknowledged=None):
     return q
 
 
-async def compute_summary(db):
+async def detector_calibration(db) -> dict:
+    """Real operational precision of the automated dark-spot detector, grouped by the detector version
+    that actually produced each flagged case — built ONLY from analyst review decisions on real detector
+    cases (never demo/mock/imported/analyst-registered ones). Deliberately does NOT attempt recall: there is
+    no ground truth for slicks the detector never flagged, so that number would have to be fabricated. This
+    is why /validation's detection_metrics stay NOT YET VALIDATED even as this panel fills in with real data —
+    the two measure different things and neither substitutes for a proper labeled evaluation dataset."""
+    cases = await db.cases.find({**REAL_CASE_FILTER, "source": "dark_spot_detector"},
+                                 {"_id": 0, "spill_observation_id": 1, "attribution_status": 1}).to_list(100000)
+    if not cases:
+        return {"versions": [], "overall": None, "note": "No automated detector cases recorded yet — nothing to calibrate."}
+    spill_ids = [c["spill_observation_id"] for c in cases if c.get("spill_observation_id")]
+    versions = {s["id"]: (s.get("processing_version") or "unknown") async for s in
+                db.spill_observations.find({"id": {"$in": spill_ids}}, {"_id": 0, "id": 1, "processing_version": 1})}
+    buckets: dict = {}
+    for c in cases:
+        v = versions.get(c.get("spill_observation_id"), "unknown")
+        b = buckets.setdefault(v, {"detector_version": v, "flagged": 0, "confirmed": 0, "false_positive": 0, "unresolved": 0})
+        b["flagged"] += 1
+        attr = c.get("attribution_status")
+        # analyst_confirmed / insufficient_evidence are terminal decisions (from a direct review OR a supervisor
+        # override — both write attribution_status the same way); indeterminate/possible/probable are still open.
+        b["confirmed" if attr == "analyst_confirmed" else "false_positive" if attr == "insufficient_evidence" else "unresolved"] += 1
+    out = []
+    for b in buckets.values():
+        reviewed = b["confirmed"] + b["false_positive"]
+        b["reviewed"] = reviewed
+        b["precision"] = round(b["confirmed"] / reviewed, 3) if reviewed else None
+        b["precision_note"] = (f"measured over {reviewed} analyst-reviewed case(s); {b['unresolved']} still awaiting review" if reviewed
+                                else "NOT YET VALIDATED — no analyst review recorded yet for this detector version")
+        out.append(b)
+    out.sort(key=lambda b: -b["flagged"])
+    tot_c, tot_fp, tot_flagged = (sum(b[k] for b in out) for k in ("confirmed", "false_positive", "flagged"))
+    reviewed_total = tot_c + tot_fp
+    overall = {"flagged": tot_flagged, "confirmed": tot_c, "false_positive": tot_fp, "unresolved": tot_flagged - reviewed_total, "reviewed": reviewed_total,
+               "precision": round(tot_c / reviewed_total, 3) if reviewed_total else None}
+    return {"versions": out, "overall": overall,
+            "note": "Precision = analyst-confirmed \u00f7 analyst-reviewed, computed only from real detector-flagged cases with a terminal decision (analyst confirm/reject or supervisor override). Grows more meaningful as more cases are reviewed; small-n numbers should be read cautiously."}
+
     demo_ids = await demo_case_ids(db)
     excluded_ids = [c["id"] for c in await db.cases.find({"origin": {"$nin": REAL_ORIGINS}}, {"_id": 0, "id": 1}).to_list(10000)]
     cases, alerts = db.cases, db.alerts

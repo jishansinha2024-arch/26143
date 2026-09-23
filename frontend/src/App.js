@@ -30,6 +30,7 @@ import Validation from "@/pages/Validation";
 import AdminSecurity from "@/pages/AdminSecurity";
 import Billing from "@/pages/Billing";
 import About from "@/pages/About";
+import SihDemo from "@/pages/SihDemo";
 
 const Protected = ({ children, role }) => {
   const { user } = useAuth();
@@ -60,6 +61,7 @@ const AppRoutes = () => {
               <Route path="/account" element={<Account />} />
               <Route path="/billing" element={<Billing />} />
               <Route path="/about" element={<About />} />
+              <Route path="/sih-demo" element={<SihDemo />} />
               <Route path="/watchlist" element={<Watchlist />} />
               <Route path="/compare" element={<Compare />} />
               <Route path="/explorer" element={<SceneExplorer />} />

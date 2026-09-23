@@ -11,7 +11,7 @@ from pydantic import BaseModel
 
 from auth import (check_lockout, clear_failures, create_access_token, create_guest_token, get_current_user, hash_password,
                   public_user, record_failure, require_role, verify_password, validate_password, rate_limit,
-                  ROLES, ADMIN_ASSIGNABLE, ACCESS_HOURS, GUEST_ACCESS_HOURS, ROLE_RANK)
+                  ADMIN_ASSIGNABLE, ACCESS_HOURS, GUEST_ACCESS_HOURS, ROLE_RANK)
 from db import db, clean, audit
 from emailer import send_email, reset_email_html, test_email_html, record_test, configured as email_configured, get_config as get_email_config
 from models import LoginRequest, UserCreate, UserUpdate, ForgotPasswordRequest, ResetPasswordRequest, SignupRequest, RoleRequestCreate, new_id

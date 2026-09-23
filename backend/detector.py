@@ -10,11 +10,12 @@ from PIL import Image
 from shapely.geometry import Polygon, shape
 
 from db import db, audit
+from ml_detector import ML_VERSION, FALLBACK_VERSION, load_session
 from models import SpillObservationCreate, new_id
 from satellite import fetch_preview
 from storage import put_object, APP_NAME
 
-DETECTOR_VERSION = "darkspot-otsu-0.1.0-experimental"
+DETECTOR_VERSION = "darkspot-otsu-0.1.0-experimental"  # kept for back-compat call sites; analyze() now reports the active version per-run
 MIN_AREA_PX, MAX_AREA_FRAC, MIN_ELONGATION, MAX_SPOTS = 40, 0.02, 2.2, 5
 
 
@@ -32,6 +33,19 @@ def _dark_mask(vv: np.ndarray, valid: np.ndarray, sea: np.ndarray):
     k = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
     dark = cv2.morphologyEx(cv2.morphologyEx(dark, cv2.MORPH_OPEN, k), cv2.MORPH_CLOSE, k, iterations=2)
     return dark, float(thr)
+
+
+def _ml_mask(vv: np.ndarray, valid: np.ndarray, session) -> np.ndarray:
+    """Run the installed ONNX SAR segmentation model on the VV quicklook; same mask shape/contract as _dark_mask
+    so the existing contour/shape/contrast filters in _contour_to_spot apply unchanged to either source."""
+    x = (vv.astype(np.float32) / 255.0)[None, None, :, :]  # NCHW, single VV channel (quicklook-only for now)
+    input_name = session.get_inputs()[0].name
+    out = session.run(None, {input_name: x})[0]
+    prob = np.asarray(out).reshape(vv.shape)
+    mask = ((prob > 0.5) & valid).astype(np.uint8) * 255
+    k = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
+    mask = cv2.morphologyEx(cv2.morphologyEx(mask, cv2.MORPH_OPEN, k), cv2.MORPH_CLOSE, k, iterations=2)
+    return mask
 
 
 def _contour_to_spot(c, vv: np.ndarray, dark: np.ndarray, to_geo, fp, med: float) -> Optional[dict]:
@@ -66,13 +80,23 @@ def analyze(png: bytes, bbox: list, footprint: dict) -> dict:
     valid = (arr[:, :, 3] > 0) & (arr[:, :, :3].sum(axis=2) > 6)
     sea = vv[valid]
     if sea.size < 500:
-        return {"spots": [], "note": "insufficient valid pixels", "width": w, "height": h}
-    dark, thr = _dark_mask(vv, valid, sea)
+        return {"spots": [], "note": "insufficient valid pixels", "width": w, "height": h, "detector_version": FALLBACK_VERSION, "detector_mode": "OTSU_FALLBACK"}
+    session, thr, version, mode = load_session(), None, FALLBACK_VERSION, "OTSU_FALLBACK"
+    if session is not None:
+        try:
+            dark = _ml_mask(vv, valid, session)
+            version, mode = ML_VERSION, "ML"
+        except Exception as e:  # noqa: BLE001 — any inference failure falls back to the always-available heuristic
+            logging.getLogger("detector").warning("ML inference failed (%s); falling back to Otsu dark-spot heuristic", str(e)[:160])
+            dark, thr = _dark_mask(vv, valid, sea)
+    else:
+        dark, thr = _dark_mask(vv, valid, sea)
     contours, _ = cv2.findContours(dark, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     to_geo, fp, med = _affine(bbox, w, h), shape(footprint), float(np.median(sea))
     spots = [s for s in (_contour_to_spot(c, vv, dark, to_geo, fp, med) for c in contours) if s]
     spots.sort(key=lambda s: (-s["contrast"] * math.log(s["area_px"] + 1)))
-    return {"spots": spots[:MAX_SPOTS], "threshold": thr, "sea_median": med, "width": w, "height": h, "candidates_total": len(spots)}
+    return {"spots": spots[:MAX_SPOTS], "threshold": thr, "sea_median": med, "width": w, "height": h, "candidates_total": len(spots),
+            "detector_version": version, "detector_mode": mode}
 
 
 def thumbnail_webp(png: bytes, pixel_bbox: list, pad: int = 40) -> bytes:
@@ -119,13 +143,17 @@ async def run_dark_spot_detector(scene: dict, actor="system") -> dict:
     bbox = (scene.get("metadata") or {}).get("bbox") or list(shape(scene["footprint"]).bounds)
     png = await get_quicklook(scene)
     res = analyze(png, bbox, scene["footprint"])
+    active_version, is_ml = res.get("detector_version", FALLBACK_VERSION), res.get("detector_mode") == "ML"
     cases = []
     now = datetime.now(timezone.utc)
     for i, s in enumerate(res["spots"]):
+        flags = ["lookalike_suspect"] if is_ml else ["lookalike_suspect", "experimental_detector"]
+        note = (f"ONNX SAR segmentation model output (elongation {s['elongation']}, contrast {s['contrast']}). Still analyst-review candidate evidence, not a legal determination."
+                if is_ml else
+                f"EXPERIMENTAL dark-spot heuristic (Otsu threshold on Sentinel-1 quicklook, elongation {s['elongation']}, contrast {s['contrast']}). Low-wind areas, upwelling and wakes cause false positives — analyst review required.")
         payload = SpillObservationCreate(
             scene_id=scene["id"], geometry=s["geometry"], acquisition_time=scene["acquisition_time"], source="dark_spot_detector",
-            detection_confidence=s["confidence"], quality_flags=["lookalike_suspect", "experimental_detector"], processing_version=DETECTOR_VERSION,
-            notes=f"EXPERIMENTAL dark-spot heuristic (Otsu threshold on Sentinel-1 quicklook, elongation {s['elongation']}, contrast {s['contrast']}). Low-wind areas, upwelling and wakes cause false positives — analyst review required.")
+            detection_confidence=s["confidence"], quality_flags=flags, processing_version=active_version, notes=note)
         spill, case = await create_spill_observation(payload, actor)
         try:
             thumb = thumbnail_webp(png, s["pixel_bbox"])
@@ -139,10 +167,11 @@ async def run_dark_spot_detector(scene: dict, actor="system") -> dict:
         except Exception:  # noqa: BLE001
             pass
         cases.append({"case_id": case["id"], "case_number": case["case_number"], "confidence": s["confidence"], "elongation": s["elongation"], "contrast": s["contrast"]})
-    await db.scenes.update_one({"id": scene["id"]}, {"$set": {"status": "detected", "detector_version": DETECTOR_VERSION, "detector_summary": {**{k: v for k, v in res.items() if k != "spots"}, "spots": len(res["spots"]), "at": now}}})
-    await audit("scene", scene["id"], "scene.detected", {"detector": DETECTOR_VERSION, "spots": len(res["spots"]), "cases": [c["case_number"] for c in cases]}, actor)
-    return {"detector": DETECTOR_VERSION, "experimental": True, "spots": len(res["spots"]), "cases": cases, "threshold": res.get("threshold"), "sea_median": res.get("sea_median"),
-            "note": "EXPERIMENTAL: Otsu dark-spot heuristic on a quicklook — not a validated SAR segmentation model."}
+    await db.scenes.update_one({"id": scene["id"]}, {"$set": {"status": "detected", "detector_version": active_version, "detector_summary": {**{k: v for k, v in res.items() if k != "spots"}, "spots": len(res["spots"]), "at": now}}})
+    await audit("scene", scene["id"], "scene.detected", {"detector": active_version, "spots": len(res["spots"]), "cases": [c["case_number"] for c in cases]}, actor)
+    return {"detector": active_version, "experimental": not is_ml, "spots": len(res["spots"]), "cases": cases, "threshold": res.get("threshold"), "sea_median": res.get("sea_median"),
+            "note": ("ONNX SAR segmentation model active for this run." if is_ml else
+                     "EXPERIMENTAL: Otsu dark-spot heuristic on a quicklook — not a validated SAR segmentation model. Drop a model at OIL_MODEL_PATH to activate ML with no code change.")}
 
 
 async def detect_scene(scene: dict, actor="system") -> dict:

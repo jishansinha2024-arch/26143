@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { BadgeCheck, Cpu, FlaskConical } from "lucide-react";
+import { BadgeCheck, Cpu, FlaskConical, Target } from "lucide-react";
 import { api } from "@/lib/api";
 
 const Row = ({ label, value, target }) => (
@@ -40,6 +40,47 @@ export default function Validation() {
             <div><p className="label-mono">Drift</p><p className="mt-0.5 font-mono text-sm text-slate-300">{v.drift_version}</p></div>
           </div>
           <p className="mt-3 text-xs text-slate-400">{det.note}</p>
+        </div>
+      )}
+
+      {v && v.operational_calibration && (
+        <div className="panel mb-4 overflow-hidden fade-up" data-testid="validation-calibration">
+          <div className="flex items-center gap-2 border-b px-4 py-3" style={{ borderColor: "var(--border-default)" }}><Target size={15} color="#0a67ad" /><h2 className="font-display font-semibold">Detector calibration (live)</h2></div>
+          {v.operational_calibration.versions.length === 0 ? (
+            <p className="px-4 py-4 text-xs text-slate-400" data-testid="calibration-empty">{v.operational_calibration.note}</p>
+          ) : (
+            <>
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="label-mono text-left">
+                    <th className="px-4 py-2 font-normal">Detector version</th>
+                    <th className="px-4 py-2 font-normal">Flagged</th>
+                    <th className="px-4 py-2 font-normal">Confirmed</th>
+                    <th className="px-4 py-2 font-normal">False positive</th>
+                    <th className="px-4 py-2 font-normal">Unresolved</th>
+                    <th className="px-4 py-2 font-normal">Precision</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {v.operational_calibration.versions.map((b) => (
+                    <tr key={b.detector_version} className="border-t" style={{ borderColor: "var(--border-default)" }} data-testid={`calibration-row-${b.detector_version}`}>
+                      <td className="px-4 py-2 font-mono text-xs text-slate-300">{b.detector_version}</td>
+                      <td className="px-4 py-2 font-mono text-xs">{b.flagged}</td>
+                      <td className="px-4 py-2 font-mono text-xs text-emerald-300">{b.confirmed}</td>
+                      <td className="px-4 py-2 font-mono text-xs text-rose-300">{b.false_positive}</td>
+                      <td className="px-4 py-2 font-mono text-xs text-amber-300">{b.unresolved}</td>
+                      <td className="px-4 py-2 font-mono text-xs" title={b.precision_note}>
+                        {b.precision === null
+                          ? <span className="rounded px-2 py-0.5 text-[10px] uppercase tracking-wider" style={{ color: "#b26a00", background: "rgba(178,106,0,0.1)", border: "1px solid rgba(178,106,0,0.35)" }}>NOT YET VALIDATED</span>
+                          : <span className="text-cyan-300">{b.precision} <span className="text-slate-500">(n={b.reviewed})</span></span>}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <p className="px-4 py-3 text-xs text-slate-500">{v.operational_calibration.note}</p>
+            </>
+          )}
         </div>
       )}
 

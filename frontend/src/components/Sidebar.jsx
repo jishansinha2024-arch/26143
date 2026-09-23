@@ -18,6 +18,7 @@ const SECTIONS = [
     { to: "/compare", label: "Compare", icon: "compare", id: "nav-compare-link" },
   ] },
   { title: "Intelligence", items: [
+    { to: "/sih-demo", label: "SIH Demo Walkthrough", icon: "rocket_launch", id: "nav-sih-demo-link" },
     { to: "/about", label: "About Varuna Netra", icon: "info", id: "nav-about-link" },
     { to: "/archive", label: "Archive", icon: "inventory_2", id: "nav-archive-link" },
     { to: "/zones", label: "Zones / Jurisdictions", icon: "map", id: "nav-zones-link" },

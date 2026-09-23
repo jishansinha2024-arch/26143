@@ -1,155 +1,100 @@
 # Varuna Netra — Render Deployment Guide
 
-This guide walks you through deploying **Varuna Netra** (FastAPI Backend + React Frontend + MongoDB) to **[Render](https://render.com)**.
-
----
-
-## 🏗️ Architecture on Render
+Varuna Netra deploys as **one Docker web service**. `Dockerfile` builds the React frontend
+(`frontend/`) into static files, then bundles them into the same image as the FastAPI backend
+(`backend/`); `render_app.py` serves both from a single origin — the API under `/api/*`, everything
+else as the React app. One URL, no separate frontend service, no CORS configuration to get right.
 
 ```
-  ┌───────────────────────────────┐
-  │   Render Static Site (FREE)   │
-  │   - React 18 + Tailwind SPA   │  ◄── User Browser
-  │   - Global CDN + SSL          │
-  └──────────────┬────────────────┘
-                 │ API calls (HTTPS / SSE)
-                 ▼
-  ┌───────────────────────────────┐
-  │   Render Web Service (Free)   │
-  │   - FastAPI + Uvicorn         │
-  │   - Background Workers        │
-  └──────────────┬────────────────┘
-                 │ MONGODB_URL
-                 ▼
-  ┌───────────────────────────────┐
-  │   MongoDB Atlas (Free M0)     │
-  │   - 512 MB Cluster            │
-  └───────────────────────────────┘
+   ┌─────────────────────────────────────────┐
+   │        Render Web Service (Docker)       │
+   │  FastAPI + Uvicorn, serving:             │
+   │    /api/*      → backend routes          │
+   │    everything  → built React SPA         │  ◄── User Browser
+   │    /health     → health check            │
+   └──────────────────┬────────────────────────┘
+                       │ MONGO_URL
+                       ▼
+   ┌─────────────────────────────────────────┐
+   │        MongoDB Atlas (Free M0)           │
+   └─────────────────────────────────────────┘
 ```
 
----
+## Prerequisites
 
-## 📋 Prerequisites
+1. **GitHub account** — push this repository (public or private both work).
+2. **Render account** — sign up free at [render.com](https://render.com).
+3. **MongoDB Atlas account (free)** — Render has no managed MongoDB, so an external cluster is required.
 
-1. **GitHub Account**: Push this repository to a GitHub repository (public or private).
-2. **Render Account**: Sign up free at [render.com](https://render.com).
-3. **MongoDB Atlas Account (Free)**: Sign up at [mongodb.com/atlas](https://www.mongodb.com/atlas).
+## Step 1: Create a free MongoDB Atlas cluster
 
----
+1. Log into [MongoDB Atlas](https://cloud.mongodb.com/) → **Create a Database** → **M0 (Free)**.
+2. Pick a region close to where you'll deploy on Render.
+3. **Database Access**: create a database user and a strong password — save both.
+4. **Network Access**: **Add IP Address** → **Allow Access from Anywhere** (`0.0.0.0/0`). Render's
+   outbound IPs aren't fixed, so this is required.
+5. **Connect** → **Drivers** (Python) → copy the SRV connection string, e.g.
+   `mongodb+srv://<user>:<password>@cluster0.xxxxx.mongodb.net/?retryWrites=true&w=majority`.
 
-## 🗄️ Step 1: Set Up Free MongoDB on MongoDB Atlas
+## Step 2: Deploy the Blueprint
 
-Render does not offer a native managed MongoDB service. MongoDB Atlas offers a 100% free shared cluster (M0) that works seamlessly:
+This repo includes [`render.yaml`](./render.yaml), which Render reads automatically to provision
+the single `varuna-netra` service.
 
-1. Log into [MongoDB Atlas](https://cloud.mongodb.com/).
-2. Click **Create a Database** → Choose **M0 (Free)**.
-3. Select AWS as provider and pick the region closest to your Render service (e.g., `us-east-1` or `frankfurt`).
-4. **Security Setup**:
-   - **Database User**: Create a username (e.g., `varuna_user`) and a secure password. Save these credentials.
-   - **Network Access**: Go to **Network Access** → Click **Add IP Address** → Select **Allow Access from Anywhere (`0.0.0.0/0`)** (required because Render cloud instances have dynamic outbound IPs).
-5. **Get Connection String**:
-   - Click **Connect** → **Drivers** (Python).
-   - Copy the URI:
-     ```
-     mongodb+srv://varuna_user:<password>@cluster0.xxxxx.mongodb.net/?retryWrites=true&w=majority
-     ```
-   - Replace `<password>` with your database user password.
-
----
-
-## 🚀 Option A: 1-Click Blueprint Deployment (Recommended)
-
-This repository includes a [`render.yaml`](./render.yaml) file. Render can automatically provision and connect both services at once.
-
-1. Go to your [Render Dashboard](https://dashboard.render.com/).
-2. Click **New +** → **Blueprint**.
-3. Connect your GitHub account and select your **Varuna Netra** repository.
-4. Render will detect `render.yaml` and configure:
-   - **Backend**: Python Web Service (`varuna-netra-backend`)
-   - **Frontend**: Static Site (`varuna-netra-frontend`)
-5. In the configuration screen, you will be prompted for:
-   - `MONGO_URL`: Paste your MongoDB Atlas connection string from Step 1.
-6. Click **Apply**.
-7. Render will build and deploy both services!
-
----
-
-## 🛠️ Option B: Manual Dashboard Deployment
-
-If you prefer to configure the services manually in the Render dashboard:
-
-### 1. Deploy the Backend Web Service
-
-1. In Render Dashboard, click **New +** → **Web Service**.
-2. Select your GitHub repository.
-3. Configure the settings:
-   - **Name**: `varuna-netra-backend`
-   - **Region**: Choose the region closest to your MongoDB Atlas cluster.
-   - **Branch**: `main` (or your default branch)
-   - **Root Directory**: `backend`
-   - **Runtime**: `Python 3`
-   - **Build Command**: `pip install -r requirements.txt`
-   - **Start Command**: `uvicorn server:app --host 0.0.0.0 --port $PORT`
-   - **Instance Type**: `Free`
-4. Expand **Advanced** → Add the following **Environment Variables**:
+1. [Render Dashboard](https://dashboard.render.com/) → **New +** → **Blueprint**.
+2. Connect your GitHub account and select this repository.
+3. Render detects `render.yaml` and shows one service: **varuna-netra** (Docker, free plan).
+4. Fill in the env vars Render prompts for (everything marked `sync: false` in `render.yaml`):
 
    | Key | Value | Notes |
    | :--- | :--- | :--- |
-   | `MONGO_URL` | `mongodb+srv://...` | Your MongoDB Atlas connection URI |
-   | `DB_NAME` | `varuna_netra` | Database name |
-   | `JWT_SECRET` | *(click Generate or random 32+ chars)* | Session encryption key |
-   | `APP_ENV` | `production` | Environment mode |
-   | `DEMO_MODE` | `true` | Pre-populates sample maritime cases and demo users |
-   | `CORS_ORIGIN_REGEX` | `^https://.*\.onrender\.com$` | Permits requests from any Render frontend |
-   | `AIS_INGEST_ENABLED` | `false` | Disable background AIS streaming unless configured |
+   | `MONGO_URL` | your Atlas SRV string from Step 1 | required |
+   | `ADMIN_EMAIL` | your admin login email | required — becomes your first account |
+   | `ADMIN_PASSWORD` | a strong password | required |
+   | `FRONTEND_URL` | leave blank | the Dockerfile falls back to Render's own `RENDER_EXTERNAL_URL` automatically |
 
-5. Click **Create Web Service**. Wait for the build to complete.
-6. Once deployed, copy your backend URL (e.g. `https://varuna-netra-backend.onrender.com`).
+   Everything else (`DB_NAME`, `JWT_SECRET`, `WEBHOOK_CRON_SECRET`, demo account passwords) is
+   either pre-filled or auto-generated by Render — nothing else to type in.
+5. Click **Apply**. The Docker build runs `yarn install && yarn build` for the frontend, then
+   `pip install` for the backend, then bundles both into one image — expect 5–10 minutes on the
+   free tier's shared CPU. A successful boot ends with an Uvicorn "Application startup complete"
+   line in the Logs tab.
 
----
+## Step 3: Verify
 
-### 2. Deploy the Frontend Static Site
+1. **Health check**: visit `https://<your-service>.onrender.com/health` — expect
+   `{"status": "ok", ...}`. This is what Render itself polls (`healthCheckPath` in `render.yaml`),
+   so a failure here shows the deploy as unhealthy even if the build succeeded.
+2. **UI**: visit the root URL and log in with `ADMIN_EMAIL` / `ADMIN_PASSWORD`.
+3. **Demo data**: with `DEMO_MODE=true` (the default), labelled demo cases and two demo accounts
+   (`DEMO_SUPERVISOR_EMAIL` / `DEMO_ANALYST_EMAIL`) are seeded on first boot, with passwords Render
+   generated for you — find them on the service's **Environment** tab.
 
-1. In Render Dashboard, click **New +** → **Static Site**.
-2. Select the same GitHub repository.
-3. Configure the settings:
-   - **Name**: `varuna-netra-frontend`
-   - **Branch**: `main`
-   - **Root Directory**: `frontend`
-   - **Build Command**: `yarn && yarn build` (or `npm install && npm run build`)
-   - **Publish Directory**: `build`
-4. Expand **Advanced** → Add the **Environment Variable**:
+## Manual (non-Blueprint) setup
 
-   | Key | Value | Notes |
-   | :--- | :--- | :--- |
-   | `REACT_APP_BACKEND_URL` | `https://varuna-netra-backend.onrender.com` | Your backend URL from Step 1 (no trailing slash) |
+If you'd rather configure the service by hand instead of using the Blueprint:
 
-5. Configure Single Page Application (SPA) Routing:
-   - Under **Redirects/Rewrites**, click **Add Rule**:
-     - **Type**: `Rewrite`
-     - **Source Path**: `/*`
-     - **Destination**: `/index.html`
-   - *(This ensures deep links like `/cases/case_001` or `/login` work properly without 404 errors)*.
-6. Click **Create Static Site**.
+- **Type**: Web Service → **Runtime**: Docker (uses the repo's `Dockerfile` as-is)
+- **Health Check Path**: `/health`
+- **Environment Variables**: same table as Step 2, plus `DB_NAME=varuna_netra`, a random
+  `JWT_SECRET`, and `DEMO_MODE` (`true` for a demo, `false` for a clean production DB)
 
----
+There is no separate frontend service to create — creating one and pointing it at a
+`REACT_APP_BACKEND_URL` is for a two-service split this repo no longer uses.
 
-## 🔑 Default Accounts (Demo Mode)
+## Free-tier notes
 
-When deployed with `DEMO_MODE=true`, the following accounts are automatically provisioned on first launch:
-
-| Role | Email | Password |
-| :--- | :--- | :--- |
-| **Supervisor** | `supervisor@sentinelmar.demo` | `Supervisor#2026` |
-| **Analyst** | `analyst@sentinelmar.demo` | `Analyst#2026` |
-| **Admin** | `shawpriyanshu950@gmail.com` | `Admin#2026` |
-
-*Alternatively, click **"Explore as Guest"** on the login page for instant read-only access.*
-
----
-
-## ⚡ Important Render Free Tier Tips
-
-1. **Spin-down after Inactivity**: Render's free web services sleep after 15 minutes of inactivity. The first request after sleep may take ~30–50 seconds to boot up. The frontend Static Site is on Render's global CDN and never sleeps.
-2. **MongoDB IP Allowlist**: If the backend cannot connect to MongoDB, verify that MongoDB Atlas Network Access has `0.0.0.0/0` enabled.
-3. **Environment Updates**: When modifying `REACT_APP_BACKEND_URL` on the frontend, trigger a **Manual Deploy** → **Clear build cache & deploy** so React bakes the updated API URL into the bundle.
+- **Cold starts**: the free plan sleeps after 15 minutes idle; the next request takes ~30–50s to
+  wake it.
+- **Keeping it warm**: this repo has a scheduled endpoint, `POST /api/cron/scene-watch`, guarded by
+  the auto-generated `WEBHOOK_CRON_SECRET`. Point an external scheduler (e.g. cron-job.org, or a
+  scheduled GitHub Action) at it every 10–14 minutes with that secret in the request — it runs the
+  scene-watch job *and* keeps the instance awake, so no separate no-op ping is needed.
+- **MongoDB Atlas IP allowlist**: if the backend can't connect, re-check that `0.0.0.0/0` is enabled
+  under Network Access.
+- **File uploads**: attachments are stored under `backend/.uploads`, which is ephemeral on Render's
+  free tier — files won't survive a restart/redeploy. For persistence, attach a Render Persistent
+  Disk mounted there, or configure external storage.
+- **Optional integrations** (`AISSTREAM_API_KEY`, `OPENAI_API_KEY`, `STRIPE_SECRET_KEY`,
+  `RESEND_API_KEY`, `OIL_MODEL_PATH`) are all safe to leave unset — each feature degrades gracefully
+  and reports itself as "NOT CONFIGURED" rather than erroring (see `/admin/security`).

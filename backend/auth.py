@@ -8,7 +8,7 @@ import bcrypt
 import jwt
 from fastapi import Depends, HTTPException, Request
 
-from db import db, audit
+from db import db
 from models import new_id
 
 logger = logging.getLogger("auth")

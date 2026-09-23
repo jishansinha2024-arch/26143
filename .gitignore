@@ -101,11 +101,11 @@ frontend/node_modules/.cache/default-development/7.pack
 # Environment files with secrets
 .env
 */.env
-!.env.example
-!*/.env.example
+.env.*
+*.env
 frontend/node_modules/.cache/default-development/11.pack
 (3).zip
 (4).zip
-.env.*
-*.env
 frontend/node_modules/.cache/default-development/6.pack
+!.env.example
+!*/.env.example

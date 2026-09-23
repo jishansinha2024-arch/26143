@@ -1,5 +1,4 @@
 .git
-.emergent
 **/node_modules
 frontend/build
 test_reports

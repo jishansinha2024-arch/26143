@@ -16,6 +16,8 @@ services:
         sync: false
       - key: ADMIN_PASSWORD
         sync: false
+      - key: FRONTEND_URL           # required — used to build links in password-reset/alert emails
+        sync: false
       - key: DEMO_MODE           # "true" seeds labelled demo data; set "false" for a clean production DB
         value: "true"
       - key: DEMO_SUPERVISOR_EMAIL

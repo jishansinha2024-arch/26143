@@ -10,6 +10,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
 from auth import get_current_user, require_role
+from dashboard import detector_calibration
 from db import db, clean, audit
 from ml_detector import detector_status
 from correlation import ALGORITHM_VERSION
@@ -24,6 +25,13 @@ NOT_VALIDATED = "NOT YET VALIDATED"
 @router.get("/detector/status")
 async def get_detector_status(user=Depends(get_current_user)):
     return {**detector_status(), "correlation_version": ALGORITHM_VERSION, "drift_version": DRIFT_MODEL_VERSION}
+
+
+@router.get("/detector/calibration")
+async def get_detector_calibration(user=Depends(get_current_user)):
+    """Real operational precision by detector version, built only from analyst review outcomes on real
+    detector-flagged cases. Grows automatically as analysts confirm/reject cases — never a static or seeded number."""
+    return clean(await detector_calibration(db))
 
 
 @router.get("/validation")
@@ -41,6 +49,7 @@ async def get_validation(user=Depends(get_current_user)):
             "precision", "recall", "f1", "iou", "dice", "false_positives_per_scene")},
         "correlation_metrics": {k: NOT_VALIDATED for k in ("top_1_recall", "top_3_recall", "ambiguity_rate")},
         "targets": {"precision": "\u2265 0.80", "recall": "\u2265 0.75", "false_positives_per_scene": "\u2264 1.0 / scene", "top_3_recall": "\u2265 0.90"},
+        "operational_calibration": await detector_calibration(db),
     }
 
 
